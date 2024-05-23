@@ -1,38 +1,38 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Serilog.Events;
+
 using System;
 using System.Reflection;
+using Microsoft.Extensions.Hosting;
+
+using Spectre.Console;
+using Spectre.Console.Cli;
+using ABB.WorkItemClone.ConsoleUI.Commands;
 
 namespace ABB.WorkItemClone.ConsoleUI
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-           // var builder = Host.CreateApplicationBuilder(args);
-           // builder.Logging.ClearProviders();
-           // string outputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] [" + GetVersionTextForLog() + "] {Message:lj}{NewLine}{Exception}";
-           // builder.Services.AddSerilog(lc => lc
-           //         .WriteTo.SpectreConsole(theme: AnsiConsoleTheme.Code, outputTemplate: outputTemplate)
-           //         .Enrich.FromLogContext()
-           //         .Enrich.WithMachineName()
-           //         );
-           // // Setup
-           //// builder.Services.AddKeyedSingleton<IWorkEnvironmentTarget, WorkEnvironemntTarget>("AzureDevOps");
+            AnsiConsole.Write(new FigletText("ABB WIT").LeftJustified().Color(Color.Red));
+            AnsiConsole.MarkupLine($"[bold white]ABB Work Item Tools[/] [bold yellow]{GetVersionTextForLog()}[/]");
 
-           // // Add Hosted Services
-           //// var weo1 = new WorkEnvironmentOptions("WE1", 4, "AzureDevOps");
-           //// weo1.TeamMembers.Clear();
-           //// weo1.TeamMembers.Add(new TeamMember("Product Owner", "New"));
-           //// weo1.TeamMembers.Add(new TeamMember("Team Member 1", "Approved"));
-           // //weo1.TeamMembers.Add(new TeamMember("Team Member 2", "Committed"));
+            var app = new CommandApp();
+            app.Configure(config =>
+            {
+                config.PropagateExceptions();
+                config.AddCommand<WorkItemCloneCommand>("clone");
+            });
 
-           // //builder.Services.AddSingleton<IHostedService, WorkEnvironment>(serviceProvider => new WorkEnvironment(weo1, serviceProvider, serviceProvider.GetService<ILogger<WorkEnvironment>>()));
-
-           // //Build Host
-           // var host = builder.Build();
-           // host.Run();
+            try
+            {
+                return app.Run(args);
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+                return -99;
+            }
         }
 
         public static string GetVersionTextForLog()
