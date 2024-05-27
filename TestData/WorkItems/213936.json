@@ -1,0 +1,91 @@
+{
+  "id": 213936,
+  "rev": 10,
+  "fields": {
+    "SystemId": 0,
+    "SystemAreaId": 0,
+    "SystemAreaPath": null,
+    "SystemTeamProject": null,
+    "SystemNodeName": null,
+    "SystemAreaLevel1": null,
+    "SystemRev": 0,
+    "SystemAuthorizedDate": "0001-01-01T00:00:00",
+    "SystemRevisedDate": "0001-01-01T00:00:00",
+    "SystemIterationId": 0,
+    "SystemIterationPath": null,
+    "SystemIterationLevel1": null,
+    "SystemWorkItemType": null,
+    "SystemState": null,
+    "SystemReason": null,
+    "SystemCreatedDate": "0001-01-01T00:00:00",
+    "SystemCreatedBy": null,
+    "SystemChangedDate": "0001-01-01T00:00:00",
+    "SystemChangedBy": null,
+    "SystemAuthorizedAs": null,
+    "SystemPersonId": 0,
+    "SystemWatermark": 0,
+    "SystemCommentCount": 0,
+    "SystemTitle": null,
+    "SystemBoardColumn": null,
+    "SystemBoardColumnDone": false,
+    "MicrosoftVSTSCommonStateChangeDate": "0001-01-01T00:00:00",
+    "MicrosoftVSTSCommonBacklogPriority": 0.0,
+    "WEF_81B31D964B424A4FBC1D421C7BFD0CFA_SystemExtensionMarker": false,
+    "WEF_81B31D964B424A4FBC1D421C7BFD0CFA_KanbanColumn": null,
+    "WEF_81B31D964B424A4FBC1D421C7BFD0CFA_KanbanColumnDone": false,
+    "SystemDescription": null,
+    "MicrosoftVSTSCommonAcceptanceCriteria": null,
+    "SystemTags": null,
+    "SystemParent": 0
+  },
+  "relations": [
+    {
+      "rel": "System.LinkTypes.Dependency-Forward",
+      "url": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItems/213310",
+      "attributes": {
+        "isLocked": false,
+        "name": "Successor"
+      }
+    },
+    {
+      "rel": "System.LinkTypes.Hierarchy-Reverse",
+      "url": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItems/212315",
+      "attributes": {
+        "isLocked": false,
+        "name": "Parent"
+      }
+    },
+    {
+      "rel": "System.LinkTypes.Dependency-Reverse",
+      "url": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItems/213309",
+      "attributes": {
+        "isLocked": false,
+        "name": "Predecessor"
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItems/213936"
+    },
+    "workItemUpdates": {
+      "href": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItems/213936/updates"
+    },
+    "workItemRevisions": {
+      "href": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItems/213936/revisions"
+    },
+    "workItemComments": {
+      "href": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItems/213936/comments"
+    },
+    "html": {
+      "href": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_workitems/edit/213936"
+    },
+    "workItemType": {
+      "href": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItemTypes/Deliverable"
+    },
+    "fields": {
+      "href": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/fields"
+    }
+  },
+  "url": "https://dev.azure.com/ABB-MO-ATE/147d335a-0f4d-46ee-9992-8c3f82c3cbb4/_apis/wit/workItems/213936"
+}

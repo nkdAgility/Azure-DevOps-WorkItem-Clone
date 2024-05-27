@@ -22,6 +22,7 @@ namespace ABB.WorkItemClone.ConsoleUI
             {
                 config.PropagateExceptions();
                 config.AddCommand<WorkItemCloneCommand>("clone");
+                config.AddCommand<WorkItemExportCommand>("export");
             });
 
             try

@@ -1,12 +1,16 @@
 {
   "profiles": {
-    "ABB.WorkItemClone.ConsoleUI": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "Clone": {
       "commandName": "Project",
       "commandLineArgs": "clone resources\\ADO_TESTProjPipline_V03.json --accessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
     },
-    "Profile 1": {
+    "Export": {
       "commandName": "Project",
-      "commandLineArgs": "clone"
+      "commandLineArgs": "export data --accessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
     }
   }
 }
