@@ -55,9 +55,8 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
 
                 }
             }
-          
 
-
+            AnsiConsole.MarkupLine($"[green]Exported to:[/] {System.IO.Path.GetFullPath(settings.OutputPath)}.");
 
             return 0;
         }
