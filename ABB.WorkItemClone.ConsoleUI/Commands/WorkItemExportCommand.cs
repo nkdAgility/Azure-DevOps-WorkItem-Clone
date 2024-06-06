@@ -44,15 +44,18 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             var workItems = api.GetWiqlQueryResults().Result;
             AnsiConsole.MarkupLine($"[green]Work Items Found:[/] {workItems?.workItems.Count()}.");
 
-         
+            AnsiConsole.MarkupLine($"[green]Output Path:[/] {Path.GetFullPath(settings.OutputPath)}.");
+
             foreach (var item in workItems.workItems)
             {
-                AnsiConsole.MarkupLine($"[green]Building:[/] {item.id}.");
+                var wiFilePath = System.IO.Path.Combine(settings.OutputPath, $"{item.id}.json");
+                var wiFileRelativePath = System.IO.Path.GetRelativePath(settings.OutputPath, wiFilePath);
                 var workItem = api.GetWorkItem((int)item.id).Result;
                 if (workItem != null)
                 {
-                   System.IO.File.WriteAllText(System.IO.Path.Combine(settings.OutputPath, $"{workItem.id}.json"), JsonConvert.SerializeObject(workItem, Formatting.Indented));
-
+                    
+                    System.IO.File.WriteAllText(wiFilePath, JsonConvert.SerializeObject(workItem, Formatting.Indented));
+                   AnsiConsole.MarkupLine($"[green]Exported to:[/] {wiFileRelativePath}.");
                 }
             }
 

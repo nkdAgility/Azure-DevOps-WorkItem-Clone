@@ -6,11 +6,11 @@
     },
     "Clone": {
       "commandName": "Project",
-      "commandLineArgs": "clone resources\\ADO_TESTProjPipline_V03.json --accessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
+      "commandLineArgs": "clone ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --accessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
     },
     "Export": {
       "commandName": "Project",
-      "commandLineArgs": "export data --accessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
+      "commandLineArgs": "export ..\\..\\..\\..\\TestData\\WorkItems --accessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
     }
   }
 }
