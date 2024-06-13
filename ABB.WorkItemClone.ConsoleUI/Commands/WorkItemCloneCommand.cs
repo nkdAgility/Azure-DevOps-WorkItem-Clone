@@ -13,11 +13,24 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
         {
             AnsiConsole.Write(new Rule("Clone Work Items").LeftJustified());
 
+            // Load Config
+            if (settings.configFile == null)
+            {
+                AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was provided.");
+                return 1;
+            }
+            if (!System.IO.File.Exists(settings.configFile))
+            {
+                AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was found.");
+                return 1;
+            }
+            ConfigurationSettings configSettings = JsonConvert.DeserializeObject<ConfigurationSettings>(System.IO.File.ReadAllText(settings.configFile));
 
-            List<MergeWorkItem> mergeWorkItems;
+
+            List<MergeWorkItem> configWorkItems;
             try
             {
-                mergeWorkItems = JsonConvert.DeserializeObject<List<MergeWorkItem>>(File.ReadAllText(settings.JsonFile));
+                configWorkItems = JsonConvert.DeserializeObject<List<MergeWorkItem>>(File.ReadAllText(settings.JsonFile));
             }
             catch (Exception ex)
             {
@@ -25,48 +38,29 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
                 return 2;
             }
-            if (mergeWorkItems?.Count == 0)
+            if (configWorkItems?.Count == 0)
             {
                 AnsiConsole.MarkupLine("[red]Error:[/] No JSON file is empty.");
                 return 3;
             }
 
-            AnsiConsole.MarkupLine($"[green]Merge Items Loaded:[/] {mergeWorkItems?.Count}.");
+            AnsiConsole.MarkupLine($"[green]Merge Items Loaded:[/] {configWorkItems?.Count}.");
 
 
-            // Get Template
-
-            if (settings.AccessToken == null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No Access Token was provided.");
-                return 4;
-            }
-            if (settings.Project == null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No project was provided.");
-                return 4;
-            }
-            if (settings.Account == null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No account was provided.");
-                return 4;
-            }
-            AzureDevOpsApi api = new AzureDevOpsApi(settings.AccessToken, settings.Account, settings.Project);
-            var workItems = api.GetWiqlQueryResults().Result;
+            AzureDevOpsApi templateApi = new AzureDevOpsApi(settings.templateAccessToken, configSettings.template.Organization, configSettings.template.Project);
+            var workItems = templateApi.GetWiqlQueryResults().Result;
             AnsiConsole.MarkupLine($"[green]Work Items Found:[/] {workItems?.workItems.Count()}.");
 
-         
-            foreach (var item in mergeWorkItems)
-            {
-                AnsiConsole.MarkupLine($"[green]Building:[/] {item.id}.");
-                var workItem = api.GetWorkItem((int)item.id).Result;
-                if (workItem != null)
-                {
-                    workItem.fields.SystemId = 0;
-                    workItem.fields.SystemTitle = item.fields.title;
-                    //workItemsForClone.Add(workItem);
+            AzureDevOpsApi targetApi = new AzureDevOpsApi(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
+          WorkItemFull projectItem =  targetApi.GetWorkItem((int)settings.projectId).Result;
 
-                }
+            foreach (var cWorkItem in configWorkItems)
+            {
+                AnsiConsole.MarkupLine($"[green]Building:[/] {cWorkItem.id}.");
+                WorkItemAdd itemAdd = new WorkItemAdd();
+                itemAdd.Operations.Add(new Operation() { op = "add", path = "/fields/System.Title", value = cWorkItem.fields.title });
+                WorkItemFull newWorkItem = targetApi.CreateWorkItem(itemAdd, "Task").Result;
+
             }
           
 

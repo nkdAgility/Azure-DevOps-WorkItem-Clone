@@ -6,7 +6,7 @@
     },
     "Clone": {
       "commandName": "Project",
-      "commandLineArgs": "clone ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --accessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
+      "commandLineArgs": "clone ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --projectId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
     },
     "Export": {
       "commandName": "Project",

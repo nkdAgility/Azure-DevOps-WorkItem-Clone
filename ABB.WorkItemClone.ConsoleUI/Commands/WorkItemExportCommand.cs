@@ -12,26 +12,39 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
         public override int Execute(CommandContext context, WorkItemExportCommandSettings settings)
         {
             AnsiConsole.Write(new Rule("Export Work Items").LeftJustified());
-            // Get Template
+            // Load Config
+            if (settings.configFile == null)
+            {
+                AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was provided.");
+                return 1;
+            }
+            if (!System.IO.File.Exists(settings.configFile))
+            {
+                AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was found.");
+                return 1;
+            }
+            ConfigurationSettings configSettings = JsonConvert.DeserializeObject<ConfigurationSettings>(System.IO.File.ReadAllText(settings.configFile));
 
-            if (settings.AccessToken == null)
+
+
+            if (settings.templateAccessToken == null)
             {
-                AnsiConsole.MarkupLine("[red]Error:[/] No Access Token was provided.");
+                AnsiConsole.MarkupLine("[red]Error:[/] No Access Token was provided on command line.");
                 return 4;
             }
-            if (settings.Project == null)
+            if (configSettings.template.Project == null)
             {
-                AnsiConsole.MarkupLine("[red]Error:[/] No project was provided.");
+                AnsiConsole.MarkupLine("[red]Error:[/] No project was provided in configuration.");
                 return 4;
             }
-            if (settings.Account == null)
+            if (configSettings.template.Organization == null)
             {
-                AnsiConsole.MarkupLine("[red]Error:[/] No account was provided.");
+                AnsiConsole.MarkupLine("[red]Error:[/] No account was provided in configuration.");
                 return 4;
             }
             if (settings.OutputPath == null)
             {
-                AnsiConsole.MarkupLine("[red]Error:[/] No output path was provided.");
+                AnsiConsole.MarkupLine("[red]Error:[/] No output path was provided on command line.");
                 return 4;
             }
             if (!System.IO.Directory.Exists(settings.OutputPath))
@@ -40,8 +53,8 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             }
 
 
-            AzureDevOpsApi api = new AzureDevOpsApi(settings.AccessToken, settings.Account, settings.Project);
-            var workItems = api.GetWiqlQueryResults().Result;
+            AzureDevOpsApi templateApi = new AzureDevOpsApi(settings.templateAccessToken, configSettings.template.Organization, configSettings.template.Project);
+            var workItems = templateApi.GetWiqlQueryResults().Result;
             AnsiConsole.MarkupLine($"[green]Work Items Found:[/] {workItems?.workItems.Count()}.");
 
             AnsiConsole.MarkupLine($"[green]Output Path:[/] {Path.GetFullPath(settings.OutputPath)}.");
@@ -50,7 +63,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             {
                 var wiFilePath = System.IO.Path.Combine(settings.OutputPath, $"{item.id}.json");
                 var wiFileRelativePath = System.IO.Path.GetRelativePath(settings.OutputPath, wiFilePath);
-                var workItem = api.GetWorkItem((int)item.id).Result;
+                var workItem = templateApi.GetWorkItem((int)item.id).Result;
                 if (workItem != null)
                 {
                     

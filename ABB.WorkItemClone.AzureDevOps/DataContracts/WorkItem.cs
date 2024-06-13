@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,40 +21,20 @@ namespace ABB.WorkItemClone.AzureDevOps.DataContracts
 
     public class Fields
     {
+        [JsonProperty("System.Id")]
         public int SystemId { get; set; }
-        public int SystemAreaId { get; set; }
-        public string SystemAreaPath { get; set; }
-        public string SystemTeamProject { get; set; }
-        public string SystemNodeName { get; set; }
-        public string SystemAreaLevel1 { get; set; }
-        public int SystemRev { get; set; }
-        public DateTime SystemAuthorizedDate { get; set; }
-        public DateTime SystemRevisedDate { get; set; }
-        public int SystemIterationId { get; set; }
-        public string SystemIterationPath { get; set; }
-        public string SystemIterationLevel1 { get; set; }
+        [JsonProperty("System.WorkItemType")]
         public string SystemWorkItemType { get; set; }
-        public string SystemState { get; set; }
-        public string SystemReason { get; set; }
-        public DateTime SystemCreatedDate { get; set; }
-        public SystemCreatedby SystemCreatedBy { get; set; }
-        public DateTime SystemChangedDate { get; set; }
-        public SystemChangedby SystemChangedBy { get; set; }
-        public SystemAuthorizedas SystemAuthorizedAs { get; set; }
-        public int SystemPersonId { get; set; }
-        public int SystemWatermark { get; set; }
-        public int SystemCommentCount { get; set; }
+
+        [JsonProperty("System.Title")]
         public string SystemTitle { get; set; }
-        public string SystemBoardColumn { get; set; }
-        public bool SystemBoardColumnDone { get; set; }
-        public DateTime MicrosoftVSTSCommonStateChangeDate { get; set; }
-        public float MicrosoftVSTSCommonBacklogPriority { get; set; }
-        public bool WEF_81B31D964B424A4FBC1D421C7BFD0CFA_SystemExtensionMarker { get; set; }
-        public string WEF_81B31D964B424A4FBC1D421C7BFD0CFA_KanbanColumn { get; set; }
-        public bool WEF_81B31D964B424A4FBC1D421C7BFD0CFA_KanbanColumnDone { get; set; }
+        [JsonProperty("System.Description")]
         public string SystemDescription { get; set; }
+        [JsonProperty("Microsoft.VSTS.Common.AcceptanceCriteria")]
         public string MicrosoftVSTSCommonAcceptanceCriteria { get; set; }
+        [JsonProperty("System.Tags")]
         public string SystemTags { get; set; }
+        [JsonProperty("System.Parent")]
         public int SystemParent { get; set; }
     }
 

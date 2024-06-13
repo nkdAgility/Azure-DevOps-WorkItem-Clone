@@ -37,6 +37,15 @@ namespace ABB.WorkItemClone.AzureDevOps
             return await GetObjectResult<WorkItemFull>(apiCallUrl);
         }
 
+        public async Task<WorkItemFull?> CreateWorkItem(WorkItemAdd itemAdd, string workItemType)
+        {
+            // POST https://dev.azure.com/fabrikam/{project}/_apis/wit/workitems/${type}?api-version=7.1-preview.3
+            string post = JsonConvert.SerializeObject(itemAdd.Operations);
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/workitems/${workItemType}?api-version=7.1-preview.3";
+            return await GetObjectResult<WorkItemFull>(apiCallUrl, post);
+
+        }
+
         private async Task<string> GetResult(string apiToCall, string? post)
         {
             using (var client = new HttpClient())
@@ -89,6 +98,7 @@ namespace ABB.WorkItemClone.AzureDevOps
                 Console.WriteLine($"-----------------------------");
                 Console.WriteLine($"Azure DevOps API Call Failed!");
                 Console.WriteLine($"apiCallUrl: {apiCallUrl}");
+                Console.WriteLine($"Post: {post}");
                 Console.WriteLine($"Result: {result}");
                 Console.WriteLine($"ObjectType: {typeof(T).ToString}");
                 Console.WriteLine($"-----------------------------");
@@ -98,6 +108,6 @@ namespace ABB.WorkItemClone.AzureDevOps
             return default(T);
         }
 
-     
+
     }
 }
