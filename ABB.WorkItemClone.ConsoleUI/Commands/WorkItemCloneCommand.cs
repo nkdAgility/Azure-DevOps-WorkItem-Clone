@@ -4,6 +4,7 @@ using ABB.WorkItemClone.ConsoleUI.DataContracts;
 using Newtonsoft.Json;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.Linq;
 
 namespace ABB.WorkItemClone.ConsoleUI.Commands
 {
@@ -52,21 +53,61 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             AnsiConsole.MarkupLine($"[green]Work Items Found:[/] {workItems?.workItems.Count()}.");
 
             AzureDevOpsApi targetApi = new AzureDevOpsApi(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
-          WorkItemFull projectItem =  targetApi.GetWorkItem((int)settings.projectId).Result;
+            WorkItemFull projectItem =  targetApi.GetWorkItem((int)settings.projectId).Result;
+
+            List< WorkItemAdd > test = new List<WorkItemAdd>();
 
             foreach (var cWorkItem in configWorkItems)
             {
                 AnsiConsole.MarkupLine($"[green]Building:[/] {cWorkItem.id}.");
+                WorkItemFull templateItem = null;
+                if (cWorkItem.id != null)
+                {
+                    templateItem = templateApi.GetWorkItem((int)cWorkItem.id).Result;
+                }
+
                 WorkItemAdd itemAdd = new WorkItemAdd();
-                itemAdd.Operations.Add(new Operation() { op = "add", path = "/fields/System.Title", value = cWorkItem.fields.title });
-                WorkItemFull newWorkItem = targetApi.CreateWorkItem(itemAdd, "Task").Result;
+                itemAdd.ItemFromtemplate = templateItem;
+                itemAdd.ItemFromConfig = cWorkItem;
+
+                if (cWorkItem.fields.product != null)
+                {
+                    itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Title", value = $"[{cWorkItem.fields.product}] {cWorkItem.fields.title}" });
+                } else
+                {
+                    itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Title", value = $"{cWorkItem.fields.title}" });
+                }
+                if (templateItem != null)
+                {
+                    itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Description", value = templateItem.fields.SystemDescription });
+                }
+                itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.AreaPath", value = string.Join("\\", configSettings.target.Project, cWorkItem.area) });
+                itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Tags", value = string.Join(";" , cWorkItem.tags, cWorkItem.area, cWorkItem.fields.product, templateItem != null? templateItem.fields.SystemTags : "") });
+                itemAdd.Operations.Add(new RelationOperation() { op = "add", path = "/relations/-", value = new RelationValue { rel = "System.LinkTypes.Hierarchy-Reverse", url = projectItem.url } });           
+
+
+                test.Add(itemAdd);
+              
 
             }
-          
+
+            AnsiConsole.MarkupLine($"[green]Built :[/] {test?.Count()}.");
+
+            /// Actual Add
+            /// 
+            foreach (var itemAdd in test)
+            {
+
+                WorkItemFull newWorkItem = targetApi.CreateWorkItem(itemAdd, "Dependancy").Result;
+                AnsiConsole.MarkupLine($"[green]Added:[/] {newWorkItem.id}.");
+            }
 
 
 
             return 0;
         }
+
+
+
     }
 }

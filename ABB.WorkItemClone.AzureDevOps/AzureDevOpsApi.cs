@@ -42,16 +42,20 @@ namespace ABB.WorkItemClone.AzureDevOps
             // POST https://dev.azure.com/fabrikam/{project}/_apis/wit/workitems/${type}?api-version=7.1-preview.3
             string post = JsonConvert.SerializeObject(itemAdd.Operations);
             string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/workitems/${workItemType}?api-version=7.1-preview.3";
-            return await GetObjectResult<WorkItemFull>(apiCallUrl, post);
+            return await GetObjectResult<WorkItemFull>(apiCallUrl, post, "application/json-patch+json");
 
         }
 
-        private async Task<string> GetResult(string apiToCall, string? post)
+        private async Task<string> GetResult(string apiToCall, string? post, string? mediaType = "application/json")
         {
+            if (string.IsNullOrEmpty(mediaType))
+            {
+                mediaType = "application/json";
+            }
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(mediaType));
                 client.DefaultRequestHeaders.Add("User-Agent", "ManagedClientConsoleAppSample");
                 client.DefaultRequestHeaders.Add("X-TFS-FedAuthRedirect", "Suppress");
                 client.DefaultRequestHeaders.Add("Authorization", _authHeader);
@@ -62,7 +66,7 @@ namespace ABB.WorkItemClone.AzureDevOps
                     response = await client.GetAsync(apiToCall);
                 } else
                 {
-                    response = await client.PostAsync(apiToCall, new StringContent(post, System.Text.Encoding.UTF8, "application/json"));
+                    response = await client.PostAsync(apiToCall, new StringContent(post, System.Text.Encoding.UTF8, mediaType));
                 }                
                 if (response.IsSuccessStatusCode)
                 {
@@ -81,12 +85,12 @@ namespace ABB.WorkItemClone.AzureDevOps
         }
 
 
-        private async Task<T?> GetObjectResult<T>(string apiCallUrl, string? post = null)
+        private async Task<T?> GetObjectResult<T>(string apiCallUrl, string? post = null, string? mediaType = null)
         {
             string? result = "";
             try
             {
-                result = await GetResult(apiCallUrl, post);
+                result = await GetResult(apiCallUrl, post, mediaType);
                 if (!string.IsNullOrEmpty(result))
                 {
                     return JsonConvert.DeserializeObject<T>(result);
@@ -98,6 +102,7 @@ namespace ABB.WorkItemClone.AzureDevOps
                 Console.WriteLine($"-----------------------------");
                 Console.WriteLine($"Azure DevOps API Call Failed!");
                 Console.WriteLine($"apiCallUrl: {apiCallUrl}");
+                Console.WriteLine($"mediaType: {mediaType}");
                 Console.WriteLine($"Post: {post}");
                 Console.WriteLine($"Result: {result}");
                 Console.WriteLine($"ObjectType: {typeof(T).ToString}");
