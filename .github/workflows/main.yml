@@ -1,6 +1,8 @@
 name: dotnet package
 
-on: [push]
+on: 
+  push:
+  workflow_dispatch:
 
 jobs:
   build:
