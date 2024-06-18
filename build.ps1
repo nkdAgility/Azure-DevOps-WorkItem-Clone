@@ -2,11 +2,12 @@
 # Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 choco install 7zip --confirm --accept-license -y
 choco install gh --confirm --accept-license -y
-
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
+
 
 # Install DotNetApps
 dotnet tool install --global GitVersion.Tool
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
 
 # Get Version Numbers
 $versionInfo = dotnet-gitversion | ConvertFrom-Json
