@@ -17,13 +17,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Script
+      - name: Build ABBWorkItemClone
         shell: pwsh
         run: .\build.ps1
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-      - name: Setup dotnet ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v3
+      
+      - uses: actions/upload-artifact@v4
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+          name: ABBWorkItemClone
+          path: .\output\ABBWorkItemClone*.zip
+
