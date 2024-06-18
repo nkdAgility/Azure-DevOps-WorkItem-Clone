@@ -41,8 +41,8 @@ jobs:
         run: dotnet test
 
       - name: Script
-          shell: pwsh
-          run: Get-ChildItem -Recurse
+        shell: pwsh
+        run: Get-ChildItem -Recurse
           
           
       - name: Upload a Build Artifact
