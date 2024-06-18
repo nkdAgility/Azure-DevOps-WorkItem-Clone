@@ -26,5 +26,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ABBWorkItemClone
-          path: .\output\ABBWorkItemClone*.zip
+          path: .\output\*
+
 
