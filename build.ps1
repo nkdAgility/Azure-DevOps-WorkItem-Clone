@@ -1,6 +1,8 @@
+$doCompile = $false
 Write-Output "BUILD ABBWorkItemClone"
 Write-Output "======================"
 Write-Output "Running from $($MyInvocation.MyCommand.Path)"
+Write-Output "Do Build & Test? $doCompile"
 
 
 Write-Output "INSTALL CHOCO APPS"
@@ -57,11 +59,15 @@ Write-Output "--------------"
 
 Write-Output "Complile and Test"
 Write-Output "--------------"
-# Build
-$dotnetversion = where dotnet | dotnet --version
-dotnet restore
-dotnet build
-dotnet test
+if ($doCompile)
+{
+    $dotnetversion = where dotnet | dotnet --version
+    dotnet restore
+    dotnet build
+    dotnet test
+} else {
+    Write-Output "Skipping Compile and Test"
+}
 Write-Output "--------------"
 
 Write-Output "Zip ABBWorkItemClone"

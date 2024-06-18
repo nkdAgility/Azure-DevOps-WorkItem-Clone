@@ -9,11 +9,11 @@ branches:
       regex: ^master$|^main$
   release:
     mode: ContinuousDelivery
-    tag: 
+    tag: ""
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
-    regex: ^release(s)?[/-]
+    regex: ^release(s)?[\/-]
     source-branches:
     - master
     - main
