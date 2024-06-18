@@ -40,7 +40,11 @@ jobs:
       - name: Test with the dotnet CLI
         run: dotnet test
 
-      
+      - name: Script
+          shell: pwsh
+          run: Get-ChildItem -Recurse
+          
+          
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v4.3.3
         with:
