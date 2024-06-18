@@ -1,4 +1,4 @@
-$doCompile = $false
+$doCompile = $true
 Write-Output "BUILD ABBWorkItemClone"
 Write-Output "======================"
 Write-Output "Running from $($MyInvocation.MyCommand.Path)"
