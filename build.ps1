@@ -49,7 +49,10 @@ Write-Output "Detect Version"
 Write-Output "--------------"
 # Get Version Numbers
 $versionInfo = dotnet-gitversion | ConvertFrom-Json
-Write-Output "Version: $($versionInfo.SemVer)"
+Write-Output "FullSemVer: $($versionInfo.FullSemVer)"
+Write-Output "SemVer: $($versionInfo.SemVer)"
+Write-Output "PreReleaseTag: $($versionInfo.PreReleaseTag)"
+Write-Output "InformationalVersion: $($versionInfo.InformationalVersion)"
 Write-Output "--------------"
 
 Write-Output "Complile and Test"
