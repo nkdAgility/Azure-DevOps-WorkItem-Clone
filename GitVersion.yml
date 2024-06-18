@@ -6,21 +6,21 @@ branches:
       mode: ContinuousDeployment
       tag: 'preview'
       increment: Patch
+      is-mainline: true
+      prevent-increment-of-merged-branch-version: false
+      tracks-release-branches: true
       regex: ^master$|^main$
   release:
     mode: ContinuousDelivery
     tag: ""
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
     track-merge-target: false
     regex: ^release(s)?[\/-]
     source-branches:
     - master
     - main
-    tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
-    pre-release-weight: 30000
 ignore:
   sha: []
 merge-message-formats: {}
