@@ -20,6 +20,8 @@ jobs:
       - name: Script
         shell: pwsh
         run: .\build.ps1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Setup dotnet ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v3
