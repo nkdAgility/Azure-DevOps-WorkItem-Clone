@@ -1,0 +1,53 @@
+name: dotnet package
+
+on: 
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '8.x']
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v1.1.1
+        with:
+          versionSpec: '5.x'
+      - name: Setup dotnet ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v1.1.1
+        with:
+          updateAssemblyInfo: true
+
+      
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Install dependencies
+        run: dotnet restore
+      
+      - name: Build
+        run: dotnet build
+      - name: Test with the dotnet CLI
+        run: dotnet test
+
+      - name: Script
+        shell: pwsh
+        run: Get-ChildItem -Recurse
+          
+          
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: "app"
+          path: "/bin/Debug/net8.0/**"
+  
