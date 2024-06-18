@@ -89,8 +89,8 @@ Write-Output "PUBLISH ABBWorkItemClone"
 Write-Output "--------------"
 if ($versionInfo.PreReleaseTag -eq "") {
     Write-Output "Publishing Release"
-    gh release create $versionText .\output\$ZipName --generate-notes --generate-notes --discussion-category "General"
+    #gh release create $versionText .\output\$ZipName --generate-notes --generate-notes --discussion-category "General"
 } else {
     Write-Output "Publishing PreRelease"
-    gh release create $versionText .\output\$ZipName --generate-notes --generate-notes --prerelease --discussion-category "General"
+    #gh release create $versionText .\output\$ZipName --generate-notes --generate-notes --prerelease --discussion-category "General"
 }
