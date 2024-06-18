@@ -1,3 +1,10 @@
+Write-Output "BUILD ABBWorkItemClone"
+Write-Output "======================"
+Write-Output "Running from $($MyInvocation.MyCommand.Path)"
+
+
+Write-Output "INSTALL APPS"
+Write-Output "------------"
 # Install Choco Apps
 # Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 $installedStuff = choco list -i 
@@ -26,22 +33,33 @@ $env:ChocolateyInstall = Convert-Path "$((Get-Command choco).Path)\..\.."
 Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 Update-SessionEnvironment
 
+Write-Output "Detect Version"
+Write-Output "--------------"
 # Get Version Numbers
 $versionInfo = dotnet-gitversion | ConvertFrom-Json
 Write-Output "Version: $($versionInfo.SemVer)"
 
+Write-Output "Complile and Test"
+Write-Output "--------------"
 # Build
 $dotnetversion = where dotnet | dotnet --version
 dotnet restore
 dotnet build
 dotnet test
 
+Write-Output "Zip ABBWorkItemClone"
+Write-Output "--------------"
+
 $versionText = "v$($versionInfo.SemVer)";
+Write-Output "Version: $versionText"
 $ZipName = "ABBWorkItemClone-$versionText.zip"
+Write-Output "ZipName: $ZipName"
 $ZipFilePath = ".\output\$ZipName"
+Write-Output "ZipFilePath: $ZipFilePath"
 
 # Create Zip
 if (Get-Item -Path ".\output" -ErrorAction SilentlyContinue) {
+    Write-Output "Cleanning up output folder"
     Remove-Item -Path ".\output\" -Recurse -Force
 }
 New-Item -Name "output" -ItemType Directory
