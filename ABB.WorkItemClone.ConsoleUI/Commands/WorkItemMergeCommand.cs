@@ -1,80 +1,172 @@
 ﻿using ABB.WorkItemClone.AzureDevOps;
 using ABB.WorkItemClone.AzureDevOps.DataContracts;
 using ABB.WorkItemClone.ConsoleUI.DataContracts;
+using Microsoft.Extensions.Hosting;
+using Microsoft.TeamFoundation;
+using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.Process;
 using Newtonsoft.Json;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System;
 
 namespace ABB.WorkItemClone.ConsoleUI.Commands
 {
-    internal class WorkItemMergeCommand : Command<WorkItemMergeCommandSettings>
+    internal class WorkItemMergeCommand : WorkItemCommandBase<WorkItemMergeCommandSettings>
     {
-        public override int Execute(CommandContext context, WorkItemMergeCommandSettings settings)
+        public override async Task<int> ExecuteAsync(CommandContext context, WorkItemMergeCommandSettings settings)
         {
-            AnsiConsole.Write(new Rule("Export Work Items").LeftJustified());
-            // Load Config
-            if (settings.configFile == null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was provided.");
-                return 1;
-            }
-            if (!System.IO.File.Exists(settings.configFile))
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was found.");
-                return 1;
-            }
-            ConfigurationSettings configSettings = JsonConvert.DeserializeObject<ConfigurationSettings>(System.IO.File.ReadAllText(settings.configFile));
+
+            var configFile = EnsureConfigFileAskIfMissing(settings.configFile);
+            ConfigurationSettings configSettings = LoadConfigFile(settings.configFile);
+            var outputPath = EnsureOutputPathAskIfMissing(settings.OutputPath);
+            DirectoryInfo outputPathInfo = CreateOutputPath(outputPath);
+            AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(settings.templateAccessToken, configSettings.template.Organization, configSettings.template.Project);
+            var JsonFile = EnsureJsonFileAskIfMissing(settings.JsonFile);
+            List<jsonWorkItem> jsonWorkItems = LoadJsonFile(settings.JsonFile);
+            var projectId = EnsureProjectIdAskIfMissing(settings.projectId);
 
 
+            AnsiConsole.Write(
+            new Table()
+                .AddColumn(new TableColumn("Setting").Alignment(Justify.Right))
+                .AddColumn(new TableColumn("Value"))
+                .AddRow("configFile", configFile)
+                .AddRow("outputPath", outputPath)
+                .AddRow("templateAccessToken", "***************")
+                .AddRow("templateOrganization", configSettings.template.Organization)
+                .AddRow("templateProject", configSettings.template.Project)
+                .AddRow("targetAccessToken", "***************")
+                .AddRow("targetOrganization", configSettings.target.Organization)
+                .AddRow("targetProject", configSettings.target.Project)
+                .AddRow("projectId", projectId.ToString())
+                .AddRow("JsonFile", JsonFile)
+                 );
+            if (!settings.NonInteractive)
+            {
 
-            if (settings.templateAccessToken == null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No Access Token was provided on command line.");
-                return 4;
-            }
-            if (configSettings.template.Project == null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No project was provided in configuration.");
-                return 4;
-            }
-            if (configSettings.template.Organization == null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No account was provided in configuration.");
-                return 4;
-            }
-            if (settings.OutputPath == null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No output path was provided on command line.");
-                return 4;
-            }
-            if (!System.IO.Directory.Exists(settings.OutputPath))
-            {
-                System.IO.Directory.CreateDirectory(settings.OutputPath);
+                var proceedWithSettings = AnsiConsole.Prompt(
+                new SelectionPrompt<bool> { Converter = value => value ? "Yes" : "No" }
+                    .Title("Proceed with the aforementioned settings?")
+                    .AddChoices(true, false)
+            );
             }
 
 
-            AzureDevOpsApi templateApi = new AzureDevOpsApi(settings.templateAccessToken, configSettings.template.Organization, configSettings.template.Project);
-            var workItems = templateApi.GetWiqlQueryResults().Result;
-            AnsiConsole.MarkupLine($"[green]Work Items Found:[/] {workItems?.workItems.Count()}.");
+            var fakeItemsFromTemplateQuery = await AnsiConsole
+               .Status()
+               .StartAsync(
+                   "Getting template items by query...",
+                   _ => templateApi.GetWiqlQueryResults());
 
-            AnsiConsole.MarkupLine($"[green]Output Path:[/] {Path.GetFullPath(settings.OutputPath)}.");
-
-            foreach (var item in workItems.workItems)
+            if (!settings.NonInteractive)
             {
-                var wiFilePath = System.IO.Path.Combine(settings.OutputPath, $"{item.id}.json");
-                var wiFileRelativePath = System.IO.Path.GetRelativePath(settings.OutputPath, wiFilePath);
-                var workItem = templateApi.GetWorkItem((int)item.id).Result;
-                if (workItem != null)
+                var proceedWithTenplateImport = AnsiConsole
+              .Prompt(
+                  new SelectionPrompt<bool> { Converter = value => value ? "Yes" : "No" }
+                      .Title($"Found {fakeItemsFromTemplateQuery.workItems.Count()} template items to import. Proceed?")
+                      .AddChoices(true, false));
+
+                if (!proceedWithTenplateImport)
                 {
-                    
-                    System.IO.File.WriteAllText(wiFilePath, JsonConvert.SerializeObject(workItem, Formatting.Indented));
-                   AnsiConsole.MarkupLine($"[green]Exported to:[/] {wiFileRelativePath}.");
+                    return 0;
                 }
             }
 
-            AnsiConsole.MarkupLine($"[green]Exported to:[/] {System.IO.Path.GetFullPath(settings.OutputPath)}.");
+            var templateWorkItems = await AnsiConsole
+                         .Progress()
+                         .StartAsync(async ctx =>
+                         {
+                             var migrationTask = ctx.AddTask(
+                                 "Loading Template Items...",
+                                 maxValue: fakeItemsFromTemplateQuery.workItems.Count());
+
+                             var successes = 0;
+                             var failures = 0;
+
+                             List<WorkItemFull> workItems = new List<WorkItemFull>();
+
+                             await foreach (var workItem in templateApi.GetWorkItemsFullAsync(fakeItemsFromTemplateQuery.workItems))
+                             {
+                                 workItems.Add(workItem);
+                                 migrationTask.Increment(1);
+
+                             }
+
+                             return workItems;
+                         });
+
+
+            if (!settings.NonInteractive)
+            {
+                var proceedWithMerge = AnsiConsole
+              .Prompt(
+                  new SelectionPrompt<bool> { Converter = value => value ? "Yes" : "No" }
+                      .Title($"We will merge {jsonWorkItems.Count} json items with {fakeItemsFromTemplateQuery.workItems.Count()} template items. Proceed?")
+                      .AddChoices(true, false));
+
+                if (!proceedWithMerge)
+                {
+                    return 0;
+                }
+            }
+
+            AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
+            var projectItem = await AnsiConsole
+               .Status()
+               .StartAsync("Getting project item from target...",_ => targetApi.GetWorkItem((int)settings.projectId));
+
+
+
+            //List<WorkItemToBuild> buildItems = new List<WorkItemToBuild>();
+            ////first pass create items
+            //foreach (var item in configWorkItems)
+            //{
+            //    WorkItemFull templateWorkItem = null;
+            //    if (item.id != null)
+            //    {
+            //        templateWorkItem = templateApi.GetWorkItem((int)item.id).Result;
+            //    }
+            //    WorkItemToBuild newItem = new WorkItemToBuild();
+            //    newItem.guid = Guid.NewGuid();
+            //    newItem.templateId = item.id;
+            //    newItem.fields = new Dictionary<string, string>()
+            //    {
+            //        { "System.Title", item.fields.title },
+            //        { "Custom.Product", item.fields.product },
+            //        { "System.Tags", string.Join(";" , item.tags, item.area, item.fields.product, templateWorkItem != null? templateWorkItem.fields.SystemTags : "") },
+            //        { "System.AreaPath", string.Join("\\", configSettings.target.Project, item.area)},
+            //        { "System.Description",  templateWorkItem != null? templateWorkItem.fields.SystemDescription: "" },
+            //        { "Microsoft.VSTS.Common.AcceptanceCriteria", templateWorkItem != null? templateWorkItem.fields.MicrosoftVSTSCommonAcceptanceCriteria: "" }
+            //    };
+            //    buildItems.Add(newItem);
+            //}
+            ////second pass, add relations
+            //foreach (var item in configWorkItems)
+            //{
+            //    WorkItemFull templateWorkItem = null;
+            //    if (item.id != null)
+            //    {
+            //        templateWorkItem = templateApi.GetWorkItem((int)item.id).Result;
+            //    }
+            //    WorkItemToBuild newItem = buildItems.Find(x => x.templateId == item.id);
+
+            //}
+
+
+
+            ////newItem.relations = new List<WorkItemToBuildRelation>() {
+            ////        new WorkItemToBuildRelation() { rel = "System.LinkTypes.Hierarchy-Reverse", guid = Guid.NewGuid() },
+            ////        new WorkItemToBuildRelation() { rel = "System.LinkTypes.Dependency-Forward", guid = Guid.NewGuid() },
+            ////        new WorkItemToBuildRelation() { rel = "System.LinkTypes.Dependency-Reverse", guid = Guid.NewGuid() }
+            ////    };
+
+
+            //System.IO.File.WriteAllText($"{settings.OutputPath}\\WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+
 
             return 0;
         }
+
+
     }
 }

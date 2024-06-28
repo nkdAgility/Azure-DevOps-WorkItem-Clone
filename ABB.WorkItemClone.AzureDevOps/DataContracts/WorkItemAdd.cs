@@ -11,7 +11,7 @@ namespace ABB.WorkItemClone.AzureDevOps.DataContracts
     {
         public List<Operation> Operations { get; set; } = new List<Operation>();
         public WorkItemFull? ItemFromtemplate { get; set; }
-        public MergeWorkItem ItemFromConfig { get; set; }
+        public jsonWorkItem ItemFromConfig { get; set; }
     }
 
     public abstract class Operation

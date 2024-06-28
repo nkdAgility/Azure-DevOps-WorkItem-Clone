@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace ABB.WorkItemClone.AzureDevOps.DataContracts
 {
 
-    public class MergeWorkItem
+    public class jsonWorkItem
     {
         public int? id { get; set; }
         public string? area { get; set; }
         public string? tags { get; set; }
-        public MergeFields? fields { get; set; }
+        public jsonFields? fields { get; set; }
     }
 
-    public class MergeFields
+    public class jsonFields
     {
         public string? title { get; set; }
         public string? product { get; set; }

@@ -6,11 +6,15 @@
     },
     "Clone": {
       "commandName": "Project",
-      "commandLineArgs": "clone ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --projectId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
+      "commandLineArgs": "clone ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --projectId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya "
     },
     "Export": {
       "commandName": "Project",
-      "commandLineArgs": "export ..\\..\\..\\..\\TestData\\WorkItems --accessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
+      "commandLineArgs": "export ..\\..\\..\\..\\TestData\\WorkItems --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya"
+    },
+    "Merge": {
+      "commandName": "Project",
+      "commandLineArgs": "merge --outputPath ..\\..\\..\\..\\TestData --jsonFile ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --projectId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya --targetAccessToken ay5xc2kn7pka35nkx5coiey6fo4twjjc6yvtp5i3xcsmw5fu65ja --NonInteractive"
     }
   }
 }

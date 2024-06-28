@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ABB.WorkItemClone.AzureDevOps
 {
-    public class AzureDevOpsApi
+    public class AzureDevOpsApi : IAsyncDisposable
     {
         private readonly string _authHeader;
         private readonly string _account;
@@ -21,6 +21,30 @@ namespace ABB.WorkItemClone.AzureDevOps
             _account = account;
             _project = project;
         }
+
+        public Task<List<WorkItemFull>> GetWorkItemsFullAsync()
+        {
+            var fakeItems = GetWiqlQueryResults().Result;
+
+            List<WorkItemFull> realItems = new List<WorkItemFull>();
+            foreach (var item in fakeItems.workItems)
+            {
+                realItems.Add(GetWorkItem((int)item.id).Result);
+            }
+            return Task.FromResult(realItems);
+        }
+
+        public async IAsyncEnumerable<WorkItemFull> GetWorkItemsFullAsync(Workitem[] itemsToGet)
+        {
+            for (var i = 0; i < itemsToGet.Length; ++i)
+            {
+                //await Task.Delay(TimeSpan.FromMilliseconds(1000));
+                WorkItemFull result = await GetWorkItem((int)itemsToGet[i].id);
+                //WorkItemFull result = new WorkItemFull();
+                yield return result;
+            }
+        }
+
 
         public async Task<QueryResults?> GetWiqlQueryResults()
         {
@@ -113,6 +137,9 @@ namespace ABB.WorkItemClone.AzureDevOps
             return default(T);
         }
 
-
+        public ValueTask DisposeAsync()
+        {
+            return new(Task.Delay(TimeSpan.FromSeconds(1)));
+        }
     }
 }

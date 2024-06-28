@@ -44,7 +44,7 @@ namespace ABB.WorkItemClone.AzureDevOps
               string auth =  Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "", token)));
                 return $"Basic {auth}";
             }
-
+            throw new ArgumentNullException("Token is null");
             try
             {
                 var authResult = await SignInUserAndGetTokenUsingMSAL(scopes);

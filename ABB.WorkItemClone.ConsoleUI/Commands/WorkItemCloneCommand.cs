@@ -8,9 +8,9 @@ using System.Linq;
 
 namespace ABB.WorkItemClone.ConsoleUI.Commands
 {
-    internal class WorkItemCloneCommand : Command<WorkItemCloneCommandSettings>
+    internal class WorkItemCloneCommand : WorkItemCommandBase<WorkItemCloneCommandSettings>
     {
-        public override int Execute(CommandContext context, WorkItemCloneCommandSettings settings)
+        public override async Task<int> ExecuteAsync(CommandContext context, WorkItemCloneCommandSettings settings)
         {
             AnsiConsole.Write(new Rule("Clone Work Items").LeftJustified());
 
@@ -28,10 +28,10 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             ConfigurationSettings configSettings = JsonConvert.DeserializeObject<ConfigurationSettings>(System.IO.File.ReadAllText(settings.configFile));
 
 
-            List<MergeWorkItem> configWorkItems;
+            List<jsonWorkItem> configWorkItems;
             try
             {
-                configWorkItems = JsonConvert.DeserializeObject<List<MergeWorkItem>>(File.ReadAllText(settings.JsonFile));
+                configWorkItems = JsonConvert.DeserializeObject<List<jsonWorkItem>>(File.ReadAllText(settings.JsonFile));
             }
             catch (Exception ex)
             {

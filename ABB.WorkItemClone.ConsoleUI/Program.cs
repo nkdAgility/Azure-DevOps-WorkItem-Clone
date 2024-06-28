@@ -7,13 +7,18 @@ using Microsoft.Extensions.Hosting;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using ABB.WorkItemClone.ConsoleUI.Commands;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ABB.WorkItemClone.ConsoleUI
 {
     internal class Program
     {
-        static int Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
+            Console.InputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.UTF8;
+
             AnsiConsole.Write(new FigletText("ABB WIT").LeftJustified().Color(Color.Red));
             AnsiConsole.MarkupLine($"[bold white]ABB Work Item Tools[/] [bold yellow]{GetVersionTextForLog()}[/]");
 
@@ -23,17 +28,19 @@ namespace ABB.WorkItemClone.ConsoleUI
                 config.PropagateExceptions();
                 config.AddCommand<WorkItemCloneCommand>("clone");
                 config.AddCommand<WorkItemExportCommand>("export");
+                config.AddCommand<WorkItemMergeCommand>("merge");
             });
 
             try
             {
-                return app.Run(args);
+                return await app.RunAsync(args);
             }
             catch (Exception ex)
             {
                 AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
                 return -99;
             }
+            Console.WriteLine("finished");
         }
 
         public static string GetVersionTextForLog()
