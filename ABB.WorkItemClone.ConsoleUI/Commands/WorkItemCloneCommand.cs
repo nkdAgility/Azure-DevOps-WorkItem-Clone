@@ -70,13 +70,10 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 itemAdd.ItemFromtemplate = templateItem;
                 itemAdd.ItemFromConfig = cWorkItem;
 
-                if (cWorkItem.fields.product != null)
-                {
-                    itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Title", value = $"[{cWorkItem.fields.product}] {cWorkItem.fields.title}" });
-                } else
-                {
-                    itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Title", value = $"{cWorkItem.fields.title}" });
-                }
+               
+                itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Title", value = $"{cWorkItem.fields.title}" });
+                itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/Custom.Product", value = $"{cWorkItem.fields.product}" });
+
                 if (templateItem != null)
                 {
                     itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Description", value = templateItem.fields.SystemDescription });
