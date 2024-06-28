@@ -77,6 +77,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 if (templateItem != null)
                 {
                     itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Description", value = templateItem.fields.SystemDescription });
+                    itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/Microsoft.VSTS.Common.AcceptanceCriteria", value = templateItem.fields.MicrosoftVSTSCommonAcceptanceCriteria });
                 }
                 itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.AreaPath", value = string.Join("\\", configSettings.target.Project, cWorkItem.area) });
                 itemAdd.Operations.Add(new FieldOperation() { op = "add", path = "/fields/System.Tags", value = string.Join(";" , cWorkItem.tags, cWorkItem.area, cWorkItem.fields.product, templateItem != null? templateItem.fields.SystemTags : "") });
