@@ -38,10 +38,13 @@ jobs:
       - run: dotnet build
       - run: dotnet test
       - run: 'Get-ChildItem -Directory -Recurse' 
+        if: false
         shell: pwsh
       - run: 'Get-ChildItem -Directory -Recurse -Path ./'
+        if: false
         shell: pwsh
       - run: 'Get-ChildItem -Recurse -Path ./ABB.WorkItemClone.AzureDevOps/bin/Debug/net8.0/'
+        if: false
         shell: pwsh
       - uses: edgarrc/action-7z@v1
         with:
@@ -55,6 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, Setup]
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: ABBWorkItemClone
