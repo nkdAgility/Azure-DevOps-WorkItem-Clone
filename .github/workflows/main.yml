@@ -41,6 +41,8 @@ jobs:
         shell: pwsh
       - run: 'Get-ChildItem -Directory -Recurse -Path ./'
         shell: pwsh
+      - run: 'Get-ChildItem -Recurse -Path ./ABB.WorkItemClone.AzureDevOps/bin/Debug/net8.0/'
+        shell: pwsh
       - uses: edgarrc/action-7z@v1
         with:
           args: 7z a -tzip ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip ./ABB.WorkItemClone.AzureDevOps/bin/Debug/net8.0/**
