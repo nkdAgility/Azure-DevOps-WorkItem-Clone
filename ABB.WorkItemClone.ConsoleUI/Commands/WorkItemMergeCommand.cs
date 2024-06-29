@@ -17,6 +17,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
         public override async Task<int> ExecuteAsync(CommandContext context, WorkItemMergeCommandSettings settings)
         {
 
+
             var configFile = EnsureConfigFileAskIfMissing(settings.configFile);
             ConfigurationSettings configSettings = LoadConfigFile(settings.configFile);
             var outputPath = EnsureOutputPathAskIfMissing(settings.OutputPath);
@@ -52,96 +53,94 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             );
             }
 
-
-            var fakeItemsFromTemplateQuery = await AnsiConsole
-               .Status()
-               .StartAsync(
-                   "Getting template items by query...",
-                   _ => templateApi.GetWiqlQueryResults());
-
-            if (!settings.NonInteractive)
-            {
-                var proceedWithTenplateImport = AnsiConsole
-              .Prompt(
-                  new SelectionPrompt<bool> { Converter = value => value ? "Yes" : "No" }
-                      .Title($"Found {fakeItemsFromTemplateQuery.workItems.Count()} template items to import. Proceed?")
-                      .AddChoices(true, false));
-
-                if (!proceedWithTenplateImport)
-                {
-                    return 0;
-                }
-            }
-
-            List<WorkItemFull> templateWorkItems = await AnsiConsole
-                         .Progress()
-                         .StartAsync(async ctx =>
-                         {
-                             var migrationTask = ctx.AddTask(
-                                 "Loading Template Items...",
-                                 maxValue: fakeItemsFromTemplateQuery.workItems.Count());
-
-                             var successes = 0;
-                             var failures = 0;
-
-                             List<WorkItemFull> workItems = new List<WorkItemFull>();
-
-                             await foreach (var workItem in templateApi.GetWorkItemsFullAsync(fakeItemsFromTemplateQuery.workItems))
-                             {
-                                 workItems.Add(workItem);
-                                 migrationTask.Increment(1);
-
-                             }
-
-                             return workItems;
-                         });
+            await AnsiConsole.Progress()
+             .AutoClear(false)   // Do not remove the task list when done
+             .HideCompleted(false)   // Hide tasks as they are completed
+             .Columns(new ProgressColumn[]
+             {
+                            new TaskDescriptionColumn() { Alignment = Justify.Left },    // Task description
+                            new ProgressBarColumn(),        // Progress bar
+                            new PercentageColumn(),         // Percentage
+                            new RemainingTimeColumn(),      // Remaining time
+                            new SpinnerColumn(),            // Spinner
+             })
+             .StartAsync(async ctx =>
+             {
+                 // Define tasks
+                 var task1 = ctx.AddTask("[bold]Stage 1[/]: Get Template Items", false);
+                 var task2 = ctx.AddTask("[bold]Stage 2[/]: Load Template Items", false);
+                 var task3 = ctx.AddTask("[bold]Stage 3[/]: Get Target Project", false);
+                 var task4 = ctx.AddTask("[bold]Stage 4[/]: Create Work Items (First Pass)", false);
+                 var task5 = ctx.AddTask("[bold]Stage 5[/]: Create Work Item (Second Pass) Relations ", false);
 
 
-            if (!settings.NonInteractive)
-            {
-                var proceedWithMerge = AnsiConsole
-              .Prompt(
-                  new SelectionPrompt<bool> { Converter = value => value ? "Yes" : "No" }
-                      .Title($"We will merge {jsonWorkItems.Count} json items with {fakeItemsFromTemplateQuery.workItems.Count()} template items. Proceed?")
-                      .AddChoices(true, false));
+                 // Task 1: query for template work items
+                 task1.StartTask();
+                 task1.MaxValue = 1;
+                 AnsiConsole.WriteLine("Stage 1: Executing items from Query");
+                 var fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults();
+                 AnsiConsole.WriteLine($"Stage 1: Query returned {fakeItemsFromTemplateQuery.workItems.Count()} items id's from the template.");
+                 task1.Increment(1);
+                 task1.StopTask();
 
-                if (!proceedWithMerge)
-                {
-                    return 0;
-                }
-            }
+                
 
-            AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
-            WorkItemFull projectItem = await AnsiConsole
-               .Status()
-               .StartAsync("Getting project item from target...",_ => targetApi.GetWorkItem((int)settings.projectId));
+                 // Task 2: getting work items and their full data
+                 task2.MaxValue = fakeItemsFromTemplateQuery.workItems.Count();
+                 task2.StartTask();
+                 AnsiConsole.WriteLine($"Stage 2: Starting process of {task2.MaxValue} work items to get their full data ");
+                 List<WorkItemFull> templateWorkItems = new List<WorkItemFull>();
+                 await foreach (var workItem in templateApi.GetWorkItemsFullAsync(fakeItemsFromTemplateQuery.workItems))
+                 {
+                     //AnsiConsole.WriteLine($"Stage 2: Processing  {workItem.id}:`{workItem.fields.SystemTitle}`");
+                     templateWorkItems.Add(workItem);
+                     task2.Increment(1);
+                 }
+                 AnsiConsole.WriteLine($"Stage 2: All {task2.MaxValue} work items loaded");
+                 task2.StopTask();
 
-            // First pass to create work items.
+                 // Task 3: Load the Project work item
+                 task3.StartTask();
+                 task3.MaxValue = 1;
+                 AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {settings.projectId} from {configSettings.target.Organization} ");
+                 AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
+                 WorkItemFull projectItem = await targetApi.GetWorkItem((int)settings.projectId);
+                 AnsiConsole.WriteLine($"Stage 3: Project `{projectItem.fields.SystemTitle}` loaded ");
+                 task3.Increment(1);
+                 task3.StopTask();
 
-            List<WorkItemToBuild> buildItems = await AnsiConsole
-                        .Progress()
-                        .StartAsync(async ctx =>
-                        {
-                            var migrationTask = ctx.AddTask(
-                                "Creating Build items...",
-                                maxValue: jsonWorkItems.Count());
+                 // Task 4: First Pass generation of Work Items to build
+                 task4.MaxValue = jsonWorkItems.Count();
+                 task4.StartTask();
+                 AnsiConsole.WriteLine($"Stage 4: First Pass generation of Work Items to build will merge the provided json work items with the data from the template.");
+                 List<WorkItemToBuild> buildItems = new List<WorkItemToBuild>();
+                 await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(jsonWorkItems, templateWorkItems, projectItem, configSettings.target.Project))
+                 {
+                    // AnsiConsole.WriteLine($"Stage 4: processing {witb.guid}");
+                     buildItems.Add(witb);
+                     task4.Increment(1);
+                 }
+                 System.IO.File.WriteAllText($"{settings.OutputPath}\\WorkItemsToBuild-norelations.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 task4.StopTask();
+                 AnsiConsole.WriteLine($"Stage 4: Completed first pass.");
 
-                            var successes = 0;
-                            var failures = 0;
+                 // Task 5: 
+                 task5.MaxValue = jsonWorkItems.Count();
+                 AnsiConsole.WriteLine($"Stage 5: Second Pass generate relations.");
+                 task5.StartTask();
+                 await foreach (WorkItemToBuild witb in generateWorkItemsToBuildRelations(buildItems, templateWorkItems))
+                 {
+                     // AnsiConsole.WriteLine($"Stage 5: processing {witb.guid} for output of {witb.relations.Count-1} relations");
+                     task5.Increment(1);
+                 }
+                 System.IO.File.WriteAllText($"{settings.OutputPath}\\WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 task5.StopTask();
+                 AnsiConsole.WriteLine($"Stage 5: Completed second pass.");
 
-                            List<WorkItemToBuild> buildItems = new List<WorkItemToBuild>();
+             });
 
-                            await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(jsonWorkItems, templateWorkItems, projectItem, configSettings.target.Project))
-                            {
-                                buildItems.Add(witb);
-                                migrationTask.Increment(1);
 
-                            }
 
-                            return buildItems;
-                        });
-
- 
             ////second pass, add relations
             //foreach (var item in configWorkItems)
             //{
@@ -192,6 +191,33 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 };
                 newItem.relations = new List<WorkItemToBuildRelation>() { new WorkItemToBuildRelation() { rel = "System.LinkTypes.Hierarchy-Reverse", targetId = projectItem.id } };
                 yield return newItem;
+            }
+        }
+
+        private async IAsyncEnumerable<WorkItemToBuild> generateWorkItemsToBuildRelations(List<WorkItemToBuild> workItemsToBuild, List<WorkItemFull> templateWorkItems)
+        {
+            foreach (WorkItemToBuild item in workItemsToBuild)
+            {
+                WorkItemFull templateWorkItem = null;
+                if (item.templateId != null)
+                {
+                    templateWorkItem = templateWorkItems.Find(x => x.id == item.templateId);
+                    foreach (var relation in templateWorkItem.relations)
+                    {
+                        // Skip parents
+                        if (relation.rel == "System.LinkTypes.Hierarchy-Reverse") continue;
+                        var templateIdToLinkTo = Int32.Parse(relation.url.Split('/').Last());
+                        WorkItemToBuild workItemToBuildToLinkTo = workItemsToBuild.Find(x => x.templateId == templateIdToLinkTo);
+                        if (workItemToBuildToLinkTo != null)
+                        {
+                            item.relations.Add(new WorkItemToBuildRelation() { rel = relation.rel, templateId = templateIdToLinkTo, targetId = 0, guid = workItemToBuildToLinkTo.guid });
+                        } else
+                        {
+                            AnsiConsole.WriteLine($"Relation {relation.rel} to {templateIdToLinkTo} not found in work items to build.");
+                        }                        
+                    }
+                }
+                yield return item;
             }
         }
 
