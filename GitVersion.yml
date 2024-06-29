@@ -16,7 +16,7 @@ branches:
     tag: ""
     increment: Patch
     track-merge-target: false
-    regex: ^release(s)?[\/-]
+    regex: ^releases?[/-]
     source-branches:
     - master
     - main
