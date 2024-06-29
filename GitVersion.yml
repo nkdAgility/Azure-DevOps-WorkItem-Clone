@@ -1,5 +1,6 @@
 assembly-versioning-scheme: MajorMinorPatchTag
 mode: ContinuousDelivery
+continuous-delivery-fallback-tag: ''
 next-version: 0.2.0
 branches: 
   main:
