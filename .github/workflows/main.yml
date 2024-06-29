@@ -27,7 +27,7 @@ jobs:
       with:
         useConfigFile: true
     - run: |
-        If (("Preview", "") -notcontains ${{ steps.gitversion.outputs.GitVersion_PreReleaseLabel }}) {
+        If (("Preview", "") -notcontains "${{ steps.gitversion.outputs.GitVersion_PreReleaseLabel }}") {
             return 1
         } 
       shell: pwsh
