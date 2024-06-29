@@ -45,7 +45,7 @@ jobs:
         shell: pwsh
       - uses: edgarrc/action-7z@v1
         with:
-          args: 7z a -tzip ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip ./ABB.WorkItemClone.AzureDevOps/bin/Debug/net8.0/**
+          args: 7z a -tzip ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip ./ABB.WorkItemClone.ConsoleUI/bin/Debug/net8.0/**
       - uses: actions/upload-artifact@v4
         with:
           name: ABBWorkItemClone
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ABBWorkItemClone
-      - run: gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --generate-notes --discussion-category "General"
+      - run: gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --generate-notes --discussion-category "General"
         env:
          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
