@@ -39,9 +39,11 @@ jobs:
       - run: dotnet test
       - run: 'Get-ChildItem -Recurse'
         shell: pwsh
+      - run: 'Get-ChildItem -Recurse -Path ./'
+        shell: pwsh
       - uses: edgarrc/action-7z@v1
         with:
-          args: 7z a -tzip ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip ./abb-workitem-clone/abb-workitem-clone/ABB.WorkItemClone.AzureDevOps/bin/Debug/net8.0/**
+          args: 7z a -tzip ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip ./abb-workitem-clone/ABB.WorkItemClone.AzureDevOps/bin/Debug/net8.0/**
       - uses: actions/upload-artifact@v4
         with:
           name: ABBWorkItemClone
