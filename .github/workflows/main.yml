@@ -1,4 +1,4 @@
-name: ABBWorkItemClone Build and Release
+name: WorkItemClone Build and Release
 
 on: 
   push:
@@ -63,15 +63,17 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ABBWorkItemClone
-      - name: "Release ABBWorkItemClone"
+      - name: "Release WorkItemClone"
         run: |
           echo "GitVersion_BranchName: ${{needs.Setup.outputs.GitVersion_BranchName}}"
           echo "GitVersion_SemVer: ${{needs.Setup.outputs.GitVersion_SemVer}}"
           echo "GitVersion_PreReleaseLabel: ${{needs.Setup.outputs.GitVersion_PreReleaseLabel}}"
           if ( "${{needs.Setup.outputs.GitVersion_PreReleaseLabel}}" -eq "Preview" ) {
+           echo "Creating a prerelease release."
             gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --prerelease
           }
           else {
+            echo "Creating a release."
             gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --discussion-category "General"
           }
         shell: pwsh
