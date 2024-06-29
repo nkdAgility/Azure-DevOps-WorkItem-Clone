@@ -5,7 +5,15 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
 {
     internal class WorkItemCloneCommandSettings : BaseCommandSettings
     {
-        [CommandArgument(0, "[jsonFile]")]
+        [CommandOption("--NonInteractive")]
+        public bool NonInteractive { get; set; }
+        [CommandOption("--ClearCache")]
+        public bool ClearCache { get; set; }
+
+        [CommandOption("--outputPath")]
+        public string? OutputPath { get; set; }
+
+        [CommandOption("--jsonFile")]
         public string? JsonFile { get; set; }
 
         [CommandOption("--targetAccessToken")]
@@ -13,6 +21,5 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
 
         [CommandOption("-p|--projectId")]
         public int? projectId { get; set; }
-
     }
 }

@@ -4,11 +4,14 @@ using ABB.WorkItemClone.ConsoleUI.DataContracts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.Process;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 using Newtonsoft.Json;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
+using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ABB.WorkItemClone.ConsoleUI.Commands
 {
@@ -27,7 +30,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             List<jsonWorkItem> jsonWorkItems = LoadJsonFile(settings.JsonFile);
             var projectId = EnsureProjectIdAskIfMissing(settings.projectId);
 
-
+            // --------------------------------------------------------------
             AnsiConsole.Write(
             new Table()
                 .AddColumn(new TableColumn("Setting").Alignment(Justify.Right))
@@ -52,7 +55,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                     .AddChoices(true, false)
             );
             }
-
+            // --------------------------------------------------------------
             await AnsiConsole.Progress()
              .AutoClear(false)   // Do not remove the task list when done
              .HideCompleted(false)   // Hide tasks as they are completed
@@ -68,47 +71,81 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
              {
                  // Define tasks
                  var task1 = ctx.AddTask("[bold]Stage 1[/]: Get Template Items", false);
+             
                  var task2 = ctx.AddTask("[bold]Stage 2[/]: Load Template Items", false);
                  var task3 = ctx.AddTask("[bold]Stage 3[/]: Get Target Project", false);
-                 var task4 = ctx.AddTask("[bold]Stage 4[/]: Create Work Items (First Pass)", false);
-                 var task5 = ctx.AddTask("[bold]Stage 5[/]: Create Work Item (Second Pass) Relations ", false);
+                 var task4 = ctx.AddTask("[bold]Stage 4[/]: Plan Work Item Creation (First Pass)", false);
+                 var task5 = ctx.AddTask("[bold]Stage 5[/]: Plan Work Item Creation (Second Pass) Relations ", false);
+                 var task6 = ctx.AddTask("[bold]Stage 6[/]: Create Work Items", false);
 
-
+                 // --------------------------------------------------------------
                  // Task 1: query for template work items
                  task1.StartTask();
                  task1.MaxValue = 1;
                  AnsiConsole.WriteLine("Stage 1: Executing items from Query");
-                 var fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults();
-                 AnsiConsole.WriteLine($"Stage 1: Query returned {fakeItemsFromTemplateQuery.workItems.Count()} items id's from the template.");
+                 string cacheQueryFile = $"{settings.OutputPath}\\Step1-TemplateQuery.json";
+                 if (settings.ClearCache)
+                 {
+                     System.IO.File.Delete(cacheQueryFile);
+                 }
+                 QueryResults fakeItemsFromTemplateQuery;
+                 if (System.IO.File.Exists(cacheQueryFile))
+                 {
+                     fakeItemsFromTemplateQuery = JsonConvert.DeserializeObject<QueryResults>(System.IO.File.ReadAllText(cacheQueryFile));
+                     task1.Description = task1.Description + " (from cache)";
+                     AnsiConsole.WriteLine($"Stage 1: Loaded {fakeItemsFromTemplateQuery.workItems.Count()} work items from cache.");
+                 } else
+                 {
+                     fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults();
+                     AnsiConsole.WriteLine($"Stage 1: Query returned {fakeItemsFromTemplateQuery.workItems.Count()} items id's from the template.");
+                     System.IO.File.WriteAllText($"{settings.OutputPath}\\Step1-TemplateQuery.json", JsonConvert.SerializeObject(fakeItemsFromTemplateQuery, Formatting.Indented));
+                 }                 
                  task1.Increment(1);
                  task1.StopTask();
-
-                
-
+                 // --------------------------------------------------------------
                  // Task 2: getting work items and their full data
                  task2.MaxValue = fakeItemsFromTemplateQuery.workItems.Count();
                  task2.StartTask();
                  AnsiConsole.WriteLine($"Stage 2: Starting process of {task2.MaxValue} work items to get their full data ");
-                 List<WorkItemFull> templateWorkItems = new List<WorkItemFull>();
-                 await foreach (var workItem in templateApi.GetWorkItemsFullAsync(fakeItemsFromTemplateQuery.workItems))
+                 string cachetemplateWorkItemsFile = $"{settings.OutputPath}\\Step2-TemplateItems.json";
+                 if (settings.ClearCache)
                  {
-                     //AnsiConsole.WriteLine($"Stage 2: Processing  {workItem.id}:`{workItem.fields.SystemTitle}`");
-                     templateWorkItems.Add(workItem);
-                     task2.Increment(1);
+                     System.IO.File.Delete(cachetemplateWorkItemsFile);
                  }
+                 List<WorkItemFull> templateWorkItems;
+                 if (System.IO.File.Exists(cachetemplateWorkItemsFile))
+                 {
+                     templateWorkItems = JsonConvert.DeserializeObject<List<WorkItemFull>>(System.IO.File.ReadAllText(cachetemplateWorkItemsFile));
+                     task2.Increment(templateWorkItems.Count);
+                     task2.Description  = task2.Description + " (from cache)";
+                     AnsiConsole.WriteLine($"Stage 2: Loaded {templateWorkItems.Count()} work items from cache.");
+                 } else
+                 {
+                     templateWorkItems = new List<WorkItemFull>();
+                     AnsiConsole.WriteLine($"Stage 2: Loading {fakeItemsFromTemplateQuery.workItems.Count()} work items from template.");
+                     await foreach (var workItem in templateApi.GetWorkItemsFullAsync(fakeItemsFromTemplateQuery.workItems))
+                     {
+                         //AnsiConsole.WriteLine($"Stage 2: Processing  {workItem.id}:`{workItem.fields.SystemTitle}`");
+                         templateWorkItems.Add(workItem);
+                         task2.Increment(1);
+                     }
+                     System.IO.File.WriteAllText($"{settings.OutputPath}\\Step2-TemplateItems.json", JsonConvert.SerializeObject(templateWorkItems, Formatting.Indented));
+                 }
+                
                  AnsiConsole.WriteLine($"Stage 2: All {task2.MaxValue} work items loaded");
                  task2.StopTask();
-
+                 // --------------------------------------------------------------
                  // Task 3: Load the Project work item
                  task3.StartTask();
                  task3.MaxValue = 1;
                  AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {settings.projectId} from {configSettings.target.Organization} ");
                  AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
                  WorkItemFull projectItem = await targetApi.GetWorkItem((int)settings.projectId);
+                 System.IO.File.WriteAllText($"{settings.OutputPath}\\Step3-Project.json", JsonConvert.SerializeObject(projectItem, Formatting.Indented));
                  AnsiConsole.WriteLine($"Stage 3: Project `{projectItem.fields.SystemTitle}` loaded ");
                  task3.Increment(1);
                  task3.StopTask();
-
+                 // --------------------------------------------------------------
                  // Task 4: First Pass generation of Work Items to build
                  task4.MaxValue = jsonWorkItems.Count();
                  task4.StartTask();
@@ -116,29 +153,46 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                  List<WorkItemToBuild> buildItems = new List<WorkItemToBuild>();
                  await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(jsonWorkItems, templateWorkItems, projectItem, configSettings.target.Project))
                  {
-                    // AnsiConsole.WriteLine($"Stage 4: processing {witb.guid}");
+                   // AnsiConsole.WriteLine($"Stage 4: processing {witb.guid}");
                      buildItems.Add(witb);
                      task4.Increment(1);
                  }
-                 System.IO.File.WriteAllText($"{settings.OutputPath}\\WorkItemsToBuild-norelations.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{settings.OutputPath}\\Step4-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
                  task4.StopTask();
                  AnsiConsole.WriteLine($"Stage 4: Completed first pass.");
-
-                 // Task 5: 
+                 // --------------------------------------------------------------
+                 // Task 5: Second Pass Add Relations
                  task5.MaxValue = jsonWorkItems.Count();
                  AnsiConsole.WriteLine($"Stage 5: Second Pass generate relations.");
                  task5.StartTask();
                  await foreach (WorkItemToBuild witb in generateWorkItemsToBuildRelations(buildItems, templateWorkItems))
                  {
-                     // AnsiConsole.WriteLine($"Stage 5: processing {witb.guid} for output of {witb.relations.Count-1} relations");
+                     //AnsiConsole.WriteLine($"Stage 5: processing {witb.guid} for output of {witb.relations.Count-1} relations");
                      task5.Increment(1);
                  }
-                 System.IO.File.WriteAllText($"{settings.OutputPath}\\WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{settings.OutputPath}\\Step5-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
                  task5.StopTask();
                  AnsiConsole.WriteLine($"Stage 5: Completed second pass.");
 
+                 // --------------------------------------------------------------
+                 // Task 6: Create work items in target
+                 task6.MaxValue = buildItems.Count();
+                 AnsiConsole.WriteLine($"Stage 6: Create Work Items in Target.");
+                 task6.StartTask();
+                 await foreach (WorkItemToBuild witb in CreateWorkItemsToBuild(buildItems, projectItem, targetApi))
+                 {
+                     //AnsiConsole.WriteLine($"Stage 6: Processing {witb.guid} for output of {witb.relations.Count - 1} relations");
+                     task6.Increment(1);
+                 }
+                 System.IO.File.WriteAllText($"{settings.OutputPath}\\Step6-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 task6.StopTask();
+                 AnsiConsole.WriteLine($"Stage 6: All Work Items Created.");
+
+
              });
 
+
+            AnsiConsole.WriteLine($"Complete...");
 
 
             ////second pass, add relations
@@ -179,6 +233,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 }
                 WorkItemToBuild newItem = new WorkItemToBuild();
                 newItem.guid = Guid.NewGuid();
+                newItem.hasComplexRelation = false;
                 newItem.templateId = item.id;
                 newItem.fields = new Dictionary<string, string>()
                 {
@@ -211,9 +266,10 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                         if (workItemToBuildToLinkTo != null)
                         {
                             item.relations.Add(new WorkItemToBuildRelation() { rel = relation.rel, templateId = templateIdToLinkTo, targetId = 0, guid = workItemToBuildToLinkTo.guid });
+                            item.hasComplexRelation = true;
                         } else
                         {
-                            AnsiConsole.WriteLine($"Relation {relation.rel} to {templateIdToLinkTo} not found in work items to build.");
+                            //AnsiConsole.WriteLine($"Relation {relation.rel} to {templateIdToLinkTo} not found in work items to build.");
                         }                        
                     }
                 }
@@ -221,6 +277,55 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             }
         }
 
+        private async IAsyncEnumerable<WorkItemToBuild> CreateWorkItemsToBuild(List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem, AzureDevOpsApi targetApi)
+        {
+            foreach (WorkItemToBuild item in workItemsToBuild)
+            {
+                if (item.targetId != 0) continue;
+                WorkItemAdd itemToAdd = CreateWorkItemAddOperation(item, workItemsToBuild, projectItem);
+                WorkItemFull newWorkItem = await targetApi.CreateWorkItem(itemToAdd, "Dependancy");
+                if (newWorkItem == null) {
+                    throw new Exception("Failed to create work item");
+                }
+                item.targetUrl = newWorkItem.url;
+                item.targetId = newWorkItem.id;
+                yield return item;
+            }
 
+        }
+
+        private WorkItemAdd CreateWorkItemAddOperation(WorkItemToBuild item, List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem)
+        {
+            WorkItemAdd itemAdd = new WorkItemAdd();
+
+            foreach (var field in item.fields)
+            {
+                if (field.Value != null)
+                {
+                    itemAdd.Operations.Add(new FieldOperation() { op = "add", path = $"/fields/{field.Key}", value = field.Value });
+                }                
+            }
+            foreach (var relation in item.relations)
+            {
+                if (relation.rel == "System.LinkTypes.Hierarchy-Reverse")
+                {
+                    itemAdd.Operations.Add(new RelationOperation() { op = "add", path = "/relations/-", value = new RelationValue { rel = relation.rel, url = projectItem.url } });
+                }
+                else
+                {
+                    var targetItem = workItemsToBuild.Find(x => x.guid == relation.guid);
+                    if (targetItem.targetUrl == null)
+                    {
+                        //AnsiConsole.WriteLine($"SKIP: Relation on {item.guid} does not yet exist. This relation should be added from the other side when {relation.guid} is processed.");
+                    }
+                    else
+                    {
+                        itemAdd.Operations.Add(new RelationOperation() { op = "add", path = "/relations/-", value = new RelationValue { rel = relation.rel, url = targetItem.targetUrl } });
+                    }
+                    
+                }
+            }
+            return itemAdd;
+        }
     }
 }

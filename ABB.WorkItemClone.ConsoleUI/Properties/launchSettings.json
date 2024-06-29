@@ -6,7 +6,7 @@
     },
     "Clone": {
       "commandName": "Project",
-      "commandLineArgs": "clone ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --projectId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya "
+      "commandLineArgs": "clone --outputPath ..\\..\\..\\..\\TestData --jsonFile ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --projectId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya --targetAccessToken ay5xc2kn7pka35nkx5coiey6fo4twjjc6yvtp5i3xcsmw5fu65ja "
     },
     "Export": {
       "commandName": "Project",
@@ -14,7 +14,7 @@
     },
     "Merge": {
       "commandName": "Project",
-      "commandLineArgs": "merge --outputPath ..\\..\\..\\..\\TestData --jsonFile ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --projectId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya --targetAccessToken ay5xc2kn7pka35nkx5coiey6fo4twjjc6yvtp5i3xcsmw5fu65ja --NonInteractive"
+      "commandLineArgs": "merge --outputPath ..\\..\\..\\..\\TestData --jsonFile ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --projectId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya --targetAccessToken ay5xc2kn7pka35nkx5coiey6fo4twjjc6yvtp5i3xcsmw5fu65ja --NonInteractive --ClearCache"
     }
   }
 }

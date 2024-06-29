@@ -7,6 +7,8 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
     {
         [CommandOption("--NonInteractive")]
         public bool NonInteractive { get; set; }
+        [CommandOption("--ClearCache")]
+        public bool ClearCache { get; set; }
 
         [CommandOption("--outputPath")]
         public string? OutputPath { get; set; }
