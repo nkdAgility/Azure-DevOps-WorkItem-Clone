@@ -69,7 +69,7 @@ jobs:
           echo "GitVersion_SemVer: ${{needs.Setup.outputs.GitVersion_SemVer}}"
           echo "GitVersion_PreReleaseLabel: ${{needs.Setup.outputs.GitVersion_PreReleaseLabel}}"
           if ( "${{needs.Setup.outputs.GitVersion_PreReleaseLabel}}" -eq "Preview" ) {
-            gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --prerelease"
+            gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --prerelease
           }
           else {
             gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --discussion-category "General"
