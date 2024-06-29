@@ -20,7 +20,7 @@ jobs:
       uses: gittools/actions/gitversion/setup@v1.1.1
       with:
         versionSpec: '5.x'
-    - name: Install GitVersion
+    - name: Execute GitVersion
       id: gitversion
       uses: gittools/actions/gitversion/execute@v1.1.1
       with:
@@ -37,6 +37,8 @@ jobs:
           dotnet-version: 8.x
       - run: dotnet build
       - run: dotnet test
+      - run: 'Get-ChildItem -Recurse'
+        shell: pwsh
       - uses: edgarrc/action-7z@v1
         with:
           args: 7z a -tzip ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip ./abb-workitem-clone/abb-workitem-clone/ABB.WorkItemClone.AzureDevOps/bin/Debug/net8.0/**
