@@ -30,6 +30,11 @@ jobs:
         If (("Preview", "") -notcontains "${{ steps.gitversion.outputs.GitVersion_PreReleaseLabel }}") {
             return 1
         } 
+        else {
+            if ("${{ steps.gitversion.outputs.GitVersion_BranchName }}" -match "release") {
+                return 2
+            }
+        }
       shell: pwsh
 
   build:
