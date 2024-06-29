@@ -49,10 +49,10 @@ jobs:
         shell: pwsh
       - uses: edgarrc/action-7z@v1
         with:
-          args: 7z a -tzip ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip ./ABB.WorkItemClone.ConsoleUI/bin/Debug/net8.0/**
+          args: 7z a -tzip ./output/AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip ./ABB.WorkItemClone.ConsoleUI/bin/Debug/net8.0/**
       - uses: actions/upload-artifact@v4
         with:
-          name: ABBWorkItemClone
+          name: AzureDevOpsWorkItemClone
           path: ./output/*
       
   release:
@@ -62,7 +62,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: ABBWorkItemClone
+          name: AzureDevOpsWorkItemClone
       - name: "Release WorkItemClone"
         run: |
           echo "GitVersion_BranchName: ${{needs.Setup.outputs.GitVersion_BranchName}}"
@@ -70,11 +70,11 @@ jobs:
           echo "GitVersion_PreReleaseLabel: ${{needs.Setup.outputs.GitVersion_PreReleaseLabel}}"
           if ( "${{needs.Setup.outputs.GitVersion_PreReleaseLabel}}" -eq "Preview" ) {
            echo "Creating a prerelease release."
-            gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --prerelease
+            gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --prerelease
           }
           else {
             echo "Creating a release."
-            gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --discussion-category "General"
+            gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip --generate-notes --discussion-category "General"
           }
         shell: pwsh
         env:
