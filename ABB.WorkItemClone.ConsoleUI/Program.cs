@@ -19,16 +19,16 @@ namespace ABB.WorkItemClone.ConsoleUI
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
 
-            AnsiConsole.Write(new FigletText("ABB WIT").LeftJustified().Color(Color.Red));
-            AnsiConsole.MarkupLine($"[bold white]ABB Work Item Tools[/] [bold yellow]{GetVersionTextForLog()}[/]");
+            AnsiConsole.Write(new FigletText("Azure DevOps").LeftJustified().Color(Color.Red));
+            AnsiConsole.Write(new FigletText("Work Item Clone").LeftJustified().Color(Color.Red));
+            AnsiConsole.MarkupLine($"[bold white]Azure DevOps Work Item Clone[/] [bold yellow]{GetVersionTextForLog()}[/]");
 
             var app = new CommandApp();
             app.Configure(config =>
             {
                 config.PropagateExceptions();
                 config.AddCommand<WorkItemCloneCommand>("clone");
-                config.AddCommand<WorkItemExportCommand>("export");
-                config.AddCommand<WorkItemMergeCommand>("merge");
+                config.AddCommand<WorkItemCloneCommand>("init");
             });
 
             try

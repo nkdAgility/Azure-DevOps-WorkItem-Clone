@@ -12,16 +12,14 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
     {
         public override async Task<int> ExecuteAsync(CommandContext context, WorkItemCloneCommandSettings settings)
         {
-
-
             var configFile = EnsureConfigFileAskIfMissing(settings.configFile);
             ConfigurationSettings configSettings = LoadConfigFile(settings.configFile);
             var outputPath = EnsureOutputPathAskIfMissing(settings.OutputPath);
             DirectoryInfo outputPathInfo = CreateOutputPath(outputPath);
             AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(settings.templateAccessToken, configSettings.template.Organization, configSettings.template.Project);
-            var JsonFile = EnsureJsonFileAskIfMissing(settings.JsonFile);
-            List<jsonWorkItem> jsonWorkItems = LoadJsonFile(settings.JsonFile);
-            var projectId = EnsureProjectIdAskIfMissing(settings.projectId);
+            var JsonFile = EnsureJsonFileAskIfMissing(settings.inputJsonFile);
+            List<jsonWorkItem> jsonWorkItems = LoadJsonFile(settings.inputJsonFile);
+            var parentId = EnsureParentIdAskIfMissing(settings.parentId);
 
             // --------------------------------------------------------------
             AnsiConsole.Write(
@@ -36,7 +34,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 .AddRow("targetAccessToken", "***************")
                 .AddRow("targetOrganization", configSettings.target.Organization)
                 .AddRow("targetProject", configSettings.target.Project)
-                .AddRow("projectId", projectId.ToString())
+                .AddRow("parentId", parentId.ToString())
                 .AddRow("JsonFile", JsonFile)
                  );
             if (!settings.NonInteractive)
@@ -133,9 +131,9 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                  // Task 3: Load the Project work item
                  task3.StartTask();
                  task3.MaxValue = 1;
-                 AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {settings.projectId} from {configSettings.target.Organization} ");
+                 AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {settings.parentId} from {configSettings.target.Organization} ");
                  AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
-                 WorkItemFull projectItem = await targetApi.GetWorkItem((int)settings.projectId);
+                 WorkItemFull projectItem = await targetApi.GetWorkItem((int)settings.parentId);
                  System.IO.File.WriteAllText($"{settings.OutputPath}\\Step3-Project.json", JsonConvert.SerializeObject(projectItem, Formatting.Indented));
                  AnsiConsole.WriteLine($"Stage 3: Project `{projectItem.fields.SystemTitle}` loaded ");
                  task3.Increment(1);

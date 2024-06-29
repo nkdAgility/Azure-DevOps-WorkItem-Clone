@@ -10,9 +10,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
 {
     internal class BaseCommandSettings : CommandSettings
     {
-        [CommandOption("--templateAccessToken")]
-        public string? templateAccessToken { get; set; }
-
+        [Description("Pre configure paramiters using this config file. Run `Init` to create it.")]
         [CommandOption("--config")]
         [DefaultValue("configuration.json")]
         public string? configFile { get; set; }

@@ -15,18 +15,18 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
     internal abstract class WorkItemCommandBase<TSettings> : AsyncCommand<TSettings> where TSettings : CommandSettings
     {
 
-        internal int EnsureProjectIdAskIfMissing(int? projectId)
+        internal int EnsureParentIdAskIfMissing(int? parentId)
         {
-            if (projectId == null)
+            if (parentId == null)
             {
-                projectId = AnsiConsole.Prompt(
-                new TextPrompt<int>("What is the project Id?")
+                parentId = AnsiConsole.Prompt(
+                new TextPrompt<int>("What is the parent Id?")
                     .Validate(projectId
                         => projectId > 0
                             ? ValidationResult.Success()
-                            : ValidationResult.Error("[yellow]Invalid project Id[/]")));
+                            : ValidationResult.Error("[yellow]Invalid parent Id[/]")));
             }
-            return projectId.Value;
+            return parentId.Value;
         }
 
         internal List<jsonWorkItem> LoadJsonFile(string? jsonFile)
