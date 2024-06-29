@@ -28,7 +28,7 @@ jobs:
         useConfigFile: true
 
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: Setup
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 8.x
-      - run: dotnet build
+      - run: dotnet build --runtime win-x64
       - run: dotnet test
       - run: 'Get-ChildItem -Directory -Recurse' 
         if: false
