@@ -39,13 +39,12 @@ jobs:
       - run: dotnet build
       - run: dotnet test
       - uses: edgarrc/action-7z@v1
-        working-directory: ./output
         with:
-          args: 7z a -tzip ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip .\ABB.WorkItemClone.ConsoleUI\bin\Debug\net8.0\**
+          args: 7z a -tzip ./output/ABBWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}.zip .\ABB.WorkItemClone.ConsoleUI\bin\Debug\net8.0\**
       - uses: actions/upload-artifact@v4
         with:
           name: ABBWorkItemClone
-          path: .\output\*
+          path: ./output/*
       
   release:
     runs-on: ubuntu-latest
