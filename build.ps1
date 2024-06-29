@@ -100,3 +100,9 @@ if ($versionInfo.PreReleaseTag -eq "") {
     Write-Output "Publishing PreRelease"
     gh release create $versionText .\output\$ZipName --generate-notes --generate-notes --prerelease --discussion-category "General"
 }
+
+$GitVersion_PreReleaseLabel = "Preview"
+
+If (("Preview", "") -notcontains $GitVersion_PreReleaseLabel) {
+    return 1
+} 

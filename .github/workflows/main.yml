@@ -26,6 +26,11 @@ jobs:
       uses: gittools/actions/gitversion/execute@v1.1.1
       with:
         useConfigFile: true
+    - run: |
+        If (("Preview", "") -notcontains ${{ steps.gitversion.outputs.GitVersion_PreReleaseLabel }}) {
+            return 1
+        } 
+      shell: pwsh
 
   build:
     runs-on: ubuntu-latest
