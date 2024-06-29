@@ -4,6 +4,7 @@ using ABB.WorkItemClone.ConsoleUI.DataContracts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.Process;
+using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 using Newtonsoft.Json;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -72,7 +73,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 }
             }
 
-            var templateWorkItems = await AnsiConsole
+            List<WorkItemFull> templateWorkItems = await AnsiConsole
                          .Progress()
                          .StartAsync(async ctx =>
                          {
@@ -111,35 +112,36 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             }
 
             AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
-            var projectItem = await AnsiConsole
+            WorkItemFull projectItem = await AnsiConsole
                .Status()
                .StartAsync("Getting project item from target...",_ => targetApi.GetWorkItem((int)settings.projectId));
 
+            // First pass to create work items.
 
+            List<WorkItemToBuild> buildItems = await AnsiConsole
+                        .Progress()
+                        .StartAsync(async ctx =>
+                        {
+                            var migrationTask = ctx.AddTask(
+                                "Creating Build items...",
+                                maxValue: jsonWorkItems.Count());
 
-            //List<WorkItemToBuild> buildItems = new List<WorkItemToBuild>();
-            ////first pass create items
-            //foreach (var item in configWorkItems)
-            //{
-            //    WorkItemFull templateWorkItem = null;
-            //    if (item.id != null)
-            //    {
-            //        templateWorkItem = templateApi.GetWorkItem((int)item.id).Result;
-            //    }
-            //    WorkItemToBuild newItem = new WorkItemToBuild();
-            //    newItem.guid = Guid.NewGuid();
-            //    newItem.templateId = item.id;
-            //    newItem.fields = new Dictionary<string, string>()
-            //    {
-            //        { "System.Title", item.fields.title },
-            //        { "Custom.Product", item.fields.product },
-            //        { "System.Tags", string.Join(";" , item.tags, item.area, item.fields.product, templateWorkItem != null? templateWorkItem.fields.SystemTags : "") },
-            //        { "System.AreaPath", string.Join("\\", configSettings.target.Project, item.area)},
-            //        { "System.Description",  templateWorkItem != null? templateWorkItem.fields.SystemDescription: "" },
-            //        { "Microsoft.VSTS.Common.AcceptanceCriteria", templateWorkItem != null? templateWorkItem.fields.MicrosoftVSTSCommonAcceptanceCriteria: "" }
-            //    };
-            //    buildItems.Add(newItem);
-            //}
+                            var successes = 0;
+                            var failures = 0;
+
+                            List<WorkItemToBuild> buildItems = new List<WorkItemToBuild>();
+
+                            await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(jsonWorkItems, templateWorkItems, projectItem, configSettings.target.Project))
+                            {
+                                buildItems.Add(witb);
+                                migrationTask.Increment(1);
+
+                            }
+
+                            return buildItems;
+                        });
+
+ 
             ////second pass, add relations
             //foreach (var item in configWorkItems)
             //{
@@ -165,6 +167,32 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
 
 
             return 0;
+        }
+
+        private async IAsyncEnumerable<WorkItemToBuild> generateWorkItemsToBuildList(List<jsonWorkItem> jsonWorkItems, List<WorkItemFull> templateWorkItems, WorkItemFull projectItem, string targetTeamProject)
+        {
+            foreach (var item in jsonWorkItems)
+            {
+                WorkItemFull templateWorkItem = null;
+                if (item.id != null)
+                {
+                    templateWorkItem = templateWorkItems.Find(x => x.id == item.id);
+                }
+                WorkItemToBuild newItem = new WorkItemToBuild();
+                newItem.guid = Guid.NewGuid();
+                newItem.templateId = item.id;
+                newItem.fields = new Dictionary<string, string>()
+                {
+                    { "System.Title", item.fields.title },
+                    { "Custom.Product", item.fields.product },
+                    { "System.Tags", string.Join(";" , item.tags, item.area, item.fields.product, templateWorkItem != null? templateWorkItem.fields.SystemTags : "") },
+                    { "System.AreaPath", string.Join("\\", targetTeamProject, item.area)},
+                    { "System.Description",  templateWorkItem != null? templateWorkItem.fields.SystemDescription: "" },
+                    { "Microsoft.VSTS.Common.AcceptanceCriteria", templateWorkItem != null? templateWorkItem.fields.MicrosoftVSTSCommonAcceptanceCriteria: "" }
+                };
+                newItem.relations = new List<WorkItemToBuildRelation>() { new WorkItemToBuildRelation() { rel = "System.LinkTypes.Hierarchy-Reverse", targetId = projectItem.id } };
+                yield return newItem;
+            }
         }
 
 
