@@ -29,13 +29,13 @@ jobs:
     - run: |
         If (("Preview", "") -notcontains "${{ steps.gitversion.outputs.GitVersion_PreReleaseLabel }}") {
             write-output " The GitVersion_PreReleaseLabel is invlaid!"
-            return 1
+            return -1
         } 
         else {
             write-output " The GitVersion_PreReleaseLabel is valid, lets check the branch!"
             if (("${{ steps.gitversion.outputs.GitVersion_BranchName }}").StartsWith("release")) {
                 write-output "Branch Bad!"
-                return 2
+                return -2
             } 
             else {
                 write-output "Branch Good!"
