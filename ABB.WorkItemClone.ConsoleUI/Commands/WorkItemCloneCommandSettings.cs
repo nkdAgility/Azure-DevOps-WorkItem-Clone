@@ -12,9 +12,9 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
         [CommandOption("--ClearCache")]
         public bool ClearCache { get; set; }
         //------------------------------------------------
-        [CommandOption("--outputPath")]
+        [CommandOption("--outputPath|--cachePath")]
         [DefaultValue("./cache")]
-        public string? OutputPath { get; set; }
+        public string? CachePath { get; set; }
         //------------------------------------------------
         [CommandOption("--jsonFile|--inputJsonFile")]
         public string? inputJsonFile { get; set; }

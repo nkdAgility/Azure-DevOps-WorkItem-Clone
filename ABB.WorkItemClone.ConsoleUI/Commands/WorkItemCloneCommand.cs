@@ -14,7 +14,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
         {
             var configFile = EnsureConfigFileAskIfMissing(settings.configFile);
             ConfigurationSettings configSettings = LoadConfigFile(settings.configFile);
-            var outputPath = EnsureOutputPathAskIfMissing(settings.OutputPath);
+            var outputPath = EnsureOutputPathAskIfMissing(settings.CachePath);
             DirectoryInfo outputPathInfo = CreateOutputPath(outputPath);
             AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(settings.templateAccessToken, configSettings.template.Organization, configSettings.template.Project);
             var JsonFile = EnsureJsonFileAskIfMissing(settings.inputJsonFile);
@@ -45,6 +45,11 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                     .Title("Proceed with the aforementioned settings?")
                     .AddChoices(true, false)
             );
+                if (!proceedWithSettings)
+                {
+                    AnsiConsole.MarkupLine("[red]Aborted[/]");
+                    return 0;
+                }
             }
             // --------------------------------------------------------------
             await AnsiConsole.Progress()
@@ -74,7 +79,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                  task1.StartTask();
                  task1.MaxValue = 1;
                  AnsiConsole.WriteLine("Stage 1: Executing items from Query");
-                 string cacheQueryFile = $"{settings.OutputPath}\\Step1-TemplateQuery.json";
+                 string cacheQueryFile = $"{settings.CachePath}\\Step1-TemplateQuery.json";
                  if (settings.ClearCache)
                  {
                      System.IO.File.Delete(cacheQueryFile);
@@ -90,7 +95,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                  {
                      fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults();
                      AnsiConsole.WriteLine($"Stage 1: Query returned {fakeItemsFromTemplateQuery.workItems.Count()} items id's from the template.");
-                     System.IO.File.WriteAllText($"{settings.OutputPath}\\Step1-TemplateQuery.json", JsonConvert.SerializeObject(fakeItemsFromTemplateQuery, Formatting.Indented));
+                     System.IO.File.WriteAllText($"{settings.CachePath}\\Step1-TemplateQuery.json", JsonConvert.SerializeObject(fakeItemsFromTemplateQuery, Formatting.Indented));
                  }
                  task1.Increment(1);
                  task1.StopTask();
@@ -99,7 +104,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                  task2.MaxValue = fakeItemsFromTemplateQuery.workItems.Count();
                  task2.StartTask();
                  AnsiConsole.WriteLine($"Stage 2: Starting process of {task2.MaxValue} work items to get their full data ");
-                 string cachetemplateWorkItemsFile = $"{settings.OutputPath}\\Step2-TemplateItems.json";
+                 string cachetemplateWorkItemsFile = $"{settings.CachePath}\\Step2-TemplateItems.json";
                  if (settings.ClearCache)
                  {
                      System.IO.File.Delete(cachetemplateWorkItemsFile);
@@ -122,7 +127,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                          templateWorkItems.Add(workItem);
                          task2.Increment(1);
                      }
-                     System.IO.File.WriteAllText($"{settings.OutputPath}\\Step2-TemplateItems.json", JsonConvert.SerializeObject(templateWorkItems, Formatting.Indented));
+                     System.IO.File.WriteAllText($"{settings.CachePath}\\Step2-TemplateItems.json", JsonConvert.SerializeObject(templateWorkItems, Formatting.Indented));
                  }
 
                  AnsiConsole.WriteLine($"Stage 2: All {task2.MaxValue} work items loaded");
@@ -134,7 +139,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                  AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {settings.parentId} from {configSettings.target.Organization} ");
                  AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
                  WorkItemFull projectItem = await targetApi.GetWorkItem((int)settings.parentId);
-                 System.IO.File.WriteAllText($"{settings.OutputPath}\\Step3-Project.json", JsonConvert.SerializeObject(projectItem, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{settings.CachePath}\\Step3-Project.json", JsonConvert.SerializeObject(projectItem, Formatting.Indented));
                  AnsiConsole.WriteLine($"Stage 3: Project `{projectItem.fields.SystemTitle}` loaded ");
                  task3.Increment(1);
                  task3.StopTask();
@@ -150,7 +155,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                      buildItems.Add(witb);
                      task4.Increment(1);
                  }
-                 System.IO.File.WriteAllText($"{settings.OutputPath}\\Step4-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{settings.CachePath}\\Step4-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
                  task4.StopTask();
                  AnsiConsole.WriteLine($"Stage 4: Completed first pass.");
                  // --------------------------------------------------------------
@@ -163,7 +168,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                      //AnsiConsole.WriteLine($"Stage 5: processing {witb.guid} for output of {witb.relations.Count-1} relations");
                      task5.Increment(1);
                  }
-                 System.IO.File.WriteAllText($"{settings.OutputPath}\\Step5-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{settings.CachePath}\\Step5-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
                  task5.StopTask();
                  AnsiConsole.WriteLine($"Stage 5: Completed second pass.");
 
@@ -177,7 +182,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                      //AnsiConsole.WriteLine($"Stage 6: Processing {witb.guid} for output of {witb.relations.Count - 1} relations");
                      task6.Increment(1);
                  }
-                 System.IO.File.WriteAllText($"{settings.OutputPath}\\Step6-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{settings.CachePath}\\Step6-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
                  task6.StopTask();
                  AnsiConsole.WriteLine($"Stage 6: All Work Items Created.");
 

@@ -152,6 +152,12 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             ConfigurationSettings configSettings = System.Text.Json.JsonSerializer.Deserialize<ConfigurationSettings>(System.IO.File.ReadAllText(configFile));
             return configSettings;
         }
+  internal WorkItemCloneCommandSettings LoadWorkItemCloneCommandSettingsFromFile(string? configFile)
+        {
+            WorkItemCloneCommandSettings configSettings = System.Text.Json.JsonSerializer.Deserialize<WorkItemCloneCommandSettings>(System.IO.File.ReadAllText(configFile));
+            return configSettings;
+        }
+
 
         internal string EnsureConfigFileAskIfMissing(string? configFile)
         {
