@@ -10,20 +10,26 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
     internal class WorkItemCloneCommand : WorkItemCommandBase<WorkItemCloneCommandSettings>
     {
-        public override async Task<int> ExecuteAsync(CommandContext context, WorkItemCloneCommandSettings settings)
+        public override async Task<int> ExecuteAsync(CommandContext context, WorkItemCloneCommandSettings settingsFromCmd)
         {
-            var configFile = EnsureConfigFileAskIfMissing(settings.configFile);
-            ConfigurationSettings configSettings = LoadConfigFile(settings.configFile);
-            var outputPath = EnsureCachePathAskIfMissing(settings.CachePath);
-            DirectoryInfo outputPathInfo = CreateOutputPath(outputPath);
-            AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(settings.templateAccessToken, configSettings.template.Organization, configSettings.template.Project);
-            var JsonFile = EnsureJsonFileAskIfMissing(settings.inputJsonFile);
-            List<jsonWorkItem> jsonWorkItems = LoadJsonFile(settings.inputJsonFile);
-            var parentId = EnsureParentIdAskIfMissing(settings.targetParentId);
+            WorkItemCloneCommandSettings config = null;
+            if (File.Exists(settingsFromCmd.configFile))
+            {
+                    config = LoadWorkItemCloneCommandSettingsFromFile(settingsFromCmd.configFile);
+            }
+            if (config == null)
+            {
+                config = new WorkItemCloneCommandSettings();
+            }
+            CombineValuesFromConfigAndSettings(settingsFromCmd, config);
+
+            DirectoryInfo outputPathInfo = CreateOutputPath(config.CachePath);
+            AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(config.templateAccessToken, config.templateOrganization, config.templateProject);
+            List<jsonWorkItem> jsonWorkItems = LoadJsonFile(config.inputJsonFile);
 
             // --------------------------------------------------------------
-            WriteOutSettings(settings);
-            if (!settings.NonInteractive)
+            WriteOutSettings(config);
+            if (!config.NonInteractive)
             {
 
                 var proceedWithSettings = AnsiConsole.Prompt(
@@ -64,9 +70,9 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  // Task 1: query for template work items
                  task1.StartTask();
                  task1.MaxValue = 1;
-                 AnsiConsole.WriteLine("Stage 1: Executing items from Query");
-                 string cacheQueryFile = $"{settings.CachePath}\\Step1-TemplateQuery.json";
-                 if (settings.ClearCache)
+                 //AnsiConsole.WriteLine("Stage 1: Executing items from Query");
+                 string cacheQueryFile = $"{config.CachePath}\\Step1-TemplateQuery.json";
+                 if (config.ClearCache)
                  {
                      System.IO.File.Delete(cacheQueryFile);
                  }
@@ -81,7 +87,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  {
                      fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults();
                      AnsiConsole.WriteLine($"Stage 1: Query returned {fakeItemsFromTemplateQuery.workItems.Count()} items id's from the template.");
-                     System.IO.File.WriteAllText($"{settings.CachePath}\\Step1-TemplateQuery.json", JsonConvert.SerializeObject(fakeItemsFromTemplateQuery, Formatting.Indented));
+                     System.IO.File.WriteAllText($"{config.CachePath}\\Step1-TemplateQuery.json", JsonConvert.SerializeObject(fakeItemsFromTemplateQuery, Formatting.Indented));
                  }
                  task1.Increment(1);
                  task1.StopTask();
@@ -89,9 +95,9 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  // Task 2: getting work items and their full data
                  task2.MaxValue = fakeItemsFromTemplateQuery.workItems.Count();
                  task2.StartTask();
-                 AnsiConsole.WriteLine($"Stage 2: Starting process of {task2.MaxValue} work items to get their full data ");
-                 string cachetemplateWorkItemsFile = $"{settings.CachePath}\\Step2-TemplateItems.json";
-                 if (settings.ClearCache)
+                 //AnsiConsole.WriteLine($"Stage 2: Starting process of {task2.MaxValue} work items to get their full data ");
+                 string cachetemplateWorkItemsFile = $"{config.CachePath}\\Step2-TemplateItems.json";
+                 if (config.ClearCache)
                  {
                      System.IO.File.Delete(cachetemplateWorkItemsFile);
                  }
@@ -106,102 +112,77 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  else
                  {
                      templateWorkItems = new List<WorkItemFull>();
-                     AnsiConsole.WriteLine($"Stage 2: Loading {fakeItemsFromTemplateQuery.workItems.Count()} work items from template.");
+                     //AnsiConsole.WriteLine($"Stage 2: Loading {fakeItemsFromTemplateQuery.workItems.Count()} work items from template.");
                      await foreach (var workItem in templateApi.GetWorkItemsFullAsync(fakeItemsFromTemplateQuery.workItems))
                      {
                          //AnsiConsole.WriteLine($"Stage 2: Processing  {workItem.id}:`{workItem.fields.SystemTitle}`");
                          templateWorkItems.Add(workItem);
                          task2.Increment(1);
                      }
-                     System.IO.File.WriteAllText($"{settings.CachePath}\\Step2-TemplateItems.json", JsonConvert.SerializeObject(templateWorkItems, Formatting.Indented));
+                     System.IO.File.WriteAllText($"{config.CachePath}\\Step2-TemplateItems.json", JsonConvert.SerializeObject(templateWorkItems, Formatting.Indented));
                  }
 
-                 AnsiConsole.WriteLine($"Stage 2: All {task2.MaxValue} work items loaded");
+                 //AnsiConsole.WriteLine($"Stage 2: All {task2.MaxValue} work items loaded");
                  task2.StopTask();
                  // --------------------------------------------------------------
                  // Task 3: Load the Project work item
                  task3.StartTask();
                  task3.MaxValue = 1;
-                 AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {settings.targetParentId} from {configSettings.target.Organization} ");
-                 AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
-                 WorkItemFull projectItem = await targetApi.GetWorkItem((int)settings.targetParentId);
-                 System.IO.File.WriteAllText($"{settings.CachePath}\\Step3-Project.json", JsonConvert.SerializeObject(projectItem, Formatting.Indented));
-                 AnsiConsole.WriteLine($"Stage 3: Project `{projectItem.fields.SystemTitle}` loaded ");
+                 //AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {config.targetParentId} from {config.targetOrganization} ");
+                 AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(config.targetAccessToken, config.targetOrganization, config.targetProject);
+                 WorkItemFull projectItem = await targetApi.GetWorkItem((int)config.targetParentId);
+                 System.IO.File.WriteAllText($"{config.CachePath}\\Step3-Project.json", JsonConvert.SerializeObject(projectItem, Formatting.Indented));
+                 //AnsiConsole.WriteLine($"Stage 3: Project `{projectItem.fields.SystemTitle}` loaded ");
                  task3.Increment(1);
                  task3.StopTask();
                  // --------------------------------------------------------------
                  // Task 4: First Pass generation of Work Items to build
                  task4.MaxValue = jsonWorkItems.Count();
                  task4.StartTask();
-                 AnsiConsole.WriteLine($"Stage 4: First Pass generation of Work Items to build will merge the provided json work items with the data from the template.");
+                 //AnsiConsole.WriteLine($"Stage 4: First Pass generation of Work Items to build will merge the provided json work items with the data from the template.");
                  List<WorkItemToBuild> buildItems = new List<WorkItemToBuild>();
-                 await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(jsonWorkItems, templateWorkItems, projectItem, configSettings.target.Project))
+                 await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(jsonWorkItems, templateWorkItems, projectItem, config.targetProject))
                  {
                      // AnsiConsole.WriteLine($"Stage 4: processing {witb.guid}");
                      buildItems.Add(witb);
                      task4.Increment(1);
                  }
-                 System.IO.File.WriteAllText($"{settings.CachePath}\\Step4-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{config.CachePath}\\Step4-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
                  task4.StopTask();
-                 AnsiConsole.WriteLine($"Stage 4: Completed first pass.");
+                 //AnsiConsole.WriteLine($"Stage 4: Completed first pass.");
                  // --------------------------------------------------------------
                  // Task 5: Second Pass Add Relations
                  task5.MaxValue = jsonWorkItems.Count();
-                 AnsiConsole.WriteLine($"Stage 5: Second Pass generate relations.");
+                 //AnsiConsole.WriteLine($"Stage 5: Second Pass generate relations.");
                  task5.StartTask();
                  await foreach (WorkItemToBuild witb in generateWorkItemsToBuildRelations(buildItems, templateWorkItems))
                  {
                      //AnsiConsole.WriteLine($"Stage 5: processing {witb.guid} for output of {witb.relations.Count-1} relations");
                      task5.Increment(1);
                  }
-                 System.IO.File.WriteAllText($"{settings.CachePath}\\Step5-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{config.CachePath}\\Step5-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
                  task5.StopTask();
-                 AnsiConsole.WriteLine($"Stage 5: Completed second pass.");
+                 //AnsiConsole.WriteLine($"Stage 5: Completed second pass.");
 
                  // --------------------------------------------------------------
                  // Task 6: Create work items in target
                  task6.MaxValue = buildItems.Count();
-                 AnsiConsole.WriteLine($"Stage 6: Create Work Items in Target.");
+                 //AnsiConsole.WriteLine($"Stage 6: Create Work Items in Target.");
                  task6.StartTask();
                  await foreach (WorkItemToBuild witb in CreateWorkItemsToBuild(buildItems, projectItem, targetApi))
                  {
                      //AnsiConsole.WriteLine($"Stage 6: Processing {witb.guid} for output of {witb.relations.Count - 1} relations");
                      task6.Increment(1);
                  }
-                 System.IO.File.WriteAllText($"{settings.CachePath}\\Step6-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
+                 System.IO.File.WriteAllText($"{config.CachePath}\\Step6-WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
                  task6.StopTask();
-                 AnsiConsole.WriteLine($"Stage 6: All Work Items Created.");
+                 //AnsiConsole.WriteLine($"Stage 6: All Work Items Created.");
 
 
              });
 
 
             AnsiConsole.WriteLine($"Complete...");
-
-
-            ////second pass, add relations
-            //foreach (var item in configWorkItems)
-            //{
-            //    WorkItemFull templateWorkItem = null;
-            //    if (item.id != null)
-            //    {
-            //        templateWorkItem = templateApi.GetWorkItem((int)item.id).Result;
-            //    }
-            //    WorkItemToBuild newItem = buildItems.Find(x => x.templateId == item.id);
-
-            //}
-
-
-
-            ////newItem.relations = new List<WorkItemToBuildRelation>() {
-            ////        new WorkItemToBuildRelation() { rel = "System.LinkTypes.Hierarchy-Reverse", guid = Guid.NewGuid() },
-            ////        new WorkItemToBuildRelation() { rel = "System.LinkTypes.Dependency-Forward", guid = Guid.NewGuid() },
-            ////        new WorkItemToBuildRelation() { rel = "System.LinkTypes.Dependency-Reverse", guid = Guid.NewGuid() }
-            ////    };
-
-
-            //System.IO.File.WriteAllText($"{settings.OutputPath}\\WorkItemsToBuild.json", JsonConvert.SerializeObject(buildItems, Formatting.Indented));
-
 
             return 0;
         }

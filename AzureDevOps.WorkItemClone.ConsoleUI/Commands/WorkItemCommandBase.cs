@@ -16,6 +16,21 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
     internal abstract class WorkItemCommandBase<TSettings> : AsyncCommand<TSettings> where TSettings : CommandSettings
     {
 
+        internal void CombineValuesFromConfigAndSettings(WorkItemCloneCommandSettings settings, WorkItemCloneCommandSettings config)
+        {
+            config.configFile = EnsureConfigFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile);
+            config.inputJsonFile = EnsureJsonFileAskIfMissing(config.inputJsonFile = settings.inputJsonFile != null ? settings.inputJsonFile : config.inputJsonFile);
+            config.CachePath = EnsureCachePathAskIfMissing(config.CachePath = settings.CachePath != null ? settings.CachePath : config.CachePath);
+
+            config.templateOrganization = EnsureOrganizationAskIfMissing(config.templateOrganization = settings.templateOrganization != null ? settings.templateOrganization : config.templateOrganization);
+            config.templateProject = EnsureProjectAskIfMissing(config.templateProject = settings.templateProject != null ? settings.templateProject : config.templateProject, config.templateOrganization);
+            config.templateAccessToken = EnsureAccessTokenAskIfMissing(settings.templateAccessToken != null ? settings.templateAccessToken : config.templateAccessToken, config.templateOrganization);
+
+            config.targetOrganization = EnsureOrganizationAskIfMissing(config.targetOrganization = settings.targetOrganization != null ? settings.targetOrganization : config.targetOrganization);
+            config.targetProject = EnsureProjectAskIfMissing(config.targetProject = settings.targetProject != null ? settings.targetProject : config.targetProject, config.targetOrganization);
+            config.targetAccessToken = EnsureAccessTokenAskIfMissing(settings.targetAccessToken != null ? settings.targetAccessToken : config.targetAccessToken, config.targetOrganization);
+            config.targetParentId = EnsureParentIdAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId);            
+        }
         internal int EnsureParentIdAskIfMissing(int? parentId)
         {
             if (parentId == null)
@@ -98,18 +113,18 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         internal AzureDevOpsApi CreateAzureDevOpsConnection(string? accessToken, string? organization, string? project)
         {
             organization = EnsureOrganizationAskIfMissing(organization);
-            project = EnsureProjectAskIfMissing(project);
+            project = EnsureProjectAskIfMissing(project, organization);
             accessToken = EnsureAccessTokenAskIfMissing(accessToken, organization);
             return new AzureDevOpsApi(accessToken, organization, project);
         }
 
-        internal string EnsureProjectAskIfMissing(string? project)
+        internal string EnsureProjectAskIfMissing(string? project, string organization)
         {
             if (project == null)
             {
 
                 project = AnsiConsole.Prompt(
-                new TextPrompt<string>("What is the project?")
+                new TextPrompt<string>("What is the project on {organization}?")
                     .Validate(project
                         => !string.IsNullOrWhiteSpace(project)
                             ? ValidationResult.Success()
@@ -186,16 +201,20 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
            new Table()
                .AddColumn(new TableColumn("Setting").Alignment(Justify.Right))
                .AddColumn(new TableColumn("Value"))
+               .AddEmptyRow()
                .AddRow("configFile", config.configFile != null ? config.configFile : "NOT SET")
                .AddRow("CachePath",  config.CachePath != null ? config.CachePath : "NOT SET")
-               .AddRow("templateAccessToken", "***************")
+               .AddRow("inputJsonFile", config.inputJsonFile != null ? config.inputJsonFile : "NOT SET")
+               .AddEmptyRow()
+               .AddRow( "templateAccessToken", "***************")
                .AddRow("templateOrganization", config.templateOrganization != null ? config.templateOrganization : "NOT SET")
                .AddRow("templateProject", config.templateProject != null ? config.templateProject : "NOT SET")
+               .AddEmptyRow()
                .AddRow("targetAccessToken", "***************")
                .AddRow("targetOrganization", config.targetOrganization != null ? config.targetOrganization : "NOT SET")
                .AddRow("targetProject", config.targetProject != null ? config.targetProject : "NOT SET")
                .AddRow("targetParentId", config.targetParentId != null ? config.targetParentId.ToString() : "NOT SET")
-               .AddRow("inputJsonFile", config.inputJsonFile != null ? config.inputJsonFile : "NOT SET")
+               
                 );
         }
 
