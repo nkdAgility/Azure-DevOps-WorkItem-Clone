@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 using Spectre.Console;
 using Spectre.Console.Cli;
-using ABB.WorkItemClone.ConsoleUI.Commands;
+using AzureDevOps.WorkItemClone.ConsoleUI.Commands;
 using System.Text;
 using System.Threading.Tasks;
 

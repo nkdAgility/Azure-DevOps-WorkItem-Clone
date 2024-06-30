@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace ABB.WorkItemClone.AzureDevOps
+namespace AzureDevOps.WorkItemClone
 {
     class Authenticator
     {

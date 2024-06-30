@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABB.WorkItemClone.ConsoleUI.DataContracts
+namespace AzureDevOps.WorkItemClone.ConsoleUI.DataContracts
 {
     public class ConfigurationSettings
     {

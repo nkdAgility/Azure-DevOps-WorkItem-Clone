@@ -1,6 +1,6 @@
 ﻿
 
-namespace ABB.WorkItemClone.AzureDevOps.DataContracts
+namespace AzureDevOps.WorkItemClone.DataContracts
 {
     public class WorkItemToBuild
     {

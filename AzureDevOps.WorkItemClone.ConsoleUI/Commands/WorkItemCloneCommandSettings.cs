@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using Newtonsoft.Json;
 
-namespace ABB.WorkItemClone.ConsoleUI.Commands
+namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
     internal class WorkItemCloneCommandSettings : BaseCommandSettings
     {

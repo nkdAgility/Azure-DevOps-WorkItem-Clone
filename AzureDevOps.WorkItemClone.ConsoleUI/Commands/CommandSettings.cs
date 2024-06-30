@@ -7,7 +7,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-namespace ABB.WorkItemClone.ConsoleUI.Commands
+namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
     internal class BaseCommandSettings : CommandSettings
     {

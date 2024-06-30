@@ -1,11 +1,11 @@
-using ABB.WorkItemClone.AzureDevOps.DataContracts;
+using AzureDevOps.WorkItemClone.DataContracts;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace ABB.WorkItemClone.AzureDevOps
+namespace AzureDevOps.WorkItemClone
 {
     public class AzureDevOpsApi : IAsyncDisposable
     {

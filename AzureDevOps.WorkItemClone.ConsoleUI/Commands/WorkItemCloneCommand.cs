@@ -1,12 +1,12 @@
-﻿using ABB.WorkItemClone.AzureDevOps;
-using ABB.WorkItemClone.AzureDevOps.DataContracts;
-using ABB.WorkItemClone.ConsoleUI.DataContracts;
+﻿using AzureDevOps.WorkItemClone;
+using AzureDevOps.WorkItemClone.DataContracts;
+using AzureDevOps.WorkItemClone.ConsoleUI.DataContracts;
 using Newtonsoft.Json;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Linq;
 
-namespace ABB.WorkItemClone.ConsoleUI.Commands
+namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
     internal class WorkItemCloneCommand : WorkItemCommandBase<WorkItemCloneCommandSettings>
     {

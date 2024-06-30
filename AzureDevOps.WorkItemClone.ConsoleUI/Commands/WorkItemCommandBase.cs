@@ -1,6 +1,6 @@
-﻿using ABB.WorkItemClone.AzureDevOps;
-using ABB.WorkItemClone.AzureDevOps.DataContracts;
-using ABB.WorkItemClone.ConsoleUI.DataContracts;
+﻿using AzureDevOps.WorkItemClone;
+using AzureDevOps.WorkItemClone.DataContracts;
+using AzureDevOps.WorkItemClone.ConsoleUI.DataContracts;
 using Microsoft.VisualStudio.Services.Identity;
 using Newtonsoft.Json;
 using Spectre.Console;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ABB.WorkItemClone.ConsoleUI.Commands
+namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
     internal abstract class WorkItemCommandBase<TSettings> : AsyncCommand<TSettings> where TSettings : CommandSettings
     {
