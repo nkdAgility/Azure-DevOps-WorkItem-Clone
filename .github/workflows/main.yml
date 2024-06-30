@@ -60,12 +60,12 @@ jobs:
       - run: 'Get-ChildItem -Directory -Recurse -Path ./'
         if: false
         shell: pwsh
-      - run: 'Get-ChildItem -Recurse -Path ./ABB.WorkItemClone.AzureDevOps/bin/Debug/net8.0/'
+      - run: 'Get-ChildItem -Recurse -Path ./AzureDevOps.WorkItemClone.ConsoleUI/bin/Debug/net8.0/win-x64/'
         if: false
         shell: pwsh
       - uses: edgarrc/action-7z@v1
         with:
-          args: 7z a -tzip ./output/AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}-win-x64.zip ./ABB.WorkItemClone.ConsoleUI/bin/Debug/net8.0/win-x64/**
+          args: 7z a -tzip ./output/AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}-win-x64.zip ./AzureDevOps.WorkItemClone.ConsoleUI/bin/Debug/net8.0/win-x64/**
       - uses: actions/upload-artifact@v4
         with:
           name: AzureDevOpsWorkItemClone
