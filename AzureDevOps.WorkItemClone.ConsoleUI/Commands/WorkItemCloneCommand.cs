@@ -22,21 +22,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             var parentId = EnsureParentIdAskIfMissing(settings.targetParentId);
 
             // --------------------------------------------------------------
-            AnsiConsole.Write(
-            new Table()
-                .AddColumn(new TableColumn("Setting").Alignment(Justify.Right))
-                .AddColumn(new TableColumn("Value"))
-                .AddRow("configFile", configFile)
-                .AddRow("outputPath", outputPath)
-                .AddRow("templateAccessToken", "***************")
-                .AddRow("templateOrganization", configSettings.template.Organization)
-                .AddRow("templateProject", configSettings.template.Project)
-                .AddRow("targetAccessToken", "***************")
-                .AddRow("targetOrganization", configSettings.target.Organization)
-                .AddRow("targetProject", configSettings.target.Project)
-                .AddRow("parentId", parentId.ToString())
-                .AddRow("JsonFile", JsonFile)
-                 );
+            WriteOutSettings(settings);
             if (!settings.NonInteractive)
             {
 

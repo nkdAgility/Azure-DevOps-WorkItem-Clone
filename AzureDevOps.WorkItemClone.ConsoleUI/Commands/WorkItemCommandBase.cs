@@ -1,6 +1,7 @@
 ﻿using ABB.WorkItemClone.AzureDevOps;
 using ABB.WorkItemClone.AzureDevOps.DataContracts;
 using ABB.WorkItemClone.ConsoleUI.DataContracts;
+using Microsoft.VisualStudio.Services.Identity;
 using Newtonsoft.Json;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -177,6 +178,25 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 throw new Exception(configFile + " not found.");
             }
             return configFile;
+        }
+
+        internal void WriteOutSettings(WorkItemCloneCommandSettings config)
+        {
+            AnsiConsole.Write(
+           new Table()
+               .AddColumn(new TableColumn("Setting").Alignment(Justify.Right))
+               .AddColumn(new TableColumn("Value"))
+               .AddRow("configFile", config.configFile != null ? config.configFile : "NOT SET")
+               .AddRow("CachePath",  config.CachePath != null ? config.CachePath : "NOT SET")
+               .AddRow("templateAccessToken", "***************")
+               .AddRow("templateOrganization", config.templateOrganization != null ? config.templateOrganization : "NOT SET")
+               .AddRow("templateProject", config.templateProject != null ? config.templateProject : "NOT SET")
+               .AddRow("targetAccessToken", "***************")
+               .AddRow("targetOrganization", config.targetOrganization != null ? config.targetOrganization : "NOT SET")
+               .AddRow("targetProject", config.targetProject != null ? config.targetProject : "NOT SET")
+               .AddRow("targetParentId", config.targetParentId != null ? config.targetParentId.ToString() : "NOT SET")
+               .AddRow("inputJsonFile", config.inputJsonFile != null ? config.inputJsonFile : "NOT SET")
+                );
         }
 
     }

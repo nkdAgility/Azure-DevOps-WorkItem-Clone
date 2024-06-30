@@ -1,10 +1,10 @@
 {
   "CachePath": "./cache",
-  "inputJsonFile": null,
+  "inputJsonFile": "ADO_TESTProjPipline_V03.json",
   "targetAccessToken": null,
   "targetOrganization": "nkdagility-preview",
   "targetProject": "ABB-Demo",
-  "parentId": null,
+  "targetParentId": 540,
   "templateAccessToken": null,
   "templateOrganization": "ABB-MO-ATE",
   "templateProject": "ABB Traction Template"

@@ -30,6 +30,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             {
                 config = new WorkItemCloneCommandSettings();
             }
+            config.configFile = EnsureConfigFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile);
             config.inputJsonFile = EnsureJsonFileAskIfMissing(config.inputJsonFile = settings.inputJsonFile != null ? settings.inputJsonFile : config.inputJsonFile);
             config.CachePath = EnsureCachePathAskIfMissing(config.CachePath = settings.CachePath != null ? settings.CachePath : config.CachePath);
             
@@ -40,6 +41,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             config.targetProject = EnsureProjectAskIfMissing(config.targetProject = settings.targetProject != null ? settings.targetProject : config.targetProject);
             config.targetParentId = EnsureParentIdAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId);
 
+            WriteOutSettings(config);
 
             System.IO.File.WriteAllText(configFile, JsonConvert.SerializeObject(config, Formatting.Indented));
 
