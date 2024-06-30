@@ -1,10 +1,11 @@
 {
-  "template": {
-    "Organization": "ABB-MO-ATE",
-    "Project": "ABB Traction Template"
-  },
-  "target": {
-    "Organization": "nkdagility-preview",
-    "Project": "ABB-Demo"
-  }
-  }
+  "CachePath": "./cache",
+  "inputJsonFile": null,
+  "targetAccessToken": null,
+  "targetOrganization": "nkdagility-preview",
+  "targetProject": "ABB-Demo",
+  "parentId": null,
+  "templateAccessToken": null,
+  "templateOrganization": "ABB-MO-ATE",
+  "templateProject": "ABB Traction Template"
+}

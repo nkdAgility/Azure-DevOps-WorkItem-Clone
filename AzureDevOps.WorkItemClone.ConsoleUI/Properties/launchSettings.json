@@ -8,12 +8,12 @@
       "commandName": "Project",
       "commandLineArgs": "clone --outputPath ..\\..\\..\\..\\TestData --jsonFile ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --parentId 540 --templateAccessToken tqvemdfaucnfhr7fwr2f5ebunncgfxeps5owjmsriu6e3uti7dya --targetAccessToken ay5xc2kn7pka35nkx5coiey6fo4twjjc6yvtp5i3xcsmw5fu65ja "
     },
-    "Export": {
-      "commandName": "Project",
-      "commandLineArgs": "init "
-    },
     "empty": {
       "commandName": "Project"
+    },
+    "init": {
+      "commandName": "Project",
+      "commandLineArgs": "init "
     }
   }
 }

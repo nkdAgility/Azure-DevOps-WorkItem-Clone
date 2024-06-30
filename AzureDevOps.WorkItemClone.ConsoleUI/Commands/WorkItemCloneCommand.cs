@@ -14,12 +14,12 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
         {
             var configFile = EnsureConfigFileAskIfMissing(settings.configFile);
             ConfigurationSettings configSettings = LoadConfigFile(settings.configFile);
-            var outputPath = EnsureOutputPathAskIfMissing(settings.CachePath);
+            var outputPath = EnsureCachePathAskIfMissing(settings.CachePath);
             DirectoryInfo outputPathInfo = CreateOutputPath(outputPath);
             AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(settings.templateAccessToken, configSettings.template.Organization, configSettings.template.Project);
             var JsonFile = EnsureJsonFileAskIfMissing(settings.inputJsonFile);
             List<jsonWorkItem> jsonWorkItems = LoadJsonFile(settings.inputJsonFile);
-            var parentId = EnsureParentIdAskIfMissing(settings.parentId);
+            var parentId = EnsureParentIdAskIfMissing(settings.targetParentId);
 
             // --------------------------------------------------------------
             AnsiConsole.Write(
@@ -136,9 +136,9 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                  // Task 3: Load the Project work item
                  task3.StartTask();
                  task3.MaxValue = 1;
-                 AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {settings.parentId} from {configSettings.target.Organization} ");
+                 AnsiConsole.WriteLine($"Stage 3: Load the Project work item with ID {settings.targetParentId} from {configSettings.target.Organization} ");
                  AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(settings.targetAccessToken, configSettings.target.Organization, configSettings.target.Project);
-                 WorkItemFull projectItem = await targetApi.GetWorkItem((int)settings.parentId);
+                 WorkItemFull projectItem = await targetApi.GetWorkItem((int)settings.targetParentId);
                  System.IO.File.WriteAllText($"{settings.CachePath}\\Step3-Project.json", JsonConvert.SerializeObject(projectItem, Formatting.Indented));
                  AnsiConsole.WriteLine($"Stage 3: Project `{projectItem.fields.SystemTitle}` loaded ");
                  task3.Increment(1);

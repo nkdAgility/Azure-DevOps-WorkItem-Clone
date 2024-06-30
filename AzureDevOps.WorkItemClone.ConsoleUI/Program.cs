@@ -28,10 +28,7 @@ namespace ABB.WorkItemClone.ConsoleUI
             {
                 config.PropagateExceptions();
                 config.AddCommand<WorkItemCloneCommand>("clone");
-#if DEBUG
-
-                config.AddCommand<WorkItemCloneCommand>("init");
-#endif
+                config.AddCommand<WorkItemInitCommand>("init");
             });
 
             try

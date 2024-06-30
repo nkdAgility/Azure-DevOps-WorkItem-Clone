@@ -63,7 +63,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
                 jsonFile = AnsiConsole.Prompt(
                 new TextPrompt<string>("Where is the JSON File?")
                     .Validate(jsonFile
-                        => !string.IsNullOrWhiteSpace(jsonFile)
+                        => !string.IsNullOrWhiteSpace(jsonFile) && System.IO.File.Exists(jsonFile)
                             ? ValidationResult.Success()
                             : ValidationResult.Error("[yellow]Invalid JSON file[/]")));
             }
@@ -72,7 +72,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
 
         internal DirectoryInfo CreateOutputPath(string? outputPath)
         {
-            outputPath = EnsureOutputPathAskIfMissing(outputPath);
+            outputPath = EnsureCachePathAskIfMissing(outputPath);
             if (!System.IO.Directory.Exists(outputPath))
             {
                 System.IO.Directory.CreateDirectory(outputPath);
@@ -80,7 +80,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             return new DirectoryInfo(outputPath);
         }
 
-        internal string EnsureOutputPathAskIfMissing(string? outputPath)
+        internal string EnsureCachePathAskIfMissing(string? outputPath)
         {
             if (outputPath == null)
             {
@@ -102,7 +102,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             return new AzureDevOpsApi(accessToken, organization, project);
         }
 
-        private string EnsureProjectAskIfMissing(string? project)
+        internal string EnsureProjectAskIfMissing(string? project)
         {
             if (project == null)
             {
@@ -117,7 +117,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
             return project;
         }
 
-        private string EnsureOrganizationAskIfMissing(string? organization)
+        internal string EnsureOrganizationAskIfMissing(string? organization)
         {
             if (organization == null)
             {

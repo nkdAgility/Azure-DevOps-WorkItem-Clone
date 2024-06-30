@@ -1,5 +1,6 @@
 ﻿using Spectre.Console.Cli;
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace ABB.WorkItemClone.ConsoleUI.Commands
 {
@@ -7,9 +8,11 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
     {
         [Description("Execute with no user interaction required.")]
         [CommandOption("--NonInteractive")]
+        [JsonIgnore]
         public bool NonInteractive { get; set; }
         [Description("Clear any cache if there is any")]
         [CommandOption("--ClearCache")]
+        [JsonIgnore]
         public bool ClearCache { get; set; }
         //------------------------------------------------
         [CommandOption("--outputPath|--cachePath")]
@@ -29,8 +32,8 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
         [CommandOption("--targetProject")]
         public string? targetProject { get; set; }
         [Description("The ID of the work item in the target environment that will be the parent of all created work items.")]
-        [CommandOption("-p|--parentId")]
-        public int? parentId { get; set; }
+        [CommandOption("-p|--parentId|--targetParentId")]
+        public int? targetParentId { get; set; }
         //------------------------------------------------
         [Description("The access token for the template location")]
         [CommandOption("--templateAccessToken")]

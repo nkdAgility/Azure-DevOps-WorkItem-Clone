@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace ABB.WorkItemClone.ConsoleUI.Commands
@@ -13,6 +14,7 @@ namespace ABB.WorkItemClone.ConsoleUI.Commands
         [Description("Pre configure paramiters using this config file. Run `Init` to create it.")]
         [CommandOption("--config")]
         [DefaultValue("configuration.json")]
+        [JsonIgnore]
         public string? configFile { get; set; }
     }
 }
