@@ -14,6 +14,10 @@
     "init": {
       "commandName": "Project",
       "commandLineArgs": "init "
+    },
+    "--help": {
+      "commandName": "Project",
+      "commandLineArgs": "clone --help"
     }
   }
 }
