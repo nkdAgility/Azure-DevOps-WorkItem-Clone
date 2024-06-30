@@ -55,10 +55,7 @@ Clones work items from a template project to a target project incorproating a JS
  init --config configuration.json
  ```
 
- ```powershell
-
-
- ## Configuration
+ ## Configuration Example
 
  ```json
 {
@@ -74,7 +71,7 @@ Clones work items from a template project to a target project incorproating a JS
 }
  ```
 
- ## JSON Configuration Input
+ ## inputJsonFile Example
 
  ```json
  [
@@ -107,35 +104,19 @@ proposed new format not yet adopted:
   {
     "templateId": 213928,
     "fields": [
-      {
-        "System.Title": "Technical specification"
-      },
-      {
-        "Custom.Project": "CC000_000A01"
-      },
-      {
-        "System.Tags": "Customer Document"
-      },
-      {
-        "System.AreaPath": "#{targetProject}#\\TPL"
-      }
+      {"System.Title": "Technical specification"},
+      {"Custom.Project": "CC000_000A01"},
+      {"System.Tags": "Customer Document"},
+      {"System.AreaPath": "#{targetProject}#\\TPL"}
     ]
   },
   {
     "templateId": 213928,
     "fields": [
-      {
-        "System.Title": "Technical specification"
-      },
-      {
-        "Custom.Project": "CC000_000A02"
-      },
-      {
-        "System.Tags": "Technical specification"
-      },
-      {
-        "System.AreaPath": "#{targetProject}#\\TPL"
-      }
+      {"System.Title": "Technical specification"},
+      {"Custom.Project": "CC000_000A02"},
+      {"System.Tags": "Technical specification"},
+      {"System.AreaPath": "#{targetProject}#\\TPL"}
     ]
   },
   }
