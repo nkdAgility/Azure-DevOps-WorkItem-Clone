@@ -5,7 +5,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>ABBWorkItemClone</AssemblyName>
+    <AssemblyName>WorkItemClone</AssemblyName>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
@@ -26,14 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ABB.WorkItemClone.AzureDevOps\ABB.WorkItemClone.AzureDevOps.csproj" />
+    <ProjectReference Include="..\AzureDevOps.WorkItemClone\AzureDevOps.WorkItemClone.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="configuration.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\ABB_logo.svg.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\ADO_TESTProjPipline_V03.json">
