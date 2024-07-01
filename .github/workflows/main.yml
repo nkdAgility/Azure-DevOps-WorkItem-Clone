@@ -26,23 +26,6 @@ jobs:
       uses: gittools/actions/gitversion/execute@v1.1.1
       with:
         useConfigFile: true
-    - run: |
-        If (("Preview", "") -notcontains "${{ steps.gitversion.outputs.GitVersion_PreReleaseLabel }}") {
-            write-output " The GitVersion_PreReleaseLabel is invlaid!"
-            exit 1
-        } 
-        else {
-            write-output " The GitVersion_PreReleaseLabel is valid, lets check the branch!"
-            if (("${{ steps.gitversion.outputs.GitVersion_BranchName }}").StartsWith("release")) {
-                write-output "Branch Bad!"
-                exit 2
-            } 
-            else {
-                write-output "Branch Good!"
-            }
-        }
-      shell: pwsh
-
   build:
     runs-on: ubuntu-latest
     needs: Setup
