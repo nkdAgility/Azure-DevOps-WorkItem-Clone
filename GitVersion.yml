@@ -27,11 +27,11 @@ branches:
     tag: useBranchName
     increment: Patch
     track-merge-target: false
-    regex: ^releases?[\/]v?(\d+\.\d+.\d+)$
+    regex: ^topic?[\/]v?(\d+\.\d+.\d+)$
     source-branches:
     - master
     - main
-    is-release-branch: true
+    is-release-branch: false
     is-mainline: false
 ignore:
   sha: []
