@@ -6,7 +6,7 @@ on:
 
 jobs:
   Setup:
-    name: Setup
+    name: "Setup & Configuration"
     runs-on: ubuntu-latest
     outputs:
       GitVersion_BranchName: ${{ steps.gitversion.outputs.GitVersion_BranchName }}
@@ -28,6 +28,7 @@ jobs:
       with:
         useConfigFile: true
   build:
+    name: "Build & Test"
     runs-on: ubuntu-latest
     needs: Setup
     steps:
@@ -56,6 +57,7 @@ jobs:
           path: ./output/*
   
   Wiki:
+    name: "Release to GitHub Wiki"
     runs-on: ubuntu-latest
     needs: [build, Setup]
     if: ${{ success() && ( needs.Setup.outputs.GitVersion_PreReleaseLabel == 'Preview' || needs.Setup.outputs.GitVersion_PreReleaseLabel == '' ) }}
@@ -68,6 +70,7 @@ jobs:
           path: docs
 
   release:
+    name: "Release to GitHub Releases"
     runs-on: ubuntu-latest
     needs: [build, Setup]
     if: ${{ success() && ( needs.Setup.outputs.GitVersion_PreReleaseLabel == 'Preview' || needs.Setup.outputs.GitVersion_PreReleaseLabel == '' ) }}
