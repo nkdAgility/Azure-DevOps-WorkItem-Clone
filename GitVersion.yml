@@ -12,7 +12,7 @@ branches:
       tracks-release-branches: true
       regex: ^master$|^main$
   release:
-    mode: ContinuousDelivery
+    mode: ContinuousDeployment
     tag: ""
     increment: Patch
     track-merge-target: false
