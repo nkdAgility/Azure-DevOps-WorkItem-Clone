@@ -16,7 +16,7 @@ branches:
     tag: ""
     increment: Patch
     track-merge-target: false
-    regex: ^releases?[/-]v?(\d+\.\d+.\d+)$
+    regex: ^releases?[\/]v?(\d+\.\d+.\d+)$
     source-branches:
     - master
     - main
