@@ -22,6 +22,17 @@ branches:
     - main
     is-release-branch: true
     is-mainline: false
+  topic:
+    mode: ContinuousDelivery
+    tag: useBranchName
+    increment: Patch
+    track-merge-target: false
+    regex: ^releases?[\/]v?(\d+\.\d+.\d+)$
+    source-branches:
+    - master
+    - main
+    is-release-branch: true
+    is-mainline: false
 ignore:
   sha: []
 merge-message-formats: {}
