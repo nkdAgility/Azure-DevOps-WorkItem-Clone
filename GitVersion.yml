@@ -12,15 +12,26 @@ branches:
       tracks-release-branches: true
       regex: ^master$|^main$
   release:
-    mode: ContinuousDelivery
+    mode: ContinuousDeployment
     tag: ""
     increment: Patch
     track-merge-target: false
-    regex: ^releases?[/-]v?(\d+\.\d+.\d+)$
+    regex: ^releases?[\/]v?(\d+\.\d+.\d+)$
     source-branches:
     - master
     - main
     is-release-branch: true
+    is-mainline: false
+  topic:
+    mode: ContinuousDelivery
+    tag: useBranchName
+    increment: Patch
+    track-merge-target: false
+    regex: ^topic?[\/]v?(\d+\.\d+.\d+)$
+    source-branches:
+    - master
+    - main
+    is-release-branch: false
     is-mainline: false
 ignore:
   sha: []
