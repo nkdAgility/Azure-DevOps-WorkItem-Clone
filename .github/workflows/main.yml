@@ -72,7 +72,7 @@ jobs:
            echo "Creating a prerelease release."
             gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}-win-x64.zip --generate-notes --prerelease
           }
-          else {
+          if ( "${{needs.Setup.outputs.GitVersion_PreReleaseLabel}}" -eq "" ) {
             echo "Creating a release."
             gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}-win-x64.zip --generate-notes --discussion-category "General"
           }
