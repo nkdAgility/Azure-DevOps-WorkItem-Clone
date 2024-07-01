@@ -54,7 +54,19 @@ jobs:
         with:
           name: AzureDevOpsWorkItemClone
           path: ./output/*
-      
+  
+  Wiki:
+    runs-on: ubuntu-latest
+    needs: [build, Setup]
+    if: ${{ success() && ( needs.Setup.outputs.GitVersion_PreReleaseLabel == 'Preview' || needs.Setup.outputs.GitVersion_PreReleaseLabel == '' ) }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: spenserblack/actions-wiki@<version>
+        with:
+          # Whatever directory you choose will be mirrored to the GitHub
+          # .wiki.git. The default is .github/wiki.
+          path: docs
+
   release:
     runs-on: ubuntu-latest
     needs: [build, Setup]
