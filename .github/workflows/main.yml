@@ -91,7 +91,7 @@ jobs:
             }
             if ( "${{needs.Setup.outputs.GitVersion_PreReleaseLabel}}" -eq "" ) {
             echo "Creating a release."
-            gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}-win-x64.zip --generate-notes --discussion-category "General"
+            gh release create v${{needs.Setup.outputs.GitVersion_SemVer}} ./AzureDevOpsWorkItemClone-v${{needs.Setup.outputs.GitVersion_SemVer}}-win-x64.zip --generate-notes --discussion-category "Announcements"
             exit 0
             }
         shell: pwsh

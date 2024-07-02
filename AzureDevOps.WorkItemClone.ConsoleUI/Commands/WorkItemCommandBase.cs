@@ -18,6 +18,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
         internal void CombineValuesFromConfigAndSettings(WorkItemCloneCommandSettings settings, WorkItemCloneCommandSettings config)
         {
+            config.RunName = settings.RunName != null ? settings.RunName : DateTime.Now.ToString("yyyyyMMddHHmmss");
             config.configFile = EnsureConfigFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile);
             config.inputJsonFile = EnsureJsonFileAskIfMissing(config.inputJsonFile = settings.inputJsonFile != null ? settings.inputJsonFile : config.inputJsonFile);
             config.CachePath = EnsureCachePathAskIfMissing(config.CachePath = settings.CachePath != null ? settings.CachePath : config.CachePath);
@@ -29,7 +30,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             config.targetOrganization = EnsureOrganizationAskIfMissing(config.targetOrganization = settings.targetOrganization != null ? settings.targetOrganization : config.targetOrganization);
             config.targetProject = EnsureProjectAskIfMissing(config.targetProject = settings.targetProject != null ? settings.targetProject : config.targetProject, config.targetOrganization);
             config.targetAccessToken = EnsureAccessTokenAskIfMissing(settings.targetAccessToken != null ? settings.targetAccessToken : config.targetAccessToken, config.targetOrganization);
-            config.targetParentId = EnsureParentIdAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId);            
+            config.targetParentId = EnsureParentIdAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId);
         }
         internal int EnsureParentIdAskIfMissing(int? parentId)
         {
@@ -45,14 +46,8 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return parentId.Value;
         }
 
-        internal List<jsonWorkItem> LoadJsonFile(string? jsonFile)
+        private List<jsonWorkItem> DeserializeWorkItemList(string jsonFile)
         {
-            jsonFile = EnsureJsonFileAskIfMissing(jsonFile);
-            if (!System.IO.File.Exists(jsonFile))
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was found.");
-                throw new Exception(jsonFile + " not found.");
-            }
             List<jsonWorkItem> configWorkItems;
             try
             {
@@ -70,6 +65,31 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 throw new Exception(jsonFile + " is empty.");
             }
             return configWorkItems;
+        }
+
+        internal List<jsonWorkItem> DeserializeWorkItemList(WorkItemCloneCommandSettings config)
+        {
+           string CachedRunJson =  System.IO.Path.Combine(config.CachePath, config.RunName, "input.json");
+            if (System.IO.File.Exists(CachedRunJson))
+            {
+                // Load From Run Cache
+                config.inputJsonFile = CachedRunJson;
+                return DeserializeWorkItemList(CachedRunJson);
+            } else
+            {
+                // Load new
+                config.inputJsonFile = EnsureJsonFileAskIfMissing(config.inputJsonFile);
+                if (!System.IO.File.Exists(config.inputJsonFile))
+                {
+                    AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was found.");
+                    throw new Exception(config.inputJsonFile + " not found.");
+                }
+
+                List<jsonWorkItem> inputWorkItems;
+                inputWorkItems= DeserializeWorkItemList(config.inputJsonFile);
+                System.IO.File.WriteAllText(CachedRunJson, JsonConvert.SerializeObject(inputWorkItems, Formatting.Indented));
+                return inputWorkItems;
+            } 
         }
 
         internal string EnsureJsonFileAskIfMissing(string? jsonFile)
@@ -203,6 +223,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                .AddColumn(new TableColumn("Value"))
                .AddEmptyRow()
                .AddRow("configFile", config.configFile != null ? config.configFile : "NOT SET")
+               .AddRow("runName", config.RunName != null ? config.RunName : "NOT SET")
                .AddRow("CachePath",  config.CachePath != null ? config.CachePath : "NOT SET")
                .AddRow("inputJsonFile", config.inputJsonFile != null ? config.inputJsonFile : "NOT SET")
                .AddEmptyRow()

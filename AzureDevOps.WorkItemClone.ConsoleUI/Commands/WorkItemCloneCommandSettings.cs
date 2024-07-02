@@ -14,6 +14,10 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         [CommandOption("--ClearCache")]
         [JsonIgnore]
         public bool ClearCache { get; set; }
+        [Description("Use this run name to execute. This will create a unique folder under the CachePath for storing run specific data and status. Defaults to yyyyyMMddHHmmss.")]
+        [CommandOption("--RunName")]
+        [JsonIgnore]
+        public string? RunName { get; set; }
         //------------------------------------------------
         [CommandOption("--outputPath|--cachePath")]
         [DefaultValue("./cache")]
