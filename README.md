@@ -20,6 +20,7 @@ Clones work items from a template project to a target project incorproating a JS
  - `--config` - The path to the configuration file. Default is `.\configuration.json`. This can be used to had code paramiters... Command line params overrides the configuration file.
  - `--CachePath` - Folder used to cache data like the template. Default is `.\cache`.
  - `--inputJsonFile` - The path to the JSON file that instructs the creation of the work items
+ - `--runname` - The name of the run. Default is the current DateTime. Use this to rerun a creation that failed or was interupted.
 
 *Template Parameters* - The template contains the Descrition, Acceptance Criteria and relationship to other work itsm that we will clone.
 
@@ -44,6 +45,22 @@ Clones work items from a template project to a target project incorproating a JS
  ```powershell
  clone --inputJsonFile ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --targetParentId 540 --templateAccessToken tqvemdfaucsriu6e3uti7dya --targetAccessToken ay5xc2kn5i3xcsmw5fu65ja 
  ```
+
+ #### Runs
+
+ The consept of runs is to allow users to restart a failed or interupted run. The run name is used to identify the run and the cache is used to store the state of the run.
+
+ The example below will create a subfolder to the cache called `Bob` where it will store the state of the run. If the run fails or is interupted you can restart the run by using the same run name. Rerunning the same run will not create duplicate work items and will not rebuild the output file that is generated in steps 4 and 5. It will reuse the existing one. If you need to change the input file then you will need to create a new run.
+
+ When using the `--runname` parameter the `--inputJsonFile ` will not be used if a cache exists for the run. The input file will be read from the cache.
+
+ *Typical usage*:
+ 
+ ```powershell
+  clone --runname Bob --inputJsonFile ..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json --targetParentId 540 --templateAccessToken tqvemdfaucsriu6e3uti7dya --targetAccessToken ay5xc2kn5i3xcsmw5fu65ja 
+ ```
+
+
 
  ### `init`
 

@@ -14,10 +14,10 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         [CommandOption("--ClearCache")]
         [JsonIgnore]
         public bool ClearCache { get; set; }
-        [Description("Rerun with the same data. Usually because the previus run failed half way through. Overrides ClearCache.")]
-        [CommandOption("--rerun")]
+        [Description("Use this run name to execute. This will create a unique folder under the CachePath for storing run specific data and status. Defaults to yyyyyMMddHHmmss.")]
+        [CommandOption("--RunName")]
         [JsonIgnore]
-        public bool rerun { get; set; }
+        public string? RunName { get; set; }
         //------------------------------------------------
         [CommandOption("--outputPath|--cachePath")]
         [DefaultValue("./cache")]

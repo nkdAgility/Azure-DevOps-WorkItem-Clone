@@ -10,8 +10,6 @@ namespace AzureDevOps.WorkItemClone.DataContracts
     public class WorkItemAdd
     {
         public List<Operation> Operations { get; set; } = new List<Operation>();
-        public WorkItemFull? ItemFromtemplate { get; set; }
-        public jsonWorkItem ItemFromConfig { get; set; }
     }
 
     public abstract class Operation

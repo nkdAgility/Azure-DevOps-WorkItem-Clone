@@ -10,6 +10,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F583DC39-F8DC-46A8-80E8-AC0458DEE366}"
 	ProjectSection(SolutionItems) = preProject
 		TestData\ADO_TESTProjPipline_V03.json = TestData\ADO_TESTProjPipline_V03.json
+		GitVersion.yml = GitVersion.yml
+		.github\workflows\main.yml = .github\workflows\main.yml
 	EndProjectSection
 EndProject
 Global
