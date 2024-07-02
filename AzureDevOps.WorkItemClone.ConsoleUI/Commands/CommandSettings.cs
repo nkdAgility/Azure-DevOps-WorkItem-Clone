@@ -12,7 +12,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
     internal class BaseCommandSettings : CommandSettings
     {
         [Description("Pre configure paramiters using this config file. Run `Init` to create it.")]
-        [CommandOption("--config")]
+        [CommandOption("--config|--configFile")]
         [DefaultValue("configuration.json")]
         [JsonIgnore]
         public string? configFile { get; set; }
