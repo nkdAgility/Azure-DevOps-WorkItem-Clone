@@ -18,6 +18,8 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
         internal void CombineValuesFromConfigAndSettings(WorkItemCloneCommandSettings settings, WorkItemCloneCommandSettings config)
         {
+            config.NonInteractive = settings.NonInteractive;
+            config.ClearCache = settings.ClearCache;
             config.RunName = settings.RunName != null ? settings.RunName : DateTime.Now.ToString("yyyyyMMddHHmmss");
             config.configFile = EnsureConfigFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile);
             config.inputJsonFile = EnsureJsonFileAskIfMissing(config.inputJsonFile = settings.inputJsonFile != null ? settings.inputJsonFile : config.inputJsonFile);
