@@ -38,6 +38,10 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         [Description("The ID of the work item in the target environment that will be the parent of all created work items.")]
         [CommandOption("-p|--parentId|--targetParentId")]
         public int? targetParentId { get; set; }
+        [Description("This is the fallback work item type that will be used if we cant find one!")]
+        [CommandOption("--targetFalbackWit")]
+        [DefaultValue("Deliverable")]
+        public string? targetFalbackWit { get; set; }
         //------------------------------------------------
         [Description("The access token for the template location")]
         [CommandOption("--templateAccessToken")]

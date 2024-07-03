@@ -37,6 +37,9 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
             // --------------------------------------------------------------
             WriteOutSettings(config);
+            string runConfig = $"{runCache}\\config.json";
+            System.IO.File.WriteAllText(runConfig, JsonConvert.SerializeObject(config, Formatting.Indented));
+
             if (!config.NonInteractive)
             {
 
@@ -283,7 +286,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 newItem.guid = Guid.NewGuid();
                 newItem.hasComplexRelation = false;
                 newItem.templateId = item.id;
-                newItem.workItemType = templateWorkItem.fields.SystemWorkItemType;
+                newItem.workItemType = templateWorkItem != null ? templateWorkItem.fields.SystemWorkItemType : "Deliverable";
                 newItem.fields = new Dictionary<string, string>()
                 {
                     { "System.Title", item.fields.title },
