@@ -22,6 +22,9 @@ namespace ABB.WorkItemClone.ConsoleUI
 
         static async Task<int> Main(string[] args)
         {
+
+                https://learn.microsoft.com/en-us/dotnet/core/diagnostics/observability-with-otel
+
             // Create a new tracer provider builder and add an Azure Monitor trace exporter to the tracer provider builder.
             // It is important to keep the TracerProvider instance active throughout the process lifetime.
             // See https://github.com/open-telemetry/opentelemetry-dotnet/tree/main/docs/trace#tracerprovider-management
