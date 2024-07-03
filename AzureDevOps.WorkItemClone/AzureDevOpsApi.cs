@@ -46,6 +46,31 @@ namespace AzureDevOps.WorkItemClone
             }
         }
 
+        public async Task<QueryResults?> GetWiqlQueryResults(string wiqlQuery, Dictionary<string, string> parameters)
+        {
+            if (parameters == null)
+            {
+                parameters = new Dictionary<string, string>();
+            }
+            if (!parameters.ContainsKey("@project"))
+            {
+                parameters.Add("@project", _project);
+            }
+            if (string.IsNullOrEmpty(wiqlQuery))
+            {
+                wiqlQuery = "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.TeamProject] = '@project' order by [System.CreatedDate] desc";
+            }
+            foreach (var param in parameters)
+            {
+                wiqlQuery = wiqlQuery.Replace(param.Key, param.Value);
+            }
+            string post = JsonConvert.SerializeObject(new
+            {
+                query = wiqlQuery
+            });
+            string apiCallUrl = $"https://dev.azure.com/{_account}/_apis/wit/wiql?api-version=7.2-preview.2";
+            return await GetObjectResult<QueryResults>(apiCallUrl, post);
+        }
 
         public async Task<QueryResults?> GetWiqlQueryResults()
         {

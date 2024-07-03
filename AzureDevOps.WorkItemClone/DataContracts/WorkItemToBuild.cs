@@ -11,5 +11,6 @@ namespace AzureDevOps.WorkItemClone.DataContracts
         public bool hasComplexRelation { get; set; }
         public string targetUrl { get; set; }
         public int targetId { get; set; }
+        public string workItemType { get; set; }
     }
 }

@@ -35,10 +35,6 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         [Description("The project name for the target location")]
         [CommandOption("--targetProject")]
         public string? targetProject { get; set; }
-        [Description("The Name of the work item type to use when creating")]
-        [CommandOption("--targetWorkItemType|--wit")]
-        [DefaultValue("Deliverable")]
-        public string? targetWorkItemType { get; set; }
         [Description("The ID of the work item in the target environment that will be the parent of all created work items.")]
         [CommandOption("-p|--parentId|--targetParentId")]
         public int? targetParentId { get; set; }
@@ -52,6 +48,9 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         [Description("The project name for the template location")]
         [CommandOption("--templateProject")]
         public string? templateProject { get; set; }
+        [Description("The ID of the work item in the template environment under which we will read all the sub items.")]
+        [CommandOption("--templateParentId")]
+        public int? templateParentId { get; set; }
         //------------------------------------------------
     }
 }

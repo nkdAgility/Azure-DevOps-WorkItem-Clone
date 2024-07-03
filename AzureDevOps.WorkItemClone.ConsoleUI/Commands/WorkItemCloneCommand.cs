@@ -73,7 +73,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  var task5 = ctx.AddTask("[bold]Stage 5[/]: Create Output Plan Relations ", false);
                  var task6 = ctx.AddTask("[bold]Stage 6[/]: Create Work Items", false);
 
-                 string cacheTemplateWorkItemsFile = $"{config.CachePath}\\templateCache-{config.templateOrganization}-{config.templateProject}.json";
+                 string cacheTemplateWorkItemsFile = $"{config.CachePath}\\templateCache-{config.templateOrganization}-{config.templateProject}-{config.templateParentId}.json";
 
                  if (config.ClearCache && System.IO.File.Exists(cacheTemplateWorkItemsFile))
                  {
@@ -81,11 +81,26 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  }
 
                  task1.MaxValue = 1;
-                 List<WorkItemFull> templateWorkItems;
+                 List<WorkItemFull> templateWorkItems = null;
+
+
+
+                 task1.StartTask();
+                 task2.StartTask();
+
                  if (System.IO.File.Exists(cacheTemplateWorkItemsFile))
                  {
+
+                     var changedDate = System.IO.File.GetLastWriteTime(cacheTemplateWorkItemsFile).AddDays(1).Date;
+                     //Test Cache
+                     QueryResults fakeItemsFromTemplateQuery;
+                     fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id AND [System.ChangedDate] > '@changeddate' order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() }, { "@changeddate", changedDate.ToString("yyyy-MM-dd") } });
+                     if (fakeItemsFromTemplateQuery.workItems.Length == 0)
+                     {                    
+                     AnsiConsole.WriteLine($"Stage 1: Checked template for changes. None Detected. Loading Cache");
+
                      // Load from Cache
-                     task1.StartTask();
+                     
                      task1.Increment(1);
                      task1.Description = task1.Description + " (cache)";
                      await Task.Delay(250);
@@ -95,8 +110,10 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      task2.Increment(templateWorkItems.Count);
                      task2.Description = task2.Description + " (cache)";
                      AnsiConsole.WriteLine($"Stage 2: Loaded {templateWorkItems.Count()} work items from cache.");
+                     }
                  }
-                 else
+
+                 if (templateWorkItems == null)
                  {
                      // Get From Server
                      // --------------------------------------------------------------
@@ -105,7 +122,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      
                      //AnsiConsole.WriteLine("Stage 1: Executing items from Query");
                      QueryResults fakeItemsFromTemplateQuery;
-                     fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults();
+                     fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() } });
                      AnsiConsole.WriteLine($"Stage 1: Query returned {fakeItemsFromTemplateQuery.workItems.Count()} items id's from the template.");
                      task1.Increment(1);
                      task1.StopTask();
@@ -221,7 +238,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  AnsiConsole.WriteLine($"Processing {buildItems.Count()} items");
                  task6.Description = $"[bold]Stage 6[/]: Create Work Items (0/{buildItems.Count()})";
                  task6.StartTask();
-                 await foreach ((WorkItemToBuild witb, string status, int skipped, int failed, int created) result in CreateWorkItemsToBuild(buildItems, projectItem, targetApi, config.targetWorkItemType))
+                 await foreach ((WorkItemToBuild witb, string status, int skipped, int failed, int created) result in CreateWorkItemsToBuild(buildItems, projectItem, targetApi))
                  {
                      //AnsiConsole.WriteLine($"Stage 6: Processing {witb.guid} for output of {witb.relations.Count - 1} relations");
                      task6.Increment(1);
@@ -266,6 +283,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 newItem.guid = Guid.NewGuid();
                 newItem.hasComplexRelation = false;
                 newItem.templateId = item.id;
+                newItem.workItemType = templateWorkItem.fields.SystemWorkItemType;
                 newItem.fields = new Dictionary<string, string>()
                 {
                     { "System.Title", item.fields.title },
@@ -309,7 +327,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             }
         }
 
-        private async IAsyncEnumerable<(WorkItemToBuild, string status, int skipped, int failed, int created)> CreateWorkItemsToBuild(List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem, AzureDevOpsApi targetApi, string workItemTypeToCreate)
+        private async IAsyncEnumerable<(WorkItemToBuild, string status, int skipped, int failed, int created)> CreateWorkItemsToBuild(List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem, AzureDevOpsApi targetApi)
         {
             int skipped = 0;
             int failed = 0;
@@ -323,7 +341,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 } else
                 {
                     WorkItemAdd itemToAdd = CreateWorkItemAddOperation(item, workItemsToBuild, projectItem);
-                    WorkItemFull newWorkItem = await targetApi.CreateWorkItem(itemToAdd, workItemTypeToCreate);
+                    WorkItemFull newWorkItem = await targetApi.CreateWorkItem(itemToAdd, item.workItemType);
                     if (newWorkItem != null)
                     {
                         created++;

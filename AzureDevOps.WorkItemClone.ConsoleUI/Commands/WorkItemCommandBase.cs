@@ -18,6 +18,8 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
         internal void CombineValuesFromConfigAndSettings(WorkItemCloneCommandSettings settings, WorkItemCloneCommandSettings config)
         {
+            config.NonInteractive = settings.NonInteractive;
+            config.ClearCache = settings.ClearCache;
             config.RunName = settings.RunName != null ? settings.RunName : DateTime.Now.ToString("yyyyyMMddHHmmss");
             config.configFile = EnsureConfigFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile);
             config.inputJsonFile = EnsureJsonFileAskIfMissing(config.inputJsonFile = settings.inputJsonFile != null ? settings.inputJsonFile : config.inputJsonFile);
@@ -26,28 +28,16 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             config.templateOrganization = EnsureOrganizationAskIfMissing(config.templateOrganization = settings.templateOrganization != null ? settings.templateOrganization : config.templateOrganization);
             config.templateProject = EnsureProjectAskIfMissing(config.templateProject = settings.templateProject != null ? settings.templateProject : config.templateProject, config.templateOrganization);
             config.templateAccessToken = EnsureAccessTokenAskIfMissing(settings.templateAccessToken != null ? settings.templateAccessToken : config.templateAccessToken, config.templateOrganization);
+            config.templateParentId = EnsureParentIdAskIfMissing(config.templateParentId = settings.templateParentId != null ? settings.templateParentId : config.templateParentId);
 
             config.targetOrganization = EnsureOrganizationAskIfMissing(config.targetOrganization = settings.targetOrganization != null ? settings.targetOrganization : config.targetOrganization);
             config.targetProject = EnsureProjectAskIfMissing(config.targetProject = settings.targetProject != null ? settings.targetProject : config.targetProject, config.targetOrganization);
             config.targetAccessToken = EnsureAccessTokenAskIfMissing(settings.targetAccessToken != null ? settings.targetAccessToken : config.targetAccessToken, config.targetOrganization);
             config.targetParentId = EnsureParentIdAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId);
-            config.targetWorkItemType = EnsureWorkItemTypeAskIfMissing(config.targetWorkItemType = settings.targetWorkItemType != null ? settings.targetWorkItemType : config.targetWorkItemType);
+
         }
 
-        private string? EnsureWorkItemTypeAskIfMissing(string? v)
-        {
-            if (v == null)
-            {
-                v = AnsiConsole.Prompt(
-                new TextPrompt<string>("What is the target Work Item Type?")
-                    .Validate(v
-                        => !string.IsNullOrWhiteSpace(v)
-                            ? ValidationResult.Success()
-                            : ValidationResult.Error("[yellow]Invalid Work Item Type[/]")));
-            }
-            return v;
-            
-        }
+
 
         internal int EnsureParentIdAskIfMissing(int? parentId)
         {
