@@ -221,7 +221,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  AnsiConsole.WriteLine($"Processing {buildItems.Count()} items");
                  task6.Description = $"[bold]Stage 6[/]: Create Work Items (0/{buildItems.Count()})";
                  task6.StartTask();
-                 await foreach ((WorkItemToBuild witb, string status, int skipped, int failed, int created) result in CreateWorkItemsToBuild(buildItems, projectItem, targetApi, config.targetWorkItemType))
+                 await foreach ((WorkItemToBuild witb, string status, int skipped, int failed, int created) result in CreateWorkItemsToBuild(buildItems, projectItem, targetApi))
                  {
                      //AnsiConsole.WriteLine($"Stage 6: Processing {witb.guid} for output of {witb.relations.Count - 1} relations");
                      task6.Increment(1);
@@ -266,6 +266,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 newItem.guid = Guid.NewGuid();
                 newItem.hasComplexRelation = false;
                 newItem.templateId = item.id;
+                newItem.workItemType = templateWorkItem.fields.SystemWorkItemType;
                 newItem.fields = new Dictionary<string, string>()
                 {
                     { "System.Title", item.fields.title },
@@ -309,7 +310,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             }
         }
 
-        private async IAsyncEnumerable<(WorkItemToBuild, string status, int skipped, int failed, int created)> CreateWorkItemsToBuild(List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem, AzureDevOpsApi targetApi, string workItemTypeToCreate)
+        private async IAsyncEnumerable<(WorkItemToBuild, string status, int skipped, int failed, int created)> CreateWorkItemsToBuild(List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem, AzureDevOpsApi targetApi)
         {
             int skipped = 0;
             int failed = 0;
@@ -323,7 +324,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 } else
                 {
                     WorkItemAdd itemToAdd = CreateWorkItemAddOperation(item, workItemsToBuild, projectItem);
-                    WorkItemFull newWorkItem = await targetApi.CreateWorkItem(itemToAdd, workItemTypeToCreate);
+                    WorkItemFull newWorkItem = await targetApi.CreateWorkItem(itemToAdd, item.workItemType);
                     if (newWorkItem != null)
                     {
                         created++;
