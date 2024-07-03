@@ -21,36 +21,37 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             config.NonInteractive = settings.NonInteractive;
             config.ClearCache = settings.ClearCache;
             config.RunName = settings.RunName != null ? settings.RunName : DateTime.Now.ToString("yyyyyMMddHHmmss");
-            config.configFile = EnsureConfigFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile);
-            config.inputJsonFile = EnsureJsonFileAskIfMissing(config.inputJsonFile = settings.inputJsonFile != null ? settings.inputJsonFile : config.inputJsonFile);
-            config.CachePath = EnsureCachePathAskIfMissing(config.CachePath = settings.CachePath != null ? settings.CachePath : config.CachePath);
+            config.configFile = EnsureFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile, "Where is the config file to load?");
+            config.inputJsonFile = EnsureFileAskIfMissing(config.inputJsonFile = settings.inputJsonFile != null ? settings.inputJsonFile : config.inputJsonFile, "Where is the JSON File?");
+            config.CachePath = EnsureFolderAskIfMissing(config.CachePath = settings.CachePath != null ? settings.CachePath : config.CachePath, "What is the cache path?");
 
-            config.templateOrganization = EnsureOrganizationAskIfMissing(config.templateOrganization = settings.templateOrganization != null ? settings.templateOrganization : config.templateOrganization);
-            config.templateProject = EnsureProjectAskIfMissing(config.templateProject = settings.templateProject != null ? settings.templateProject : config.templateProject, config.templateOrganization);
-            config.templateAccessToken = EnsureAccessTokenAskIfMissing(settings.templateAccessToken != null ? settings.templateAccessToken : config.templateAccessToken, config.templateOrganization);
-            config.templateParentId = EnsureParentIdAskIfMissing(config.templateParentId = settings.templateParentId != null ? settings.templateParentId : config.templateParentId);
+            config.templateOrganization = EnsureStringAskIfMissing(config.templateOrganization = settings.templateOrganization != null ? settings.templateOrganization : config.templateOrganization, "What is the template organisation?");
+            config.templateProject = EnsureStringAskIfMissing(config.templateProject = settings.templateProject != null ? settings.templateProject : config.templateProject, $"What is the project on {config.templateOrganization}?");
+            config.templateAccessToken = EnsureStringAskIfMissing(settings.templateAccessToken != null ? settings.templateAccessToken : config.templateAccessToken, $"What is the access token on {config.templateOrganization}?");
+            config.templateParentId = EnsureIntAskIfMissing(config.templateParentId = settings.templateParentId != null ? settings.templateParentId : config.templateParentId, "Provide the template parent?");
 
-            config.targetOrganization = EnsureOrganizationAskIfMissing(config.targetOrganization = settings.targetOrganization != null ? settings.targetOrganization : config.targetOrganization);
-            config.targetProject = EnsureProjectAskIfMissing(config.targetProject = settings.targetProject != null ? settings.targetProject : config.targetProject, config.targetOrganization);
-            config.targetAccessToken = EnsureAccessTokenAskIfMissing(settings.targetAccessToken != null ? settings.targetAccessToken : config.targetAccessToken, config.targetOrganization);
-            config.targetParentId = EnsureParentIdAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId);
+            config.targetOrganization = EnsureStringAskIfMissing(config.targetOrganization = settings.targetOrganization != null ? settings.targetOrganization : config.targetOrganization, "What is the target organisation?");
+            config.targetProject = EnsureStringAskIfMissing(config.targetProject = settings.targetProject != null ? settings.targetProject : config.targetProject, $"What is the project on {config.targetOrganization}?");
+            config.targetAccessToken = EnsureStringAskIfMissing(settings.targetAccessToken != null ? settings.targetAccessToken : config.targetAccessToken, $"What is the access token on {config.targetOrganization}?");
+            config.targetParentId = EnsureIntAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId, "Provide the target parent?");
+            config.targetFalbackWit = EnsureStringAskIfMissing(config.targetFalbackWit = settings.targetFalbackWit != null ? settings.targetFalbackWit : config.targetFalbackWit, "Provide the target fallback wit?");
 
         }
 
 
 
-        internal int EnsureParentIdAskIfMissing(int? parentId)
+        internal int EnsureIntAskIfMissing(int? value, string message = "Provide a valid number?")
         {
-            if (parentId == null)
+            if (value == null)
             {
-                parentId = AnsiConsole.Prompt(
-                new TextPrompt<int>("What is the parent Id?")
+                value = AnsiConsole.Prompt(
+                new TextPrompt<int>(message)
                     .Validate(projectId
                         => projectId > 0
                             ? ValidationResult.Success()
-                            : ValidationResult.Error("[yellow]Invalid parent Id[/]")));
+                            : ValidationResult.Error("[yellow]Invalid number[/]")));
             }
-            return parentId.Value;
+            return value.Value;
         }
 
         private List<jsonWorkItem> DeserializeWorkItemList(string jsonFile)
@@ -85,7 +86,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             } else
             {
                 // Load new
-                config.inputJsonFile = EnsureJsonFileAskIfMissing(config.inputJsonFile);
+                config.inputJsonFile = EnsureFileAskIfMissing(config.inputJsonFile, "Where is the JSON File?");
                 if (!System.IO.File.Exists(config.inputJsonFile))
                 {
                     AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was found.");
@@ -99,23 +100,10 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             } 
         }
 
-        internal string EnsureJsonFileAskIfMissing(string? jsonFile)
-        {
-            if (jsonFile == null)
-            {
-                jsonFile = AnsiConsole.Prompt(
-                new TextPrompt<string>("Where is the JSON File?")
-                    .Validate(jsonFile
-                        => !string.IsNullOrWhiteSpace(jsonFile) && System.IO.File.Exists(jsonFile)
-                            ? ValidationResult.Success()
-                            : ValidationResult.Error("[yellow]Invalid JSON file[/]")));
-            }
-            return jsonFile;
-        }
 
         internal DirectoryInfo CreateOutputPath(string? outputPath)
         {
-            outputPath = EnsureCachePathAskIfMissing(outputPath);
+            outputPath = EnsureFolderAskIfMissing(outputPath, "What cache path should we use?");
             if (!System.IO.Directory.Exists(outputPath))
             {
                 System.IO.Directory.CreateDirectory(outputPath);
@@ -123,82 +111,73 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return new DirectoryInfo(outputPath);
         }
 
-        internal string EnsureCachePathAskIfMissing(string? outputPath)
-        {
-            if (outputPath == null)
-            {
-                outputPath = AnsiConsole.Prompt(
-                new TextPrompt<string>("What is the output path?")
-                    .Validate(outputPath
-                        => !string.IsNullOrWhiteSpace(outputPath)
-                            ? ValidationResult.Success()
-                            : ValidationResult.Error("[yellow]Invalid output path[/]")));
-            }
-            return outputPath;
-        }
 
         internal AzureDevOpsApi CreateAzureDevOpsConnection(string? accessToken, string? organization, string? project)
         {
-            organization = EnsureOrganizationAskIfMissing(organization);
-            project = EnsureProjectAskIfMissing(project, organization);
-            accessToken = EnsureAccessTokenAskIfMissing(accessToken, organization);
             return new AzureDevOpsApi(accessToken, organization, project);
         }
 
-        internal string EnsureProjectAskIfMissing(string? project, string organization)
+        internal string EnsureStringAskIfMissing(string value, string message)
         {
-            if (project == null)
+            if (value == null)
             {
 
-                project = AnsiConsole.Prompt(
-                new TextPrompt<string>("What is the project on {organization}?")
-                    .Validate(project
-                        => !string.IsNullOrWhiteSpace(project)
+                value = AnsiConsole.Prompt(
+                new TextPrompt<string>(message)
+                    .Validate(value
+                        => !string.IsNullOrWhiteSpace(value)
                             ? ValidationResult.Success()
-                            : ValidationResult.Error("[yellow]Invalid project[/]")));
+                            : ValidationResult.Error("[yellow]Invalid value[/]")));
             }
-            return project;
+            return value;
         }
 
-        internal string EnsureOrganizationAskIfMissing(string? organization)
-        {
-            if (organization == null)
-            {
-
-                organization = AnsiConsole.Prompt(
-                new TextPrompt<string>("What is the organization?")
-                    .Validate(organization
-                        => !string.IsNullOrWhiteSpace(organization)
-                            ? ValidationResult.Success()
-                            : ValidationResult.Error("[yellow]Invalid organization[/]")));
-            }
-            return organization;
-        }
-
-        private string EnsureAccessTokenAskIfMissing(string? accessToken, string organization)
-        {
-            if (accessToken == null)
-            {
-
-                accessToken = AnsiConsole.Prompt(
-                new TextPrompt<string>($"Provide a valid Access Token for {organization}?")
-                    .Validate(accessToken
-                        => !string.IsNullOrWhiteSpace(accessToken)
-                            ? ValidationResult.Success()
-                            : ValidationResult.Error("[yellow]Invalid access token[/]")));
-            }
-            return accessToken;
-        }
 
         internal ConfigurationSettings LoadConfigFile(string? configFile)
         {
             ConfigurationSettings configSettings = System.Text.Json.JsonSerializer.Deserialize<ConfigurationSettings>(System.IO.File.ReadAllText(configFile));
             return configSettings;
         }
+
   internal WorkItemCloneCommandSettings LoadWorkItemCloneCommandSettingsFromFile(string? configFile)
         {
             WorkItemCloneCommandSettings configSettings = System.Text.Json.JsonSerializer.Deserialize<WorkItemCloneCommandSettings>(System.IO.File.ReadAllText(configFile));
             return configSettings;
+        }
+
+        internal string EnsureFileAskIfMissing(string? filename, string message = "What file should we load?")
+        {
+            if (filename == null)
+            {
+
+                filename = AnsiConsole.Prompt(
+                new TextPrompt<string>("Where is the config File?")
+                    .Validate(configFile
+                        => !string.IsNullOrWhiteSpace(configFile) && System.IO.File.Exists(configFile)
+                            ? ValidationResult.Success()
+                            : ValidationResult.Error("[yellow]Invalid config file[/]")));
+            }
+            if (!System.IO.File.Exists(filename))
+            {
+                AnsiConsole.MarkupLine("[red]Error:[/] No file was found.");
+                throw new Exception(filename + " not found.");
+            }
+            return filename;
+        }
+
+        internal string EnsureFolderAskIfMissing(string? foldername, string message = "What folder should we use?")
+        {
+            if (foldername == null)
+            {
+
+                foldername = AnsiConsole.Prompt(
+                new TextPrompt<string>("Where is the folder?")
+                    .Validate(configFile
+                        => !string.IsNullOrWhiteSpace(configFile) && System.IO.Directory.Exists(configFile)
+                            ? ValidationResult.Success()
+                            : ValidationResult.Error("[yellow]Invalid config file[/]")));
+            }
+            return foldername;
         }
 
 
@@ -229,19 +208,22 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                .AddColumn(new TableColumn("Setting").Alignment(Justify.Right))
                .AddColumn(new TableColumn("Value"))
                .AddEmptyRow()
-               .AddRow("configFile", config.configFile != null ? config.configFile : "NOT SET")
                .AddRow("runName", config.RunName != null ? config.RunName : "NOT SET")
+               .AddEmptyRow()
+               .AddRow("configFile", config.configFile != null ? config.configFile : "NOT SET")               
                .AddRow("CachePath",  config.CachePath != null ? config.CachePath : "NOT SET")
                .AddRow("inputJsonFile", config.inputJsonFile != null ? config.inputJsonFile : "NOT SET")
                .AddEmptyRow()
                .AddRow( "templateAccessToken", "***************")
                .AddRow("templateOrganization", config.templateOrganization != null ? config.templateOrganization : "NOT SET")
                .AddRow("templateProject", config.templateProject != null ? config.templateProject : "NOT SET")
+               .AddRow("templateParentId", config.templateParentId != null ? config.templateParentId.ToString() : "NOT SET")
                .AddEmptyRow()
                .AddRow("targetAccessToken", "***************")
                .AddRow("targetOrganization", config.targetOrganization != null ? config.targetOrganization : "NOT SET")
                .AddRow("targetProject", config.targetProject != null ? config.targetProject : "NOT SET")
                .AddRow("targetParentId", config.targetParentId != null ? config.targetParentId.ToString() : "NOT SET")
+               .AddRow("targetFalbackWit", config.targetFalbackWit != null ? config.targetFalbackWit : "NOT SET")
                
                 );
         }
