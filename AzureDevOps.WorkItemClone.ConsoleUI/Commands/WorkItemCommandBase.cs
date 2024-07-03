@@ -31,7 +31,24 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             config.targetProject = EnsureProjectAskIfMissing(config.targetProject = settings.targetProject != null ? settings.targetProject : config.targetProject, config.targetOrganization);
             config.targetAccessToken = EnsureAccessTokenAskIfMissing(settings.targetAccessToken != null ? settings.targetAccessToken : config.targetAccessToken, config.targetOrganization);
             config.targetParentId = EnsureParentIdAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId);
+            config.targetWorkItemType = EnsureWorkItemTypeAskIfMissing(config.targetWorkItemType = settings.targetWorkItemType != null ? settings.targetWorkItemType : config.targetWorkItemType);
         }
+
+        private string? EnsureWorkItemTypeAskIfMissing(string? v)
+        {
+            if (v == null)
+            {
+                v = AnsiConsole.Prompt(
+                new TextPrompt<string>("What is the target Work Item Type?")
+                    .Validate(v
+                        => !string.IsNullOrWhiteSpace(v)
+                            ? ValidationResult.Success()
+                            : ValidationResult.Error("[yellow]Invalid Work Item Type[/]")));
+            }
+            return v;
+            
+        }
+
         internal int EnsureParentIdAskIfMissing(int? parentId)
         {
             if (parentId == null)

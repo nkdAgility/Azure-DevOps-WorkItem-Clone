@@ -1,0 +1,1280 @@
+[
+  {
+    "id": 213928,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Technical specification",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213928,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Technical specification",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213928,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Technical specification",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213380,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Handover protocol",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213380,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Handover protocol",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213380,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Handover protocol",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 214467,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Kick off protocol",
+      "product": ""
+    }
+  },
+  {
+    "id": 213366,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Project management plan",
+      "product": ""
+    }
+  },
+  {
+    "id": 213849,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Engineering cost estimation",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213849,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Engineering cost estimation",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213849,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Engineering cost estimation",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213367,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Document list",
+      "product": ""
+    }
+  },
+  {
+    "id": 213363,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Time schedule",
+      "product": ""
+    }
+  },
+  {
+    "id": 213848,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Engineering Process Checklist",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213848,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Engineering Process Checklist",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213848,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Engineering Process Checklist",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213368,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Risk & Oppertunity Assement",
+      "product": ""
+    }
+  },
+  {
+    "id": 214470,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Reviews",
+      "product": ""
+    }
+  },
+  {
+    "id": 214486,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Rating plate",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 214486,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Rating plate",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 214486,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Rating plate",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 214486,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Rating plate",
+      "product": "eBox"
+    }
+  },
+  {
+    "id": 213379,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Manual ",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213379,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Manual ",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213379,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Manual ",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213374,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Spare part list",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213374,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Spare part list",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213374,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Spare part list",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213374,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Spare part list",
+      "product": "eBox"
+    }
+  },
+  {
+    "id": 214487,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Spare part portfolio",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 214487,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Spare part portfolio",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 214487,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Spare part portfolio",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 214487,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Spare part portfolio",
+      "product": "eBox"
+    }
+  },
+  {
+    "id": 214489,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "REACh_Compliance_Declaration",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 214489,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "REACh_Compliance_Declaration",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 214489,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "REACh_Compliance_Declaration",
+      "product": "eBox"
+    }
+  },
+  {
+    "id": 214489,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "REACh_Compliance_Declaration",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 214493,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Handover SER/PLCM prot.",
+      "product": ""
+    }
+  },
+  {
+    "id": 213942,
+    "area": "System",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Traction chain interface document",
+      "product": ""
+    }
+  },
+  {
+    "id": 213944,
+    "area": "System",
+    "tags": "",
+    "fields": {
+      "title": "Traction chain test program",
+      "product": ""
+    }
+  },
+  {
+    "id": 213250,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Test block diagram",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213250,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Test block diagram",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213251,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Test block diagram",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213255,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Electrical customer interface",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213255,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Electrical customer interface",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213256,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Electrical customer interface",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213264,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Insulation coordination",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213264,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Insulation coordination",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213265,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Insulation coordination",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213266,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Protection concept",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213266,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Protection concept",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213267,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Protection concept",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213268,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Overall test concept",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213268,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Overall test concept",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213269,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Converter test program",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213269,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Converter test program",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213270,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "ESS test program",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213280,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "E3 Circuit diagram",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213280,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "E3 Circuit diagram",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213281,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "E3 Circuit diagram",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213282,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "E3 Circuit diagram (customer)",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213282,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "E3 Circuit diagram (customer)",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213283,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "E3 Circuit diagram (customer)",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213284,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Wire / cable list",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213284,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Wire / cable list",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213285,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Wire / cable list",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213290,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Routine test instruction",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213290,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Routine test instruction",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213289,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Routine test instruction",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213292,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Routine test protocol",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213292,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Routine test protocol",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213293,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Routine test protocol",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213545,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Dimensional drawing",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213545,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Dimensional drawing",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213545,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Dimensional drawing",
+      "product": "eBox"
+    }
+  },
+  {
+    "id": 213545,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Dimensional drawing",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213547,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Cabinet specification",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213547,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Cabinet specification",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213547,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Cabinet specification",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213547,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Cabinet specification",
+      "product": "eBox"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Stress analysis report",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Stress analysis report",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Stress analysis report",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Order drawings",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Order drawings",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Order drawings",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213557,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Final assembly drawing",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213557,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Final assembly drawing",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213557,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Final assembly drawing",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213555,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Sub-assembly drawings",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213555,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Sub-assembly drawings",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213555,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Sub-assembly drawings",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213560,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Fire safety statement",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213560,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Fire safety statement",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213560,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Fire safety statement",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213560,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "Fire safety statement",
+      "product": "eBox"
+    }
+  },
+  {
+    "id": 213559,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Fire safety statement (customer)",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213559,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Fire safety statement (customer)",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213559,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Fire safety statement (customer)",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213559,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Fire safety statement (customer)",
+      "product": "eBox"
+    }
+  },
+  {
+    "id": 213564,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Weight protocol",
+      "product": "CC000_000A01"
+    }
+  },
+  {
+    "id": 213564,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Weight protocol",
+      "product": "CC000_000A02"
+    }
+  },
+  {
+    "id": 213564,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Weight protocol",
+      "product": "ESS_000_000A01"
+    }
+  },
+  {
+    "id": 213652,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Quality Assurance Plan",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 213653,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Quality Assurance Plan",
+      "product": "AUX"
+    }
+  },
+  {
+    "id": 213655,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Quality Assurance Plan",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Verification Report",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Verification Report",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Change Management Report",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Change Management Report",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": 213656,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Functional Interface Specification",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 213657,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Functional Interface Specification",
+      "product": "AUX"
+    }
+  },
+  {
+    "id": 213658,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Functional Interface Specification",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": 213659,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Communication Interface Specification",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 213663,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Communication Interface Specification",
+      "product": "AUX"
+    }
+  },
+  {
+    "id": 213662,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Communication Interface Specification",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": 213725,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Requirement Specification",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 247726,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Requirement Specification",
+      "product": "AUX"
+    }
+  },
+  {
+    "id": 213728,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Requirement Specification",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": 213730,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "(Overall) SW Test Specification",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 213733,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "(Overall) SW Test Specification",
+      "product": "AUX"
+    }
+  },
+  {
+    "id": 213731,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "(Overall) SW Test Specification",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": 213733,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Commissioning Plan",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Traceability",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Traceability",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": 213727,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Protection Table",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 247731,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Protection Table",
+      "product": "AUX"
+    }
+  },
+  {
+    "id": 213729,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Protection Table",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW RTS Automatic Test Report",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "Commissioning Test Report",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "(Overall) SW Test Report",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "(Overall) SW Test Report",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": 213781,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Failure List Description",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 247754,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Failure List Description",
+      "product": "AUX"
+    }
+  },
+  {
+    "id": 247761,
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Failure List Description",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": 213782,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Validation Report",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 247755,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Validation Report",
+      "product": "CC"
+    }
+  },
+  {
+    "id": 247762,
+    "area": "Test",
+    "tags": "",
+    "fields": {
+      "title": "SW Validation Report",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Installer ZIP",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Installer ZIP",
+      "product": "ESS"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Release Notes",
+      "product": "CC"
+    }
+  },
+  {
+    "id": "",
+    "area": "Test",
+    "tags": "Customer Document",
+    "fields": {
+      "title": "SW Release Notes",
+      "product": "ESS"
+    }
+  }
+]

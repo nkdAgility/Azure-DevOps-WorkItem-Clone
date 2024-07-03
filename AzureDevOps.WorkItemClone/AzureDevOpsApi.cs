@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AzureDevOps.WorkItemClone
@@ -122,17 +123,21 @@ namespace AzureDevOps.WorkItemClone
             }
             catch (Exception ex)
             {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"-----------------------------");
+                sb.AppendLine($"Azure DevOps API Call Failed!");
+                sb.AppendLine($"apiCallUrl: {apiCallUrl}");
+                sb.AppendLine($"mediaType: {mediaType}");
+                sb.AppendLine($"Post: {post}");
+                sb.AppendLine($"Result: {result}");
+                sb.AppendLine($"ObjectType: {typeof(T).ToString}");
+                    sb.AppendLine($"-----------------------------");
+                sb.AppendLine(ex.ToString());
+                sb.AppendLine($"-----------------------------");
                 // Should be logger
-                Console.WriteLine($"-----------------------------");
-                Console.WriteLine($"Azure DevOps API Call Failed!");
-                Console.WriteLine($"apiCallUrl: {apiCallUrl}");
-                Console.WriteLine($"mediaType: {mediaType}");
-                Console.WriteLine($"Post: {post}");
-                Console.WriteLine($"Result: {result}");
-                Console.WriteLine($"ObjectType: {typeof(T).ToString}");
-                Console.WriteLine($"-----------------------------");
-                Console.WriteLine(ex.ToString());
-                Console.WriteLine($"-----------------------------");
+                Console.WriteLine(sb.ToString());
+                System.IO.File.WriteAllText($"./.errors/{DateTime.Today.ToString("yyyyyMMddHHmmss")}.txt", sb.ToString());
+
             }
             return default(T);
         }
