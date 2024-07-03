@@ -221,7 +221,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  AnsiConsole.WriteLine($"Processing {buildItems.Count()} items");
                  task6.Description = $"[bold]Stage 6[/]: Create Work Items (0/{buildItems.Count()})";
                  task6.StartTask();
-                 await foreach ((WorkItemToBuild witb, string status, int skipped, int failed, int created) result in CreateWorkItemsToBuild(buildItems, projectItem, targetApi))
+                 await foreach ((WorkItemToBuild witb, string status, int skipped, int failed, int created) result in CreateWorkItemsToBuild(buildItems, projectItem, targetApi, config.targetWorkItemType))
                  {
                      //AnsiConsole.WriteLine($"Stage 6: Processing {witb.guid} for output of {witb.relations.Count - 1} relations");
                      task6.Increment(1);
@@ -309,7 +309,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             }
         }
 
-        private async IAsyncEnumerable<(WorkItemToBuild, string status, int skipped, int failed, int created)> CreateWorkItemsToBuild(List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem, AzureDevOpsApi targetApi)
+        private async IAsyncEnumerable<(WorkItemToBuild, string status, int skipped, int failed, int created)> CreateWorkItemsToBuild(List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem, AzureDevOpsApi targetApi, string workItemTypeToCreate)
         {
             int skipped = 0;
             int failed = 0;
@@ -323,7 +323,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 } else
                 {
                     WorkItemAdd itemToAdd = CreateWorkItemAddOperation(item, workItemsToBuild, projectItem);
-                    WorkItemFull newWorkItem = await targetApi.CreateWorkItem(itemToAdd, "Dependancy");
+                    WorkItemFull newWorkItem = await targetApi.CreateWorkItem(itemToAdd, workItemTypeToCreate);
                     if (newWorkItem != null)
                     {
                         created++;

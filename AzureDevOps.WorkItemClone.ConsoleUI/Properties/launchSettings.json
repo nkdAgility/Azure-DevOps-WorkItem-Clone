@@ -6,7 +6,7 @@
     },
     "Clone": {
       "commandName": "Project",
-      "commandLineArgs": "clone --RunName Run1 --cachePath ..\\..\\..\\..\\..\\.cache\\ --configFile ..\\..\\..\\..\\..\\.cache\\configuration.json --jsonFile ..\\..\\..\\..\\..\\TestData\\ADO_TESTProjPipline_V03.json "
+      "commandLineArgs": "clone --RunName Allessandro2 --cachePath ..\\..\\..\\..\\..\\.cache\\ --configFile ..\\..\\..\\..\\..\\.cache\\configuration.json --jsonFile ..\\..\\..\\..\\..\\TestData\\new.json "
     },
     "empty": {
       "commandName": "Project"
