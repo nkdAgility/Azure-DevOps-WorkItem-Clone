@@ -82,8 +82,8 @@ jobs:
       - uses: actions/create-github-app-token@v1
         id: app-token
         with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.NKDAGILITY_BOT_CLIENTSECRET }}
+          app-id: ${{ env.APP_ID }}
+          private-key: ${{ env.PRIVATE_KEY }}
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
