@@ -7,5 +7,6 @@
   "targetParentId": 540,
   "templateAccessToken": null,
   "templateOrganization": "ABB-MO-ATE",
-  "templateProject": "ABB Traction Template"
+  "templateProject": "ABB Traction Template",
+  "templateParentId": 212315
 }
