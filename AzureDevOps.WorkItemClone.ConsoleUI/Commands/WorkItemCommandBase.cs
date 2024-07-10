@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -54,12 +55,12 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return value.Value;
         }
 
-        private List<jsonWorkItem1> DeserializeWorkItemList(string jsonFile)
+        private JArray DeserializeWorkItemList(string jsonFile)
         {
-            List<jsonWorkItem1> configWorkItems;
+            JArray configWorkItems;
             try
             {
-                configWorkItems = JsonConvert.DeserializeObject<List<jsonWorkItem1>>(File.ReadAllText(jsonFile));
+                configWorkItems = JArray.Parse(File.ReadAllText(jsonFile));
             }
             catch (Exception ex)
             {
@@ -75,7 +76,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return configWorkItems;
         }
 
-        internal List<jsonWorkItem1> DeserializeWorkItemList(WorkItemCloneCommandSettings config)
+        internal JArray DeserializeWorkItemList(WorkItemCloneCommandSettings config)
         {
            string CachedRunJson =  System.IO.Path.Combine(config.CachePath, config.RunName, "input.json");
             if (System.IO.File.Exists(CachedRunJson))
@@ -93,7 +94,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                     throw new Exception(config.inputJsonFile + " not found.");
                 }
 
-                List<jsonWorkItem1> inputWorkItems;
+                JArray inputWorkItems;
                 inputWorkItems= DeserializeWorkItemList(config.inputJsonFile);
                 System.IO.File.WriteAllText(CachedRunJson, JsonConvert.SerializeObject(inputWorkItems, Formatting.Indented));
                 return inputWorkItems;

@@ -7,6 +7,7 @@ using Spectre.Console.Cli;
 using System.Linq;
 using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.VisualStudio.Services.CircuitBreaker;
+using Newtonsoft.Json.Linq;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -32,8 +33,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(config.templateAccessToken, config.templateOrganization, config.templateProject);
             AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(config.targetAccessToken, config.targetOrganization, config.targetProject);
 
-            List<jsonWorkItem1> inputWorkItems = DeserializeWorkItemList(config);
-
+            JArray inputWorkItems = DeserializeWorkItemList(config);
 
             // --------------------------------------------------------------
             WriteOutSettings(config);
@@ -273,29 +273,48 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return 0;
         }
 
-        private async IAsyncEnumerable<WorkItemToBuild> generateWorkItemsToBuildList(List<jsonWorkItem1> jsonWorkItems, List<WorkItemFull> templateWorkItems, WorkItemFull projectItem, string targetTeamProject)
+        private async IAsyncEnumerable<WorkItemToBuild> generateWorkItemsToBuildList(JArray jsonWorkItems, List<WorkItemFull> templateWorkItems, WorkItemFull projectItem, string targetTeamProject)
         {
             foreach (var item in jsonWorkItems)
             {
                 WorkItemFull templateWorkItem = null;
-                if (item.id != null)
+                if (item["id"] != null)
                 {
-                    templateWorkItem = templateWorkItems.Find(x => x.id == item.id);
+                    templateWorkItem = templateWorkItems.Find(x => x.id == (int)item["id"]);
                 }
                 WorkItemToBuild newItem = new WorkItemToBuild();
                 newItem.guid = Guid.NewGuid();
                 newItem.hasComplexRelation = false;
-                newItem.templateId = item.id;
+                newItem.templateId = (int)item["id"];
                 newItem.workItemType = templateWorkItem != null ? templateWorkItem.fields.SystemWorkItemType : "Deliverable";
-                newItem.fields = new Dictionary<string, string>()
+                newItem.fields = new Dictionary<string, string>();
+                newItem.fields.Add("System.Description", templateWorkItem != null ? templateWorkItem.fields.SystemDescription : "");
+                newItem.fields.Add("Microsoft.VSTS.Common.AcceptanceCriteria", templateWorkItem != null ? templateWorkItem.fields.MicrosoftVSTSCommonAcceptanceCriteria : "");
+                //{
+                //    { "System.Tags", string.Join(";" , item.tags, item.area, item.fields.product, templateWorkItem != null? templateWorkItem.fields.SystemTags : "") },
+                //    { "System.AreaPath", string.Join("\\", targetTeamProject, item.area)},
+                //};
+                var fields = item["fields"].ToObject<Dictionary<string,string>>();
+                foreach (var field in fields)
                 {
-                    { "System.Title", item.fields.title },
-                    { "Custom.Product", item.fields.product },
-                    { "System.Tags", string.Join(";" , item.tags, item.area, item.fields.product, templateWorkItem != null? templateWorkItem.fields.SystemTags : "") },
-                    { "System.AreaPath", string.Join("\\", targetTeamProject, item.area)},
-                    { "System.Description",  templateWorkItem != null? templateWorkItem.fields.SystemDescription: "" },
-                    { "Microsoft.VSTS.Common.AcceptanceCriteria", templateWorkItem != null? templateWorkItem.fields.MicrosoftVSTSCommonAcceptanceCriteria: "" }
-                };
+                    switch (field.Key)
+                    {
+                        case "System.AreaPath":
+                            newItem.fields.Add(field.Key, string.Join("\\", targetTeamProject, field.Value));
+                            break;
+                        default:
+                            if (newItem.fields.ContainsKey(field.Key))
+                            {
+                                newItem.fields[field.Key] = field.Value;
+                            }
+                            else
+                            {
+                                newItem.fields.Add(field.Key, field.Value);
+
+                            }
+                            break;
+                    }
+                }
                 newItem.relations = new List<WorkItemToBuildRelation>() { new WorkItemToBuildRelation() { rel = "System.LinkTypes.Hierarchy-Reverse", targetId = projectItem.id } };
                 yield return newItem;
             }

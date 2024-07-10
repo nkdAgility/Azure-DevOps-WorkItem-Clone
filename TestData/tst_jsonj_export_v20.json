@@ -1,420 +1,421 @@
 [
   {
     "id": 213928,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "Technical specification" },
-      { "Custom.Product": "CC" },
-      { "System.Effort": 12 },
-      { "Custom.TRA_Milestone": "E0.1" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Technical specification",
+      "Custom.Product": "CC",
+      "System.Effort": 12,
+      "Custom.TRA_Milestone": "E0.1"
+    }
   },
   {
     "id": 251889,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "Technical specification" },
-      { "Custom.Product": "ESS" },
-      { "System.Effort": 12 },
-      { "Custom.TRA_Milestone": "E0.1" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Technical specification",
+      "Custom.Product": "ESS",
+      "System.Effort": 12,
+      "Custom.TRA_Milestone": "E0.1"
+    }
   },
   {
     "id": 213380,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Handover protocol" },
-      { "Custom.Product": "" },
-      { "System.Effort": 4 },
-      { "Custom.TRA_Milestone": "E1" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Handover protocol",
+      "Custom.Product": "",
+      "System.Effort": 4,
+      "Custom.TRA_Milestone": "E1"
+    }
+
   },
   {
     "id": 214467,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Kick off protocol" },
-      { "Custom.Product": "" },
-      { "System.Effort": 4 },
-      { "Custom.TRA_Milestone": "E1" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Kick off protocol",
+      "Custom.Product": "",
+      "System.Effort": 4,
+      "Custom.TRA_Milestone": "E1"
+    }
   },
   {
     "id": 213849,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Engineering cost estimation" },
-      { "Custom.Product": "" },
-      { "System.Effort": 4 },
-      { "Custom.TRA_Milestone": "E1.1" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Engineering cost estimation",
+      "Custom.Product": "",
+      "System.Effort": 4,
+      "Custom.TRA_Milestone": "E1.1"
+    }
   },
   {
     "id": 213363,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Time schedule" },
-      { "Custom.Product": "" },
-      { "System.Effort": 36.8 },
-      { "Custom.TRA_Milestone": "E1.1" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Time schedule",
+      "Custom.Product": "",
+      "System.Effort": 36.8,
+      "Custom.TRA_Milestone": "E1.1"
+    }
   },
   {
     "id": 213368,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Risk & Oppertunity Assement" },
-      { "Custom.Product": "" },
-      { "System.Effort": 8 },
-      { "Custom.TRA_Milestone": "E1.2" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Risk & Oppertunity Assement",
+      "Custom.Product": "",
+      "System.Effort": 8,
+      "Custom.TRA_Milestone": "E1.2"
+    }
   },
   {
     "id": 213366,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Project management plan" },
-      { "Custom.Product": "" },
-      { "System.Effort": 4 },
-      { "Custom.TRA_Milestone": "E2" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Project management plan",
+      "Custom.Product": "",
+      "System.Effort": 4,
+      "Custom.TRA_Milestone": "E2"
+    }
   },
   {
     "id": 213367,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Document list" },
-      { "Custom.Product": "" },
-      { "System.Effort": 24 },
-      { "Custom.TRA_Milestone": "E2" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Document list",
+      "Custom.Product": "",
+      "System.Effort": 24,
+      "Custom.TRA_Milestone": "E2"
+    }
   },
   {
     "id": 213848,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Engineering Process Checklist" },
-      { "Custom.Product": "" },
-      { "System.Effort": 8 },
-      { "Custom.TRA_Milestone": "E2" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Engineering Process Checklist",
+      "Custom.Product": "",
+      "System.Effort": 8,
+      "Custom.TRA_Milestone": "E2"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E2 Assessment" },
-      { "Custom.Product": "" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E2" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E2 Assessment",
+      "Custom.Product": "",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E2"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E2 Mgmt Meeting" },
-      { "Custom.Product": "" },
-      { "System.Effort": 1 },
-      { "Custom.TRA_Milestone": "E2" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E2 Mgmt Meeting",
+      "Custom.Product": "",
+      "System.Effort": 1,
+      "Custom.TRA_Milestone": "E2"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Technical specification" },
-      { "Custom.Product": "CC" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E3" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Technical specification",
+      "Custom.Product": "CC",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E3"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Technical specification" },
-      { "Custom.Product": "ESS" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E3" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Technical specification",
+      "Custom.Product": "ESS",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E3"
+    }
   },
   {
     "id": 214486,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Rating plate" },
-      { "Custom.Product": "CC" },
-      { "System.Effort": 4 },
-      { "Custom.TRA_Milestone": "E4.5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Rating plate",
+      "Custom.Product": "CC",
+      "System.Effort": 4,
+      "Custom.TRA_Milestone": "E4.5"
+    }
   },
   {
     "id": 251898,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Rating plate" },
-      { "Custom.Product": "ESS" },
-      { "System.Effort": 4 },
-      { "Custom.TRA_Milestone": "E4.5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Rating plate",
+      "Custom.Product": "ESS",
+      "System.Effort": 4,
+      "Custom.TRA_Milestone": "E4.5"
+    }
   },
   {
     "id": 251899,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Rating plate" },
-      { "Custom.Product": "eBox" },
-      { "System.Effort": 4 },
-      { "Custom.TRA_Milestone": "E4.5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Rating plate",
+      "Custom.Product": "eBox",
+      "System.Effort": 4,
+      "Custom.TRA_Milestone": "E4.5"
+    }
   },
   {
     "id": 213374,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "Spare part list" },
-      { "Custom.Product": "CC" },
-      { "System.Effort": 2.4 },
-      { "Custom.TRA_Milestone": "E4.5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Spare part list",
+      "Custom.Product": "CC",
+      "System.Effort": 2.4,
+      "Custom.TRA_Milestone": "E4.5"
+    }
   },
   {
     "id": 251900,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "Spare part list" },
-      { "Custom.Product": "ESS" },
-      { "System.Effort": 2.4 },
-      { "Custom.TRA_Milestone": "E4.5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Spare part list",
+      "Custom.Product": "ESS",
+      "System.Effort": 2.4,
+      "Custom.TRA_Milestone": "E4.5"
+    }
   },
   {
     "id": 214487,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "Spare part portfolio" },
-      { "Custom.Product": "CC" },
-      { "System.Effort": 2.4 },
-      { "Custom.TRA_Milestone": "E4.6" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Spare part portfolio",
+      "Custom.Product": "CC",
+      "System.Effort": 2.4,
+      "Custom.TRA_Milestone": "E4.6"
+    }
   },
   {
     "id": 251901,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "Spare part portfolio" },
-      { "Custom.Product": "ESS" },
-      { "System.Effort": 2.4 },
-      { "Custom.TRA_Milestone": "E4.6" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Spare part portfolio",
+      "Custom.Product": "ESS",
+      "System.Effort": 2.4,
+      "Custom.TRA_Milestone": "E4.6"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E4.8 Assessment" },
-      { "Custom.Product": "" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E4.8" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E4.8 Assessment",
+      "Custom.Product": "",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E4.8"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E4.8 Mgmt Meeting" },
-      { "Custom.Product": "" },
-      { "System.Effort": 1 },
-      { "Custom.TRA_Milestone": "E4.8" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E4.8 Mgmt Meeting",
+      "Custom.Product": "",
+      "System.Effort": 1,
+      "Custom.TRA_Milestone": "E4.8"
+    }
   },
   {
     "id": 214489,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "REACh_Compliance_Declaration" },
-      { "Custom.Product": "CC" },
-      { "System.Effort": 12 },
-      { "Custom.TRA_Milestone": "E5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "REACh_Compliance_Declaration",
+      "Custom.Product": "CC",
+      "System.Effort": 12,
+      "Custom.TRA_Milestone": "E5"
+    }
   },
   {
     "id": 251905,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "REACh_Compliance_Declaration" },
-      { "Custom.Product": "eBox" },
-      { "System.Effort": 12 },
-      { "Custom.TRA_Milestone": "E5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "REACh_Compliance_Declaration",
+      "Custom.Product": "eBox",
+      "System.Effort": 12,
+      "Custom.TRA_Milestone": "E5"
+    }
   },
   {
     "id": 251904,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "REACh_Compliance_Declaration" },
-      { "Custom.Product": "ESS" },
-      { "System.Effort": 12 },
-      { "Custom.TRA_Milestone": "E5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "REACh_Compliance_Declaration",
+      "Custom.Product": "ESS",
+      "System.Effort": 12,
+      "Custom.TRA_Milestone": "E5"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E6.7 Assessment" },
-      { "Custom.Product": "" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E6.7" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E6.7 Assessment",
+      "Custom.Product": "",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E6.7"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E6.7 Mgmt Meeting" },
-      { "Custom.Product": "" },
-      { "System.Effort": 1 },
-      { "Custom.TRA_Milestone": "E6.7" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E6.7 Mgmt Meeting",
+      "Custom.Product": "",
+      "System.Effort": 1,
+      "Custom.TRA_Milestone": "E6.7"
+    }
   },
   {
     "id": 213379,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "Operatiom Manual " },
-      { "Custom.Product": "CC" },
-      { "System.Effort": 40 },
-      { "Custom.TRA_Milestone": "E6.7" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Operatiom Manual ",
+      "Custom.Product": "CC",
+      "System.Effort": 40,
+      "Custom.TRA_Milestone": "E6.7"
+    }
   },
   {
     "id": 251902,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "Customer Document" },
-      { "System.Title": "Operatiom Manual " },
-      { "Custom.Product": "ESS" },
-      { "System.Effort": 40 },
-      { "Custom.TRA_Milestone": "E6.7" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Operatiom Manual ",
+      "Custom.Product": "ESS",
+      "System.Effort": 40,
+      "Custom.TRA_Milestone": "E6.7"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E7.2 Assessment" },
-      { "Custom.Product": "" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E7.2" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E7.2 Assessment",
+      "Custom.Product": "",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E7.2"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E7.2 Mgmt Meeting" },
-      { "Custom.Product": "" },
-      { "System.Effort": 1 },
-      { "Custom.TRA_Milestone": "E7.2" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E7.2 Mgmt Meeting",
+      "Custom.Product": "",
+      "System.Effort": 1,
+      "Custom.TRA_Milestone": "E7.2"
+    }
   },
   {
     "id": 214493,
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Handover SER/PLCM prot." },
-      { "Custom.Product": "" },
-      { "System.Effort": 2.4 },
-      { "Custom.TRA_Milestone": "E7.5" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Handover SER/PLCM prot.",
+      "Custom.Product": "",
+      "System.Effort": 2.4,
+      "Custom.TRA_Milestone": "E7.5"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Technical specification" },
-      { "Custom.Product": "CC" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E8" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Technical specification",
+      "Custom.Product": "CC",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E8"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Technical specification" },
-      { "Custom.Product": "ESS" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E8" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Technical specification",
+      "Custom.Product": "ESS",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E8"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "Engineering Process Checklist" },
-      { "Custom.Product": "" },
-      { "System.Effort": 1 },
-      { "Custom.TRA_Milestone": "E8" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "Engineering Process Checklist",
+      "Custom.Product": "",
+      "System.Effort": 1,
+      "Custom.TRA_Milestone": "E8"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E8 Assessment" },
-      { "Custom.Product": "" },
-      { "System.Effort": 2 },
-      { "Custom.TRA_Milestone": "E8" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E8 Assessment",
+      "Custom.Product": "",
+      "System.Effort": 2,
+      "Custom.TRA_Milestone": "E8"
+    }
   },
   {
     "id": "",
-    "fields": [
-      { "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1" },
-      { "System.Tags": "" },
-      { "System.Title": "E8 Mgmt Meeting" },
-      { "Custom.Product": "" },
-      { "System.Effort": 1 },
-      { "Custom.TRA_Milestone": "E8" }
-    ]
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E8 Mgmt Meeting",
+      "Custom.Product": "",
+      "System.Effort": 1,
+      "Custom.TRA_Milestone": "E8"
+    }
   }
 ]
