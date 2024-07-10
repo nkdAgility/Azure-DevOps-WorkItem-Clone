@@ -54,12 +54,12 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return value.Value;
         }
 
-        private List<jsonWorkItem> DeserializeWorkItemList(string jsonFile)
+        private List<jsonWorkItem1> DeserializeWorkItemList(string jsonFile)
         {
-            List<jsonWorkItem> configWorkItems;
+            List<jsonWorkItem1> configWorkItems;
             try
             {
-                configWorkItems = JsonConvert.DeserializeObject<List<jsonWorkItem>>(File.ReadAllText(jsonFile));
+                configWorkItems = JsonConvert.DeserializeObject<List<jsonWorkItem1>>(File.ReadAllText(jsonFile));
             }
             catch (Exception ex)
             {
@@ -75,7 +75,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return configWorkItems;
         }
 
-        internal List<jsonWorkItem> DeserializeWorkItemList(WorkItemCloneCommandSettings config)
+        internal List<jsonWorkItem1> DeserializeWorkItemList(WorkItemCloneCommandSettings config)
         {
            string CachedRunJson =  System.IO.Path.Combine(config.CachePath, config.RunName, "input.json");
             if (System.IO.File.Exists(CachedRunJson))
@@ -93,7 +93,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                     throw new Exception(config.inputJsonFile + " not found.");
                 }
 
-                List<jsonWorkItem> inputWorkItems;
+                List<jsonWorkItem1> inputWorkItems;
                 inputWorkItems= DeserializeWorkItemList(config.inputJsonFile);
                 System.IO.File.WriteAllText(CachedRunJson, JsonConvert.SerializeObject(inputWorkItems, Formatting.Indented));
                 return inputWorkItems;
