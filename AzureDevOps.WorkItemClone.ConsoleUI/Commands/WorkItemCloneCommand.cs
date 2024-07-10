@@ -32,7 +32,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(config.templateAccessToken, config.templateOrganization, config.templateProject);
             AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(config.targetAccessToken, config.targetOrganization, config.targetProject);
 
-            List<jsonWorkItem> inputWorkItems = DeserializeWorkItemList(config);
+            List<jsonWorkItem1> inputWorkItems = DeserializeWorkItemList(config);
 
 
             // --------------------------------------------------------------
@@ -273,7 +273,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return 0;
         }
 
-        private async IAsyncEnumerable<WorkItemToBuild> generateWorkItemsToBuildList(List<jsonWorkItem> jsonWorkItems, List<WorkItemFull> templateWorkItems, WorkItemFull projectItem, string targetTeamProject)
+        private async IAsyncEnumerable<WorkItemToBuild> generateWorkItemsToBuildList(List<jsonWorkItem1> jsonWorkItems, List<WorkItemFull> templateWorkItems, WorkItemFull projectItem, string targetTeamProject)
         {
             foreach (var item in jsonWorkItems)
             {
