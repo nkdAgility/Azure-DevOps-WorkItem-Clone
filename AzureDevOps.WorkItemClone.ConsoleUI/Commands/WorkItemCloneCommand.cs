@@ -74,6 +74,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  var task3 = ctx.AddTask("[bold]Stage 3[/]: Get Target Project", false);
                  var task4 = ctx.AddTask("[bold]Stage 4[/]: Create Output Plan", false);
                  var task5 = ctx.AddTask("[bold]Stage 5[/]: Create Output Plan Relations ", false);
+                 //var task51 = ctx.AddTask("[bold]Stage 5.1[/]: Validate Data ", false);
                  var task6 = ctx.AddTask("[bold]Stage 6[/]: Create Work Items", false);
 
                  string cacheTemplateWorkItemsFile = $"{config.CachePath}\\templateCache-{config.templateOrganization}-{config.templateProject}-{config.templateParentId}.json";
@@ -233,9 +234,12 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
                  //AnsiConsole.WriteLine($"Stage 5: Completed second pass.");
 
+                 
+
+
                  // --------------------------------------------------------------
                  // Task 6: Create work items in target
-                 
+
                 task6.MaxValue = buildItems.Count();
                 int taskCount = 1;
                  AnsiConsole.WriteLine($"Processing {buildItems.Count()} items");
@@ -278,14 +282,15 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             foreach (var item in jsonWorkItems)
             {
                 WorkItemFull templateWorkItem = null;
-                if (item["id"] != null)
+                int jsonItemTemplateId = 0;
+                if (int.TryParse(item["id"].Value<string>(),out jsonItemTemplateId))
                 {
-                    templateWorkItem = templateWorkItems.Find(x => x.id == (int)item["id"]);
+                    templateWorkItem = templateWorkItems.Find(x => x.id == jsonItemTemplateId);
                 }
                 WorkItemToBuild newItem = new WorkItemToBuild();
                 newItem.guid = Guid.NewGuid();
                 newItem.hasComplexRelation = false;
-                newItem.templateId = (int)item["id"];
+                newItem.templateId = jsonItemTemplateId;
                 newItem.workItemType = templateWorkItem != null ? templateWorkItem.fields.SystemWorkItemType : "Deliverable";
                 newItem.fields = new Dictionary<string, string>();
                 newItem.fields.Add("System.Description", templateWorkItem != null ? templateWorkItem.fields.SystemDescription : "");
@@ -325,7 +330,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             foreach (WorkItemToBuild item in workItemsToBuild)
             {
                 WorkItemFull templateWorkItem = null;
-                if (item.templateId != null)
+                if (item.templateId != 0)
                 {
                     templateWorkItem = templateWorkItems.Find(x => x.id == item.templateId);
                     foreach (var relation in templateWorkItem.relations)
