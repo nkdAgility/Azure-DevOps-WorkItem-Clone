@@ -335,7 +335,9 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 if (item.templateId != 0)
                 {
                     templateWorkItem = templateWorkItems.Find(x => x.id == item.templateId);
-                    foreach (var relation in templateWorkItem.relations)
+                    if (templateWorkItem != null)
+                    { 
+                    foreach (var relation in templateWorkItem?.relations)
                     {
                         // Skip parents
                         if (relation.rel == "System.LinkTypes.Hierarchy-Reverse") continue;
@@ -350,6 +352,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                         {
                             //AnsiConsole.WriteLine($"Relation {relation.rel} to {templateIdToLinkTo} not found in work items to build.");
                         }
+                    }
                     }
                 }
                 yield return item;
