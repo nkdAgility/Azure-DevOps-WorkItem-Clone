@@ -8,6 +8,13 @@
     <AssemblyName>WorkItemClone</AssemblyName>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	  <Version>0.0.0.0</Version>
+	  <FileVersion>0.0.0.0</FileVersion>
+	  <InformationalVersion>0.0.0-local</InformationalVersion>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <PackageProjectUrl>https://github.com/nkdAgility/Azure-DevOps-WorkItem-Clone</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/nkdAgility/Azure-DevOps-WorkItem-Clone</RepositoryUrl>
+	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
