@@ -17,4 +17,13 @@ namespace AzureDevOps.WorkItemClone.DataContracts
         public string url { get; set; }
     }
 
+
+    public class WorkItemFieldList
+    {
+        public int count { get; set; }
+        public FieldItem[] value { get; set; }
+    }
+
+
+
 }

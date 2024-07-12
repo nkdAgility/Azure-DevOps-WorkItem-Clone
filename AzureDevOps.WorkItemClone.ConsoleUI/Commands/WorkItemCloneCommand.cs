@@ -401,7 +401,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
         }
 
-        internal Dictionary<string, bool> foundFields = new Dictionary<string, bool>();
+        
         internal Dictionary<string, bool> foundAreaPaths = new Dictionary<string, bool>();
         private async Task<bool> ValidateOperations(AzureDevOpsApi targetApi, WorkItemToBuild item, WorkItemAdd itemToAdd)
         {
@@ -446,17 +446,32 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return valid;
         }
 
+        internal Dictionary<string, WorkItemFieldList> fieldsForTypes = new Dictionary<string, WorkItemFieldList>();
+        internal Dictionary<string, bool> foundFields = new Dictionary<string, bool>();
         private async Task<bool> CheckFieldExists(AzureDevOpsApi targetApi, WorkItemToBuild item, bool valid, FieldOperation operation)
         {
+            WorkItemFieldList fieldsLookup = null;
+            if (fieldsForTypes.ContainsKey(item.workItemType))
+            {
+                fieldsLookup = fieldsForTypes[item.workItemType];
+            }
+            else
+            {
+                fieldsLookup = await targetApi.GetFieldsOnWorkItem(item.workItemType);
+                fieldsForTypes.Add(item.workItemType, fieldsLookup);
+            }
+            int idx = operation.path.LastIndexOf('/');
+            string referenceName = operation.path.Substring(idx + 1);
             string uniqueFieldkey = $"{item.workItemType}{operation.path}";
+
             if (foundFields.ContainsKey(uniqueFieldkey))
             {
                 valid = valid && foundFields[uniqueFieldkey];
             }
             else
             {
-                FieldItem field = await targetApi.GetFieldOnWorkItem(item.workItemType, operation.path);
-                if (field == null)
+                var foundField = fieldsLookup.value.FirstOrDefault(x => x.referenceName == referenceName);
+                if (foundField == null)
                 {
                     AnsiConsole.WriteLine($"[VALIDATE] Field {operation.path} does not exist on {item.workItemType} This is required to create a work item.");
                     valid = false;

@@ -101,7 +101,15 @@ namespace AzureDevOps.WorkItemClone
             }     
         }
 
-    public async Task<FieldItem> GetFieldOnWorkItem(string wit, string fieldRefName)
+        public async Task<WorkItemFieldList> GetFieldsOnWorkItem(string wit)
+        {
+            //GET https://dev.azure.com/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields/{field}?api-version=7.2-preview.3
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/workitemtypes/{wit}/fields?api-version=7.1-preview.3";
+            var result = await GetObjectResult<WorkItemFieldList>(apiCallUrl);
+            return result.result;
+        }
+
+        public async Task<FieldItem> GetFieldOnWorkItem(string wit, string fieldRefName)
         {
             //GET https://dev.azure.com/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields/{field}?api-version=7.2-preview.3
             string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/workitemtypes/{wit}{fieldRefName}?api-version=7.1-preview.3";
