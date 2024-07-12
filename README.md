@@ -104,32 +104,6 @@ Clones work items from a template project to a target project incorproating a JS
  ```json
  [
   {
-    "id": 213928,
-    "area": "TPL",
-    "tags": "Customer Document",
-    "fields": {
-      "title": "Technical specification",
-      "product": "CC000_000A01"
-    }
-  },
-  {
-    "id": 213928,
-    "area": "TPL",
-    "tags": "Customer Document",
-    "fields": {
-      "title": "Technical specification",
-      "product": "CC000_000A02"
-    }
-  }
-]
-```
-
-proposed new format not yet adopted:
-
-
- ```json
- [
-  {
     "templateId": 213928,
     "fields": [
       {"System.Title": "Technical specification"},
