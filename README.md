@@ -1,4 +1,9 @@
 ![Azure-DevOps-WorkItem-Clone](https://socialify.git.ci/nkdAgility/Azure-DevOps-WorkItem-Clone/image?description=1&descriptionEditable=Clone%20Work%20Items%20under%20Parent%20bassed%20on%20JSON%20and%20Template&forks=1&language=1&name=1&owner=1&pattern=Signal&stargazers=1&theme=Light)
+[![Elmah.io](https://img.shields.io/badge/sponsored_by-elmah_io-0da58e)](https://elmah.io)
+![GitHub Release](https://img.shields.io/github/v/release/nkdagility/Azure-DevOps-WorkItem-Clone)
+![GitHub Release](https://img.shields.io/github/v/release/nkdagility/Azure-DevOps-WorkItem-Clone?include_prereleases)
+
+
 # Azure DevOps WorkItem Clone
 
 The purpose of this tool is to clone work items from a template project to a target project. The tool uses a JSON configuration file which it combines with a template in Azure DevOps to specify what work items to create and how to update them.
