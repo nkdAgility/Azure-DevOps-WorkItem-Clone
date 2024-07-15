@@ -277,7 +277,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  // Task 7: Create Query
                  task7.MaxValue = 1;
                  task7.StartTask();
-                 var query = await templateApi.CreateProjectQuery($"Project [{projectItem.id}]: {projectItem.fields.SystemTitle}", "Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() } });
+                 var query = await targetApi.CreateProjectQuery($"Project [{projectItem.id}]: {projectItem.fields.SystemTitle}", "Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() } });
                  task7.Increment(1);
                  task7.StopTask();
 
