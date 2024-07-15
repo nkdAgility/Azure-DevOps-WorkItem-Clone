@@ -1,6 +1,8 @@
 using AzureDevOps.WorkItemClone.DataContracts;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Spectre.Console;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -13,6 +15,8 @@ namespace AzureDevOps.WorkItemClone
         private readonly string _authHeader;
         private readonly string _account;
         private readonly string _project;
+
+        public string Project => _project;
 
 
         public AzureDevOpsApi(string token, string account, string project)
@@ -54,7 +58,8 @@ namespace AzureDevOps.WorkItemClone
                 query = wiqlQuery
             });
             string apiCallUrl = $"https://dev.azure.com/{_account}/_apis/wit/wiql?api-version=7.2-preview.2";
-            return await GetObjectResult<QueryResults>(apiCallUrl, post);
+            var result = await GetObjectResult<QueryResults>(apiCallUrl, post);
+            return result.result;
         }
 
         private string GetQueryString( string wiqlQuery,  Dictionary<string, string> parameters)
@@ -84,13 +89,44 @@ namespace AzureDevOps.WorkItemClone
                 query = $"Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.TeamProject] = '{_project}' order by [System.CreatedDate] desc"
             });
             string apiCallUrl = $"https://dev.azure.com/{_account}/_apis/wit/wiql?api-version=7.2-preview.2";
-            return await GetObjectResult<QueryResults>(apiCallUrl, post);
+            var result = await GetObjectResult<QueryResults>(apiCallUrl, post);
+            return result.result;
         }
 
+        public async Task<NodeClassification> GetNodeClassification(string nodePath)
+        {
+            //GET https://dev.azure.com/{organization}/{project}/_apis/wit/classificationnodes/{structureGroup}/{path}?api-version=7.2-preview.2
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/classificationnodes/areas/{nodePath.Replace(@"\", "/")}?api-version=7.2-preview.2";
+            var result = await GetObjectResult<NodeClassification>(apiCallUrl);
+            if (result.statusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            } else
+            {
+                return result.result;
+            }     
+        }
+
+        public async Task<WorkItemFieldList> GetFieldsOnWorkItem(string wit)
+        {
+            //GET https://dev.azure.com/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields/{field}?api-version=7.2-preview.3
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/workitemtypes/{wit}/fields?api-version=7.1-preview.3";
+            var result = await GetObjectResult<WorkItemFieldList>(apiCallUrl);
+            return result.result;
+        }
+
+        public async Task<FieldItem> GetFieldOnWorkItem(string wit, string fieldRefName)
+        {
+            //GET https://dev.azure.com/{organization}/{project}/_apis/wit/workitemtypes/{type}/fields/{field}?api-version=7.2-preview.3
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/workitemtypes/{wit}{fieldRefName}?api-version=7.1-preview.3";
+            var result = await GetObjectResult<FieldItem>(apiCallUrl);
+            return result.result;
+        }
         public async Task<WorkItemFull?> GetWorkItem(int id)
         {
             string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/workitems/{id}?$expand=All&api-version=7.2-preview.3";
-            return await GetObjectResult<WorkItemFull>(apiCallUrl);
+            var result = await GetObjectResult<WorkItemFull>(apiCallUrl);
+            return result.result;
         }
 
         public async Task<WorkItemFull?> CreateWorkItem(WorkItemAdd itemAdd, string workItemType)
@@ -98,11 +134,12 @@ namespace AzureDevOps.WorkItemClone
             // POST https://dev.azure.com/fabrikam/{project}/_apis/wit/workitems/${type}?api-version=7.1-preview.3
             string post = JsonConvert.SerializeObject(itemAdd.Operations);
             string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/workitems/${workItemType}?api-version=7.1-preview.3";
-            return await GetObjectResult<WorkItemFull>(apiCallUrl, post, "application/json-patch+json");
+            var result = await GetObjectResult<WorkItemFull>(apiCallUrl, post, "application/json-patch+json");
+            return result.result;
 
         }
 
-        private async Task<string> GetResult(string apiToCall, string? post, string? mediaType = "application/json")
+        private async Task<(string content, HttpStatusCode statusCode,string reasonPhrase)> GetResult(string apiToCall, string? post, string? mediaType = "application/json")
         {
             if (string.IsNullOrEmpty(mediaType))
             {
@@ -123,54 +160,76 @@ namespace AzureDevOps.WorkItemClone
                 } else
                 {
                     response = await client.PostAsync(apiToCall, new StringContent(post, System.Text.Encoding.UTF8, mediaType));
-                }                
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadAsStringAsync();
-                }
-                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    return (await response.Content.ReadAsStringAsync(), response.StatusCode, response.ReasonPhrase);
+                } else
                 {
-                    throw new UnauthorizedAccessException();
-                }
-                else
-                {
-                    throw new Exception($"Result::{response.StatusCode}:{response.ReasonPhrase}");
+                    return (string.Empty, response.StatusCode, response.ReasonPhrase);
                 }
             }
-            return string.Empty;
         }
 
 
-        private async Task<T?> GetObjectResult<T>(string apiCallUrl, string? post = null, string? mediaType = null)
+        private async Task<(T? result, HttpStatusCode? statusCode)> GetObjectResult<T>(string apiCallUrl, string? post = null, string? mediaType = null)
         {
-            string? result = "";
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add("apiCallUrl", apiCallUrl);
+            properties.Add("mediaType", mediaType);
+            properties.Add("post", post);
+            properties.Add("ObjectType", typeof(T).Name);
+            (string? content, HttpStatusCode? statusCode, string? reasonPhrase) result = (null, null, null);
             try
             {
                 result = await GetResult(apiCallUrl, post, mediaType);
-                if (!string.IsNullOrEmpty(result))
+                properties.Add("result", result.content);
+                properties.Add("StatusCode", result.statusCode?.ToString());
+                properties.Add("ReasonPhrase", result.reasonPhrase);
+                if (result.statusCode == HttpStatusCode.OK && !string.IsNullOrEmpty(result.content))
                 {
-                    return JsonConvert.DeserializeObject<T>(result);
+                    return (JsonConvert.DeserializeObject<T>(result.content), result.statusCode);
+                } else
+                {
+                   switch (result.statusCode)
+                    {
+                        case HttpStatusCode.BadRequest:
+                            throw new Exception("Bad Request");
+                        case HttpStatusCode.Forbidden:
+                            throw new Exception("Forbidden");
+                        case HttpStatusCode.InternalServerError:
+                            throw new Exception("Internal Server Error");    
+                    }
+                    return (default(T), result.statusCode);
                 }
             }
             catch (Exception ex)
             {
+                Telemetry.TrackException(ex, result.statusCode?.ToString(), properties);
+
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine($"-----------------------------");
                 sb.AppendLine($"Azure DevOps API Call Failed!");
-                sb.AppendLine($"apiCallUrl: {apiCallUrl}");
-                sb.AppendLine($"mediaType: {mediaType}");
+        
                 sb.AppendLine($"Post: {post}");
                 sb.AppendLine($"Result: {result}");
-                sb.AppendLine($"ObjectType: {typeof(T).ToString}");
+                sb.AppendLine($"ObjectType: {typeof(T).Name}");
                     sb.AppendLine($"-----------------------------");
                 sb.AppendLine(ex.ToString());
                 sb.AppendLine($"-----------------------------");
                 // Should be logger
-                Console.WriteLine(sb.ToString());
-                System.IO.File.WriteAllText($"./.errors/{DateTime.Today.ToString("yyyyyMMddHHmmss")}.txt", sb.ToString());
+                
+                if (!System.IO.Directory.Exists("./.errors"))
+                    {
+                    System.IO.Directory.CreateDirectory("./.errors");
+                }
+                string errorFile = $"./.errors/{DateTime.Today.ToString("yyyyyMMddHHmmss")}.txt";
+                System.IO.File.WriteAllText(errorFile, sb.ToString());
+                AnsiConsole.WriteLine($"Error logged to: {errorFile}");
 
             }
-            return default(T);
+            return (default(T), null);
         }
 
         public ValueTask DisposeAsync()
@@ -187,8 +246,10 @@ namespace AzureDevOps.WorkItemClone
                 name = queryName,
                 query = wiqlQuery
             });
-            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/queries/Shared Queries/?api-version=7.2-preview.2";
-            return await GetObjectResult<Query>(apiCallUrl, post);
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/queries/Shared Queries/some/?api-version=7.2-preview.2";
+            var result = await GetObjectResult<Query>(apiCallUrl, post);
+            return result.result;
         }
     }
+
 }

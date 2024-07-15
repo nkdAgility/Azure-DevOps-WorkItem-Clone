@@ -9,6 +9,7 @@ using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.VisualStudio.Services.CircuitBreaker;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics.Eventing.Reader;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -27,7 +28,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             }
             CombineValuesFromConfigAndSettings(settingsFromCmd, config);
 
-            AnsiConsole.MarkupLine($"[red]Run: [/] {config.RunName}" );
+            AnsiConsole.MarkupLine($"[red]Run: [/] {config.RunName}");
             string runCache = $"{config.CachePath}\\{config.RunName}";
             DirectoryInfo outputPathInfo = CreateOutputPath(runCache);
 
@@ -102,20 +103,20 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      QueryResults fakeItemsFromTemplateQuery;
                      fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id AND [System.ChangedDate] > '@changeddate' order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() }, { "@changeddate", changedDate.ToString("yyyy-MM-dd") } });
                      if (fakeItemsFromTemplateQuery.workItems.Length == 0)
-                     {                    
-                     AnsiConsole.WriteLine($"Stage 1: Checked template for changes. None Detected. Loading Cache");
+                     {
+                         AnsiConsole.WriteLine($"Stage 1: Checked template for changes. None Detected. Loading Cache");
 
-                     // Load from Cache
-                     
-                     task1.Increment(1);
-                     task1.Description = task1.Description + " (cache)";
-                     await Task.Delay(250);
-                     task1.StopTask();
-                     //////////////////////
-                     templateWorkItems = JsonConvert.DeserializeObject<List<WorkItemFull>>(System.IO.File.ReadAllText(cacheTemplateWorkItemsFile));
-                     task2.Increment(templateWorkItems.Count);
-                     task2.Description = task2.Description + " (cache)";
-                     AnsiConsole.WriteLine($"Stage 2: Loaded {templateWorkItems.Count()} work items from cache.");
+                         // Load from Cache
+
+                         task1.Increment(1);
+                         task1.Description = task1.Description + " (cache)";
+                         await Task.Delay(250);
+                         task1.StopTask();
+                         //////////////////////
+                         templateWorkItems = JsonConvert.DeserializeObject<List<WorkItemFull>>(System.IO.File.ReadAllText(cacheTemplateWorkItemsFile));
+                         task2.Increment(templateWorkItems.Count);
+                         task2.Description = task2.Description + " (cache)";
+                         AnsiConsole.WriteLine($"Stage 2: Loaded {templateWorkItems.Count()} work items from cache.");
                      }
                  }
 
@@ -125,7 +126,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      // --------------------------------------------------------------
                      // Task 1: query for template work items
                      task1.StartTask();
-                     
+
                      //AnsiConsole.WriteLine("Stage 1: Executing items from Query");
                      QueryResults fakeItemsFromTemplateQuery;
                      fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() } });
@@ -198,7 +199,8 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      task5.MaxValue = 1;
                      task5.Increment(1);
                      task5.Description = task5.Description + " (run cache)";
-                 } else
+                 }
+                 else
                  {
                      // Task 4: First Pass generation of Work Items to build
                      task4.MaxValue = inputWorkItems.Count();
@@ -236,14 +238,14 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
                  //AnsiConsole.WriteLine($"Stage 5: Completed second pass.");
 
-                 
+
 
 
                  // --------------------------------------------------------------
                  // Task 6: Create work items in target
 
-                task6.MaxValue = buildItems.Count();
-                int taskCount = 1;
+                 task6.MaxValue = buildItems.Count();
+                 int taskCount = 1;
                  AnsiConsole.WriteLine($"Processing {buildItems.Count()} items");
                  task6.Description = $"[bold]Stage 6[/]: Create Work Items (0/{buildItems.Count()})";
                  task6.StartTask();
@@ -267,7 +269,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                              AnsiConsole.WriteLine($"Failed {result.witb.guid}");
                              break;
                      }
-                     
+
                  }
                  task6.StopTask();
                  //AnsiConsole.WriteLine($"Stage 6: All Work Items Created.");
@@ -299,7 +301,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             {
                 WorkItemFull templateWorkItem = null;
                 int jsonItemTemplateId = 0;
-                if (int.TryParse(item["id"].Value<string>(),out jsonItemTemplateId))
+                if (int.TryParse(item["id"].Value<string>(), out jsonItemTemplateId))
                 {
                     templateWorkItem = templateWorkItems.Find(x => x.id == jsonItemTemplateId);
                 }
@@ -315,7 +317,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 //    { "System.Tags", string.Join(";" , item.tags, item.area, item.fields.product, templateWorkItem != null? templateWorkItem.fields.SystemTags : "") },
                 //    { "System.AreaPath", string.Join("\\", targetTeamProject, item.area)},
                 //};
-                var fields = item["fields"].ToObject<Dictionary<string,string>>();
+                var fields = item["fields"].ToObject<Dictionary<string, string>>();
                 foreach (var field in fields)
                 {
                     switch (field.Key)
@@ -349,7 +351,9 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 if (item.templateId != 0)
                 {
                     templateWorkItem = templateWorkItems.Find(x => x.id == item.templateId);
-                    foreach (var relation in templateWorkItem.relations)
+                    if (templateWorkItem != null)
+                    { 
+                    foreach (var relation in templateWorkItem?.relations)
                     {
                         // Skip parents
                         if (relation.rel == "System.LinkTypes.Hierarchy-Reverse") continue;
@@ -365,10 +369,13 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                             //AnsiConsole.WriteLine($"Relation {relation.rel} to {templateIdToLinkTo} not found in work items to build.");
                         }
                     }
+                    }
                 }
                 yield return item;
             }
         }
+
+
 
         private async IAsyncEnumerable<(WorkItemToBuild, string status, int skipped, int failed, int created)> CreateWorkItemsToBuild(List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem, AzureDevOpsApi targetApi)
         {
@@ -380,10 +387,20 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 if (item.targetId != 0)
                 {
                     skipped++;
-                    yield return (item, "skipped", skipped, failed,created);
-                } else
+                    yield return (item, "skipped", skipped, failed, created);
+                }
+                else
                 {
                     WorkItemAdd itemToAdd = CreateWorkItemAddOperation(item, workItemsToBuild, projectItem);
+
+                    if (!await ValidateOperations(targetApi, item, itemToAdd))
+                    {
+                        AnsiConsole.WriteLine($"[SKIP] {item.guid} As it does not pass field validation. issues listed above..");
+                        skipped++;
+                        yield return (item, "skipped", skipped, failed, created);
+                        continue;
+                    }
+
                     WorkItemFull newWorkItem = await targetApi.CreateWorkItem(itemToAdd, item.workItemType);
                     if (newWorkItem != null)
                     {
@@ -397,10 +414,95 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                         failed++;
                         yield return (item, "failed", skipped, failed, created);
                     }
-                }                   
-                
+                }
+
             }
 
+        }
+
+        
+        internal Dictionary<string, bool> foundAreaPaths = new Dictionary<string, bool>();
+        private async Task<bool> ValidateOperations(AzureDevOpsApi targetApi, WorkItemToBuild item, WorkItemAdd itemToAdd)
+        {
+            bool valid = true;
+            foreach (FieldOperation operation in itemToAdd.Operations.FindAll(p => p is FieldOperation))
+            {
+                valid = valid & await CheckFieldExists(targetApi, item, valid, operation);
+                switch (operation.path)
+                {
+                    case "/fields/System.AreaPath":
+                        valid = valid & await CheckAreaPathExists(targetApi, item, valid, operation);
+                        break;
+                }
+            }
+            return valid;
+        }
+
+        private async Task<bool> CheckAreaPathExists(AzureDevOpsApi targetApi, WorkItemToBuild item, bool valid, FieldOperation operation)
+        {
+            if (!foundAreaPaths.ContainsKey(operation.value))
+            {
+                NodeClassification node = await targetApi.GetNodeClassification(operation.value.Replace($"{targetApi.Project}\\", ""));
+                if (node == null)
+                {
+                    AnsiConsole.WriteLine($"[VALIDATE] {item.guid} has an invalid area path of {operation.value}. This is required to create a work item.");
+                    valid = false;
+                    foundAreaPaths.Add(operation.value, false);
+                }
+                else
+                {
+                    foundAreaPaths.Add(operation.value, true);
+                }
+            }
+            else
+            {
+                if (!foundAreaPaths[operation.value])
+                {
+                    valid = false;
+                }
+            }
+
+            return valid;
+        }
+
+        internal Dictionary<string, WorkItemFieldList> fieldsForTypes = new Dictionary<string, WorkItemFieldList>();
+        internal Dictionary<string, bool> foundFields = new Dictionary<string, bool>();
+        private async Task<bool> CheckFieldExists(AzureDevOpsApi targetApi, WorkItemToBuild item, bool valid, FieldOperation operation)
+        {
+            WorkItemFieldList fieldsLookup = null;
+            if (fieldsForTypes.ContainsKey(item.workItemType))
+            {
+                fieldsLookup = fieldsForTypes[item.workItemType];
+            }
+            else
+            {
+                fieldsLookup = await targetApi.GetFieldsOnWorkItem(item.workItemType);
+                fieldsForTypes.Add(item.workItemType, fieldsLookup);
+            }
+            int idx = operation.path.LastIndexOf('/');
+            string referenceName = operation.path.Substring(idx + 1);
+            string uniqueFieldkey = $"{item.workItemType}{operation.path}";
+
+            if (foundFields.ContainsKey(uniqueFieldkey))
+            {
+                valid = valid && foundFields[uniqueFieldkey];
+            }
+            else
+            {
+                var foundField = fieldsLookup.value.FirstOrDefault(x => x.referenceName == referenceName);
+                if (foundField == null)
+                {
+                    AnsiConsole.WriteLine($"[VALIDATE] Field {operation.path} does not exist on {item.workItemType} This is required to create a work item.");
+                    valid = false;
+                    foundFields.Add(uniqueFieldkey, false);
+                }
+                else
+                {
+                    foundFields.Add(uniqueFieldkey, true);
+                }
+            }
+
+            return valid;
         }
 
         private WorkItemAdd CreateWorkItemAddOperation(WorkItemToBuild item, List<WorkItemToBuild> workItemsToBuild, WorkItemFull projectItem)
