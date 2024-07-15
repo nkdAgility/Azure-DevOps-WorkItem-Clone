@@ -8,6 +8,7 @@ using System.Linq;
 using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.VisualStudio.Services.CircuitBreaker;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -76,6 +77,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  var task5 = ctx.AddTask("[bold]Stage 5[/]: Create Output Plan Relations ", false);
                  //var task51 = ctx.AddTask("[bold]Stage 5.1[/]: Validate Data ", false);
                  var task6 = ctx.AddTask("[bold]Stage 6[/]: Create Work Items", false);
+                 var task7 = ctx.AddTask("[bold]Stage 7[/]: Create Query", false);
 
                  string cacheTemplateWorkItemsFile = $"{config.CachePath}\\templateCache-{config.templateOrganization}-{config.templateProject}-{config.templateParentId}.json";
 
@@ -269,7 +271,21 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  }
                  task6.StopTask();
                  //AnsiConsole.WriteLine($"Stage 6: All Work Items Created.");
+
+
+                 // --------------------------------------------------------------
+                 // Task 7: Create Query
+                 task7.MaxValue = 1;
+                 task7.StartTask();
+                 var query = await templateApi.CreateProjectQuery($"Project [{projectItem.id}]: {projectItem.fields.SystemTitle}", "Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() } });
+                 task7.Increment(1);
+                 task7.StopTask();
+
+
+
              });
+
+           
 
 
             AnsiConsole.WriteLine($"Complete...");

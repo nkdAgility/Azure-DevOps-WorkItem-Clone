@@ -48,6 +48,17 @@ namespace AzureDevOps.WorkItemClone
 
         public async Task<QueryResults?> GetWiqlQueryResults(string wiqlQuery, Dictionary<string, string> parameters)
         {
+           wiqlQuery =  GetQueryString(wiqlQuery, parameters);
+            string post = JsonConvert.SerializeObject(new
+            {
+                query = wiqlQuery
+            });
+            string apiCallUrl = $"https://dev.azure.com/{_account}/_apis/wit/wiql?api-version=7.2-preview.2";
+            return await GetObjectResult<QueryResults>(apiCallUrl, post);
+        }
+
+        private string GetQueryString( string wiqlQuery,  Dictionary<string, string> parameters)
+        {
             if (parameters == null)
             {
                 parameters = new Dictionary<string, string>();
@@ -64,12 +75,7 @@ namespace AzureDevOps.WorkItemClone
             {
                 wiqlQuery = wiqlQuery.Replace(param.Key, param.Value);
             }
-            string post = JsonConvert.SerializeObject(new
-            {
-                query = wiqlQuery
-            });
-            string apiCallUrl = $"https://dev.azure.com/{_account}/_apis/wit/wiql?api-version=7.2-preview.2";
-            return await GetObjectResult<QueryResults>(apiCallUrl, post);
+            return wiqlQuery;
         }
 
         public async Task<QueryResults?> GetWiqlQueryResults()
@@ -170,6 +176,19 @@ namespace AzureDevOps.WorkItemClone
         public ValueTask DisposeAsync()
         {
             return new(Task.Delay(TimeSpan.FromSeconds(1)));
+        }
+
+        public async Task<Query> CreateProjectQuery(string queryName, string wiqlQuery, Dictionary<string, string> parameters)
+        {
+            ///POST https://dev.azure.com/{organization}/{project}/_apis/wit/queries/{query}?api-version=7.1-preview.2
+            wiqlQuery = GetQueryString(wiqlQuery, parameters);
+            string post = JsonConvert.SerializeObject(new
+            {
+                name = queryName,
+                query = wiqlQuery
+            });
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/queries/Shared Queries/?api-version=7.2-preview.2";
+            return await GetObjectResult<Query>(apiCallUrl, post);
         }
     }
 }
