@@ -76,12 +76,22 @@ namespace AzureDevOps.WorkItemClone
             {
                 wiqlQuery = "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.TeamProject] = '@project' order by [System.CreatedDate] desc";
             }
-            foreach (var param in parameters)
-            {
-                wiqlQuery = wiqlQuery.Replace(param.Key, param.Value);
-            }
+            wiqlQuery = ReplaceParamsInString(wiqlQuery, parameters);
             return wiqlQuery;
         }
+        private string ReplaceParamsInString(string text, Dictionary<string, string> parameters)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                text = "Default";
+            }
+            foreach (var param in parameters)
+            {
+                text = text.Replace(param.Key, param.Value);
+            }
+            return text;
+        }
+
 
         public async Task<QueryResults?> GetWiqlQueryResults()
         {
@@ -241,12 +251,15 @@ namespace AzureDevOps.WorkItemClone
         {
             ///POST https://dev.azure.com/{organization}/{project}/_apis/wit/queries/{query}?api-version=7.1-preview.2
             wiqlQuery = GetQueryString(wiqlQuery, parameters);
+            queryName = ReplaceParamsInString(queryName, parameters);
             string post = JsonConvert.SerializeObject(new
             {
+                isFolder = false,
                 name = queryName,
-                query = wiqlQuery
+                path = $"Shared Queries/{queryName}",
+                wiql = wiqlQuery
             });
-            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/queries/Shared Queries/some/?api-version=7.2-preview.2";
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/queries/Shared Queries/?api-version=7.2-preview.2";
             var result = await GetObjectResult<Query>(apiCallUrl, post);
             return result.result;
         }

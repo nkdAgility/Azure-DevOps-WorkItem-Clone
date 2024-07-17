@@ -34,6 +34,9 @@ Clones work items from a template project to a target project incorproating a JS
  - `--targetOrganization` - The name of the organisation to clone work items to.
  - `--targetProject` - The name of the prject to clone work items to.
  - `--targetParentId` - All cloned work items will be come a child of this work item
+ - `--targetQuery` - The query to create in the target project. Default is `SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AreaPath],[System.AssignedTo],[System.State] FROM workitems WHERE [System.Parent] = @projectID`.
+ - `--targetQueryTitle` - The title of the query to create in the target project. Default is `Project-@RunName - @projectTitle`.
+ - `--targetQueryFolder` - The folder to create the query in the target project. Default is `Shared Queries`.
 
  *Optional Parameters* - These are optional parameters that can be used to control the behaviour of the clone process.
 
@@ -83,66 +86,51 @@ Clones work items from a template project to a target project incorproating a JS
  ```json
 {
   "CachePath": "./cache",
-  "inputJsonFile": "ADO_TESTProjPipline_V03.json",
-  "targetAccessToken": null,
+  "inputJsonFile": "TESTProjPipline_V03.json",
+  "targetAccessToken": "************************************",
   "targetOrganization": "nkdagility-preview",
   "targetProject": "Clone-Demo",
   "targetParentId": 540,
-  "templateAccessToken": null,
-  "templateOrganization": "Clone-MO-ATE",
-  "templateProject": "Clone Template"
+  "templateAccessToken": "************************************",
+  "templateOrganization": "orgname",
+  "templateProject": "template Project",
+  "templateParentId": 212315,
+  "targetQuery": "SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AreaPath],[System.AssignedTo],[System.State] FROM workitems WHERE [System.Parent] = @projectID",
+  "targetQueryTitle": "Project-@RunName - @projectTitle",
+  "targetQueryFolder": "Shared Queries"
 }
  ```
 
- ## inputJsonFile Example
+## Json Input File
+
+
+The `id` is the ID of the template item. This will be used to specifiy Description, Acceptance Criteria, and dependancy relationsips. I the `id` is not specified a new work item will be created.
+
+The `fields` are the fields that will be used to create the work item. You can use any field ientifyer from Azure DevOps.
 
  ```json
- [
+[
   {
     "id": 213928,
-    "area": "TPL",
-    "tags": "Customer Document",
     "fields": {
-      "title": "Technical specification",
-      "product": "CC000_000A01"
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Technical specification",
+      "Custom.Product": "CC",
+      "Microsoft.VSTS.Scheduling.Effort": 12,
+      "Custom.TRA_Milestone": "E0.1"
     }
   },
   {
-    "id": 213928,
-    "area": "TPL",
-    "tags": "Customer Document",
+    "id": "",
     "fields": {
-      "title": "Technical specification",
-      "product": "CC000_000A02"
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E4.8 Assessment",
+      "Custom.Product": "",
+      "Microsoft.VSTS.Scheduling.Effort": 2,
+      "Custom.TRA_Milestone": "E4.8"
     }
-  }
-]
-```
-
-proposed new format not yet adopted:
-
-
- ```json
- [
-  {
-    "templateId": 213928,
-    "fields": [
-      {"System.Title": "Technical specification"},
-      {"Custom.Project": "CC000_000A01"},
-      {"System.Tags": "Customer Document"},
-      {"System.AreaPath": "#{targetProject}#\\TPL"}
-    ]
-  },
-  {
-    "templateId": 213928,
-    "fields": [
-      {"System.Title": "Technical specification"},
-      {"Custom.Project": "CC000_000A02"},
-      {"System.Tags": "Technical specification"},
-      {"System.AreaPath": "#{targetProject}#\\TPL"}
-    ]
-  },
-  }
 ]
 ```
 

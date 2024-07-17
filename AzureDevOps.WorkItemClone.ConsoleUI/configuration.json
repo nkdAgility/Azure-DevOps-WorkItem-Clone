@@ -8,5 +8,9 @@
   "templateAccessToken": null,
   "templateOrganization": "ABB-MO-ATE",
   "templateProject": "ABB Traction Template",
-  "templateParentId": 212315
+  "templateParentId": 212315,
+  "targetQuery": "SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AreaPath],[System.AssignedTo],[System.State] FROM workitems WHERE [System.Parent] = @projectID",
+  "targetQueryTitle": "Project-@RunName - @projectTitle",
+  "targetQueryFolder": "Shared Queries"
+
 }
