@@ -9,6 +9,7 @@ using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.VisualStudio.Services.CircuitBreaker;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.Eventing.Reader;
+using AzureDevOps.WorkItemClone.Repositories;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -86,7 +87,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  }
 
                  task1.MaxValue = 1;
-                 List<WorkItemFull> templateWorkItems = null;
+                 CashedWorkItems templateWorkItems = null;
 
 
 
@@ -95,12 +96,11 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
                  if (System.IO.File.Exists(cacheTemplateWorkItemsFile))
                  {
-
-                     var changedDate = System.IO.File.GetLastWriteTime(cacheTemplateWorkItemsFile).AddDays(1).Date;
-                     //Test Cache
-                     QueryResults fakeItemsFromTemplateQuery;
-                     fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id AND [System.ChangedDate] > '@changeddate' order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() }, { "@changeddate", changedDate.ToString("yyyy-MM-dd") } });
-                     if (fakeItemsFromTemplateQuery.workItems.Length == 0)
+                     // load Cache
+                     templateWorkItems = JsonConvert.DeserializeObject<CashedWorkItems>(System.IO.File.ReadAllText(cacheTemplateWorkItemsFile));
+                     //Test Cache date
+                     QueryResults changedWorkItems = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id AND [System.ChangedDate] > '@changeddate' order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() }, { "@changeddate", templateWorkItems.queryDatetime.AddDays(-1).ToString("yyyy-MM-dd") } });
+                     if (changedWorkItems.workItems.Length == 0)
                      {
                          AnsiConsole.WriteLine($"Stage 1: Checked template for changes. None Detected. Loading Cache");
 
@@ -111,10 +111,12 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                          await Task.Delay(250);
                          task1.StopTask();
                          //////////////////////
-                         templateWorkItems = JsonConvert.DeserializeObject<List<WorkItemFull>>(System.IO.File.ReadAllText(cacheTemplateWorkItemsFile));
-                         task2.Increment(templateWorkItems.Count);
+                         task2.Increment(templateWorkItems.workitems.Count());
                          task2.Description = task2.Description + " (cache)";
-                         AnsiConsole.WriteLine($"Stage 2: Loaded {templateWorkItems.Count()} work items from cache.");
+                         AnsiConsole.WriteLine($"Stage 2: Loaded {templateWorkItems.workitems.Count()} work items from cache.");
+                     } else
+                     {
+                         templateWorkItems = null;
                      }
                  }
 
@@ -126,23 +128,24 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      task1.StartTask();
 
                      //AnsiConsole.WriteLine("Stage 1: Executing items from Query");
-                     QueryResults fakeItemsFromTemplateQuery;
-                     fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() } });
-                     AnsiConsole.WriteLine($"Stage 1: Query returned {fakeItemsFromTemplateQuery.workItems.Count()} items id's from the template.");
+                     QueryResults templateWorkItemLight;
+                     DateTime queryDatetime = DateTime.Now;
+                     templateWorkItemLight = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() } });
+                     AnsiConsole.WriteLine($"Stage 1: Query returned {templateWorkItemLight.workItems.Count()} items id's from the template.");
                      task1.Increment(1);
                      task1.StopTask();
                      // --------------------------------------------------------------
                      // Task 2: getting work items and their full data
-                     task2.MaxValue = fakeItemsFromTemplateQuery.workItems.Count();
+                     task2.MaxValue = templateWorkItemLight.workItems.Count();
                      task2.StartTask();
                      await Task.Delay(250);
                      //AnsiConsole.WriteLine($"Stage 2: Starting process of {task2.MaxValue} work items to get their full data ");
-                     templateWorkItems = new List<WorkItemFull>();
+                     templateWorkItems.workitems = new List<WorkItemFull>();
                      //AnsiConsole.WriteLine($"Stage 2: Loading {fakeItemsFromTemplateQuery.workItems.Count()} work items from template.");
-                     await foreach (var workItem in templateApi.GetWorkItemsFullAsync(fakeItemsFromTemplateQuery.workItems))
+                     await foreach (var workItem in templateApi.GetWorkItemsFullAsync(templateWorkItemLight.workItems))
                      {
                          //AnsiConsole.WriteLine($"Stage 2: Processing  {workItem.id}:`{workItem.fields.SystemTitle}`");
-                         templateWorkItems.Add(workItem);
+                         templateWorkItems.workitems.Add(workItem);
                          task2.Increment(1);
                      }
                      System.IO.File.WriteAllText(cacheTemplateWorkItemsFile, JsonConvert.SerializeObject(templateWorkItems, Formatting.Indented));
@@ -206,7 +209,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      await Task.Delay(250);
                      //AnsiConsole.WriteLine($"Stage 4: First Pass generation of Work Items to build will merge the provided json work items with the data from the template.");
                      buildItems = new List<WorkItemToBuild>();
-                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(inputWorkItems, templateWorkItems, projectItem, config.targetProject))
+                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(inputWorkItems, templateWorkItems.workitems, projectItem, config.targetProject))
                      {
                          // AnsiConsole.WriteLine($"Stage 4: processing {witb.guid}");
                          buildItems.Add(witb);
@@ -221,7 +224,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      //AnsiConsole.WriteLine($"Stage 5: Second Pass generate relations.");
                      task5.StartTask();
                      await Task.Delay(250);
-                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildRelations(buildItems, templateWorkItems))
+                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildRelations(buildItems, templateWorkItems.workitems))
                      {
                          //AnsiConsole.WriteLine($"Stage 5: processing {witb.guid} for output of {witb.relations.Count-1} relations");
                          task5.Increment(1);
