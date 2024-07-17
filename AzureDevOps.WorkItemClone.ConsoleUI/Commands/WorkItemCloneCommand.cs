@@ -234,7 +234,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      { "@projectTags", projectItem.fields.SystemTags },
                      { "@RunName", config.RunName }
                  };
-                 var query = await targetApi.CreateProjectQuery(config.targetQueryTitle, config.targetQuery, queryParameters);
+                 var query = await targetApi.CreateProjectQuery(config.targetQueryTitle, config.targetQueryFolder, config.targetQuery, queryParameters);
                  task7.Increment(1);
                  task7.StopTask();
 

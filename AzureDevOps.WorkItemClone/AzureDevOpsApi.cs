@@ -247,7 +247,7 @@ namespace AzureDevOps.WorkItemClone
             return new(Task.Delay(TimeSpan.FromSeconds(1)));
         }
 
-        public async Task<Query> CreateProjectQuery(string queryName, string wiqlQuery, Dictionary<string, string> parameters)
+        public async Task<Query> CreateProjectQuery(string queryName, string folder, string wiqlQuery, Dictionary<string, string> parameters)
         {
             ///POST https://dev.azure.com/{organization}/{project}/_apis/wit/queries/{query}?api-version=7.1-preview.2
             wiqlQuery = GetQueryString(wiqlQuery, parameters);
@@ -256,10 +256,10 @@ namespace AzureDevOps.WorkItemClone
             {
                 isFolder = false,
                 name = queryName,
-                path = $"Shared Queries/{queryName}",
+                path = $"{folder}/{queryName}",
                 wiql = wiqlQuery
             });
-            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/queries/Shared Queries/?api-version=7.2-preview.2";
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/queries/{folder}/?api-version=7.2-preview.2";
             var result = await GetObjectResult<Query>(apiCallUrl, post);
             return result.result;
         }
