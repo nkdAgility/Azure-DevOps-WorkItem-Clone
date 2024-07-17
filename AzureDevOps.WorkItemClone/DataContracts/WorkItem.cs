@@ -7,7 +7,12 @@ using System.Threading.Tasks;
 
 namespace AzureDevOps.WorkItemClone.DataContracts
 {
+    public class CashedWorkItems
+    {
 
+        public List<WorkItemFull> workitems { get; set; }
+        public DateTime queryDatetime { get; set; }
+    }
 
     public class WorkItemFull
     {
