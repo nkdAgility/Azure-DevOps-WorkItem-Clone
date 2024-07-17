@@ -6,7 +6,7 @@
     },
     "Clone": {
       "commandName": "Project",
-      "commandLineArgs": "clone --configFormat YAML --cachePath ..\\..\\..\\..\\..\\.cache\\ --configFile ..\\..\\..\\..\\..\\.cache\\configuration-test.yaml --jsonFile ..\\..\\..\\..\\..\\TestData\\tst_jsonj_export_v20.json --NonInteractive "
+      "commandLineArgs": "clone --cachePath ..\\..\\..\\..\\..\\.cache\\ --configFile ..\\..\\..\\..\\..\\.cache\\configuration-test.yaml --jsonFile ..\\..\\..\\..\\..\\TestData\\tst_jsonj_export_v20.json --NonInteractive "
     },
     "empty": {
       "commandName": "Project"
@@ -18,6 +18,10 @@
     "--help": {
       "commandName": "Project",
       "commandLineArgs": "clone --help"
+    },
+    "Clone YAML": {
+      "commandName": "Project",
+      "commandLineArgs": "clone --configFormat YAML --cachePath ..\\..\\..\\..\\..\\.cache\\ --configFile ..\\..\\..\\..\\..\\.cache\\configuration-test.yaml --jsonFile ..\\..\\..\\..\\..\\TestData\\tst_jsonj_export_v20.json --NonInteractive "
     }
   }
 }
