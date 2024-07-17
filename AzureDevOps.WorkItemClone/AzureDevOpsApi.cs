@@ -52,6 +52,18 @@ namespace AzureDevOps.WorkItemClone
 
         public async Task<QueryResults?> GetWiqlQueryResults(string wiqlQuery, Dictionary<string, string> parameters)
         {
+           wiqlQuery =  GetQueryString(wiqlQuery, parameters);
+            string post = JsonConvert.SerializeObject(new
+            {
+                query = wiqlQuery
+            });
+            string apiCallUrl = $"https://dev.azure.com/{_account}/_apis/wit/wiql?api-version=7.2-preview.2";
+            var result = await GetObjectResult<QueryResults>(apiCallUrl, post);
+            return result.result;
+        }
+
+        private string GetQueryString( string wiqlQuery,  Dictionary<string, string> parameters)
+        {
             if (parameters == null)
             {
                 parameters = new Dictionary<string, string>();
@@ -64,18 +76,22 @@ namespace AzureDevOps.WorkItemClone
             {
                 wiqlQuery = "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.TeamProject] = '@project' order by [System.CreatedDate] desc";
             }
+            wiqlQuery = ReplaceParamsInString(wiqlQuery, parameters);
+            return wiqlQuery;
+        }
+        private string ReplaceParamsInString(string text, Dictionary<string, string> parameters)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                text = "Default";
+            }
             foreach (var param in parameters)
             {
-                wiqlQuery = wiqlQuery.Replace(param.Key, param.Value);
+                text = text.Replace(param.Key, param.Value);
             }
-            string post = JsonConvert.SerializeObject(new
-            {
-                query = wiqlQuery
-            });
-            string apiCallUrl = $"https://dev.azure.com/{_account}/_apis/wit/wiql?api-version=7.2-preview.2";
-            var result = await GetObjectResult<QueryResults>(apiCallUrl, post);
-            return result.result;
+            return text;
         }
+
 
         public async Task<QueryResults?> GetWiqlQueryResults()
         {
@@ -229,6 +245,23 @@ namespace AzureDevOps.WorkItemClone
         public ValueTask DisposeAsync()
         {
             return new(Task.Delay(TimeSpan.FromSeconds(1)));
+        }
+
+        public async Task<Query> CreateProjectQuery(string queryName, string wiqlQuery, Dictionary<string, string> parameters)
+        {
+            ///POST https://dev.azure.com/{organization}/{project}/_apis/wit/queries/{query}?api-version=7.1-preview.2
+            wiqlQuery = GetQueryString(wiqlQuery, parameters);
+            queryName = ReplaceParamsInString(queryName, parameters);
+            string post = JsonConvert.SerializeObject(new
+            {
+                isFolder = false,
+                name = queryName,
+                path = $"Shared Queries/{queryName}",
+                wiql = wiqlQuery
+            });
+            string apiCallUrl = $"https://dev.azure.com/{_account}/{_project}/_apis/wit/queries/Shared Queries/?api-version=7.2-preview.2";
+            var result = await GetObjectResult<Query>(apiCallUrl, post);
+            return result.result;
         }
     }
 

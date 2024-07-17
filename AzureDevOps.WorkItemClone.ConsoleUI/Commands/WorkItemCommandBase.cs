@@ -37,6 +37,9 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             config.targetParentId = EnsureIntAskIfMissing(config.targetParentId = settings.targetParentId != null ? settings.targetParentId : config.targetParentId, "Provide the target parent?");
             config.targetFalbackWit = EnsureStringAskIfMissing(config.targetFalbackWit = settings.targetFalbackWit != null ? settings.targetFalbackWit : config.targetFalbackWit, "Provide the target fallback wit?");
 
+            config.targetQueryTitle = EnsureStringAskIfMissing(config.targetQueryTitle = settings.targetQueryTitle != null ? settings.targetQueryTitle : config.targetQueryTitle, "Provide the target query title?");
+            config.targetQueryFolder = EnsureStringAskIfMissing(config.targetQueryFolder = settings.targetQueryFolder != null ? settings.targetQueryFolder : config.targetQueryFolder, "Provide the target query folder?");
+            config.targetQuery = EnsureStringAskIfMissing(config.targetQuery = settings.targetQuery != null ? settings.targetQuery : config.targetQuery, "Provide the target WIQL query?");
         }
 
 
