@@ -9,6 +9,7 @@ using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.VisualStudio.Services.CircuitBreaker;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.Eventing.Reader;
+using AzureDevOps.WorkItemClone.Repositories;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -30,8 +31,6 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             AnsiConsole.MarkupLine($"[red]Run: [/] {config.RunName}");
             string runCache = $"{config.CachePath}\\{config.RunName}";
             DirectoryInfo outputPathInfo = CreateOutputPath(runCache);
-
-            AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(config.templateAccessToken, config.templateOrganization, config.templateProject);
             AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(config.targetAccessToken, config.targetOrganization, config.targetProject);
 
             JArray inputWorkItems = DeserializeWorkItemList(config);
@@ -70,8 +69,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
              .StartAsync(async ctx =>
              {
                  // Define tasks
-                 var task1 = ctx.AddTask("[bold]Stage 1[/]: Get Template Items", false);
-                 var task2 = ctx.AddTask("[bold]Stage 2[/]: Load Template Items", false);
+                 var task1 = ctx.AddTask("[bold]Stage 1+2[/]: Load Template Items", false);
                  var task3 = ctx.AddTask("[bold]Stage 3[/]: Get Target Project", false);
                  var task4 = ctx.AddTask("[bold]Stage 4[/]: Create Output Plan", false);
                  var task5 = ctx.AddTask("[bold]Stage 5[/]: Create Output Plan Relations ", false);
@@ -85,72 +83,21 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      System.IO.File.Delete(cacheTemplateWorkItemsFile);
                  }
 
-                 task1.MaxValue = 1;
-                 List<WorkItemFull> templateWorkItems = null;
-
-
-
                  task1.StartTask();
-                 task2.StartTask();
-
-                 if (System.IO.File.Exists(cacheTemplateWorkItemsFile))
+                 IWorkItemRepository templateWor = new WorkItemRepository(config.CachePath, config.templateOrganization, config.templateProject, config.templateAccessToken, (int)config.templateParentId);
+                 await foreach (var result in templateWor.GetWorkItemsFullAsync())
                  {
-
-                     var changedDate = System.IO.File.GetLastWriteTime(cacheTemplateWorkItemsFile).AddDays(1).Date;
-                     //Test Cache
-                     QueryResults fakeItemsFromTemplateQuery;
-                     fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id AND [System.ChangedDate] > '@changeddate' order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() }, { "@changeddate", changedDate.ToString("yyyy-MM-dd") } });
-                     if (fakeItemsFromTemplateQuery.workItems.Length == 0)
+                     //AnsiConsole.WriteLine($"Stage 2: Processing  {workItem.id}:`{workItem.fields.SystemTitle}`");
+                     task1.MaxValue = result.total;
+                     if (result.total == result.processed)
                      {
-                         AnsiConsole.WriteLine($"Stage 1: Checked template for changes. None Detected. Loading Cache");
-
-                         // Load from Cache
-
-                         task1.Increment(1);
-                         task1.Description = task1.Description + " (cache)";
+                         task1.Increment(result.processed);
                          await Task.Delay(250);
-                         task1.StopTask();
-                         //////////////////////
-                         templateWorkItems = JsonConvert.DeserializeObject<List<WorkItemFull>>(System.IO.File.ReadAllText(cacheTemplateWorkItemsFile));
-                         task2.Increment(templateWorkItems.Count);
-                         task2.Description = task2.Description + " (cache)";
-                         AnsiConsole.WriteLine($"Stage 2: Loaded {templateWorkItems.Count()} work items from cache.");
                      }
-                 }
-
-                 if (templateWorkItems == null)
-                 {
-                     // Get From Server
-                     // --------------------------------------------------------------
-                     // Task 1: query for template work items
-                     task1.StartTask();
-
-                     //AnsiConsole.WriteLine("Stage 1: Executing items from Query");
-                     QueryResults fakeItemsFromTemplateQuery;
-                     fakeItemsFromTemplateQuery = await templateApi.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", config.templateParentId.ToString() } });
-                     AnsiConsole.WriteLine($"Stage 1: Query returned {fakeItemsFromTemplateQuery.workItems.Count()} items id's from the template.");
+                     task1.Description = $"[bold]Stage 1[/]: Load Template Items ({result.loadingFrom})";
                      task1.Increment(1);
-                     task1.StopTask();
-                     // --------------------------------------------------------------
-                     // Task 2: getting work items and their full data
-                     task2.MaxValue = fakeItemsFromTemplateQuery.workItems.Count();
-                     task2.StartTask();
-                     await Task.Delay(250);
-                     //AnsiConsole.WriteLine($"Stage 2: Starting process of {task2.MaxValue} work items to get their full data ");
-                     templateWorkItems = new List<WorkItemFull>();
-                     //AnsiConsole.WriteLine($"Stage 2: Loading {fakeItemsFromTemplateQuery.workItems.Count()} work items from template.");
-                     await foreach (var workItem in templateApi.GetWorkItemsFullAsync(fakeItemsFromTemplateQuery.workItems))
-                     {
-                         //AnsiConsole.WriteLine($"Stage 2: Processing  {workItem.id}:`{workItem.fields.SystemTitle}`");
-                         templateWorkItems.Add(workItem);
-                         task2.Increment(1);
-                     }
-                     System.IO.File.WriteAllText(cacheTemplateWorkItemsFile, JsonConvert.SerializeObject(templateWorkItems, Formatting.Indented));
-                     //AnsiConsole.WriteLine($"Stage 2: All {task2.MaxValue} work items loaded");
-                     await Task.Delay(250);
-                     task2.StopTask();
                  }
-                 await Task.Delay(250);
+                 task1.StopTask();
 
                  // --------------------------------------------------------------
                  string targetProjectRunFile = $"{runCache}\\targetProject.json";
@@ -206,7 +153,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      await Task.Delay(250);
                      //AnsiConsole.WriteLine($"Stage 4: First Pass generation of Work Items to build will merge the provided json work items with the data from the template.");
                      buildItems = new List<WorkItemToBuild>();
-                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(inputWorkItems, templateWorkItems, projectItem, config.targetProject))
+                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(inputWorkItems, templateWor.Data.workitems, projectItem, config.targetProject))
                      {
                          // AnsiConsole.WriteLine($"Stage 4: processing {witb.guid}");
                          buildItems.Add(witb);
@@ -221,7 +168,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      //AnsiConsole.WriteLine($"Stage 5: Second Pass generate relations.");
                      task5.StartTask();
                      await Task.Delay(250);
-                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildRelations(buildItems, templateWorkItems))
+                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildRelations(buildItems, templateWor.Data.workitems))
                      {
                          //AnsiConsole.WriteLine($"Stage 5: processing {witb.guid} for output of {witb.relations.Count-1} relations");
                          task5.Increment(1);
@@ -252,7 +199,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      //AnsiConsole.WriteLine($"Stage 6: Processing {witb.guid} for output of {witb.relations.Count - 1} relations");
                      task6.Increment(1);
                      taskCount++;
-                     task6.Description = $"[bold]Stage 6[/]: Create Work Items ({taskCount}/{buildItems.Count()} c:{result.created}, s:{result.skipped}, f:{result.failed})";
+                     task6.Description = $"[bold]Stage 6[/]: Create Work Items ({taskCount-1}/{buildItems.Count()} c:{result.created}, s:{result.skipped}, f:{result.failed})";
                      switch (result.status)
                      {
                          case "created":
