@@ -34,9 +34,19 @@ Clones work items from a template project to a target project incorproating a JS
  - `--targetOrganization` - The name of the organisation to clone work items to.
  - `--targetProject` - The name of the prject to clone work items to.
  - `--targetParentId` - All cloned work items will be come a child of this work item
+
+ *Target Query* - The target query is used to create a query in the target project to show the cloned work items.
+
  - `--targetQuery` - The query to create in the target project. Default is `SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AreaPath],[System.AssignedTo],[System.State] FROM workitems WHERE [System.Parent] = @projectID`.
  - `--targetQueryTitle` - The title of the query to create in the target project. Default is `Project-@RunName - @projectTitle`.
  - `--targetQueryFolder` - The folder to create the query in the target project. Default is `Shared Queries`.
+
+ You can use the following parameters:
+ 
+ - *@projectID* - The ID of the target parent item
+ - *@projectTitle* - The title of the parent item
+ - *@projectTags* - the tags of the item
+ - *@RunName* - The name of the run
 
  *Optional Parameters* - These are optional parameters that can be used to control the behaviour of the clone process.
 
