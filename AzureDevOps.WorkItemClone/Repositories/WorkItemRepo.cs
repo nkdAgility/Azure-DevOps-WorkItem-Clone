@@ -11,12 +11,8 @@ namespace AzureDevOps.WorkItemClone.Repositories
 {
     public interface IWorkItemRepository
     {
-        IAsyncEnumerable<(int total, int processed)> GetWorkItemsFullAsync();
-        //Task<WorkItemFull> GetWorkItemByIdAsync(int id);
-        //Task<IEnumerable<WorkItemFull>> GetAllWorkItemAsync();
-        //Task AddWorkItemAsync(WorkItemFull wif);
-        //Task UpdateWorkItemAsync(WorkItemFull wif);
-        //Task DeleteWorkItemAsync(int id);
+        CashedWorkItems Data {get;}
+        IAsyncEnumerable<(int total, int processed, string loadingFrom)> GetWorkItemsFullAsync();
     }
     public interface IPersistantCache
     {
@@ -29,15 +25,15 @@ namespace AzureDevOps.WorkItemClone.Repositories
         public string OrganisationName { get; private set; }
         public string ProjectName { get; private set; }
         private string AccesToken {  get;  set; }
-        public string ParentId { get; private set; }
+        public int ParentId { get; private set; }
 
         private AzureDevOpsApi _context;
         private string cacheWorkItemsFile;
-        public CashedWorkItems WorkItems { get { return cachedWorkItems; } }
+        public CashedWorkItems Data { get { return cachedWorkItems; } }
 
         CashedWorkItems cachedWorkItems = null;
 
-        public WorkItemRepository(string cachePath, string organisationName, string projectName, string accessToken, string parentId)
+        public WorkItemRepository(string cachePath, string organisationName, string projectName, string accessToken, int parentId)
         {
             if (string.IsNullOrEmpty(organisationName))
             {
@@ -54,17 +50,17 @@ namespace AzureDevOps.WorkItemClone.Repositories
                 throw new ArgumentNullException(nameof(accessToken));
             }
             this.AccesToken = accessToken;
-            if (string.IsNullOrEmpty(ParentId))
+            if (parentId == 0)
             {
                 throw new ArgumentNullException(nameof(parentId));
             }
             this.ParentId = parentId;
-            _context = new AzureDevOpsApi(organisationName, projectName, accessToken);
+            _context = new AzureDevOpsApi(accessToken, organisationName, projectName);
             cacheWorkItemsFile = $"{cachePath}\\cache-{organisationName}-{projectName}-{ParentId}.json";
         }
 
 
-        public async IAsyncEnumerable<(int total, int processed)> GetWorkItemsFullAsync()
+        public async IAsyncEnumerable<(int total, int processed, string loadingFrom)> GetWorkItemsFullAsync()
         {
             if (System.IO.File.Exists(cacheWorkItemsFile))
             {
@@ -80,10 +76,10 @@ namespace AzureDevOps.WorkItemClone.Repositories
                 if (cachedWorkItems != null)
                 {
                     //Test Cache date
-                    QueryResults? changedWorkItems = await _context.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id AND [System.ChangedDate] > '@changeddate' order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", ParentId }, { "@changeddate", cachedWorkItems.queryDatetime.AddDays(-1).ToString("yyyy-MM-dd") } });
+                    QueryResults? changedWorkItems = await _context.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id AND [System.ChangedDate] > '@changeddate' order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", ParentId.ToString() }, { "@changeddate", cachedWorkItems.queryDatetime.AddDays(-1).ToString("yyyy-MM-dd") } });
                     if (changedWorkItems?.workItems.Length == 0)
                     {
-                        yield return (cachedWorkItems.workitems.Count(), cachedWorkItems.workitems.Count());
+                        yield return (cachedWorkItems.workitems.Count(), cachedWorkItems.workitems.Count(), "cache");
                     }
                     else
                     {
@@ -93,9 +89,10 @@ namespace AzureDevOps.WorkItemClone.Repositories
             }
             if (cachedWorkItems == null)
             {
-                cachedWorkItems = new CashedWorkItems() { queryDatetime = DateTime.Now, workitems = new List<WorkItemFull>() };
+                
                 QueryResults? templateWorkItemLight;
                 templateWorkItemLight = await _context.GetWiqlQueryResults("Select [System.Id] From WorkItems Where [System.TeamProject] = '@project' AND [System.Parent] = @id order by [System.CreatedDate] desc", new Dictionary<string, string>() { { "@id", ParentId.ToString() } });
+                cachedWorkItems = new CashedWorkItems() { queryDatetime = templateWorkItemLight.asOf, workitems = new List<WorkItemFull>() };
                 int count = 1;
                 foreach (var item in templateWorkItemLight?.workItems)
                 {
@@ -104,7 +101,7 @@ namespace AzureDevOps.WorkItemClone.Repositories
                     {
                         cachedWorkItems.workitems.Add(result);
                     }
-                    yield return (cachedWorkItems.workitems.Count(), count);
+                    yield return (templateWorkItemLight.workItems.Count(), count, "server");
                     count++;
                 }
                 System.IO.File.WriteAllText(cacheWorkItemsFile, JsonConvert.SerializeObject(cachedWorkItems, Formatting.Indented));
