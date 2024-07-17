@@ -95,6 +95,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  task1.StartTask();
                  task2.StartTask();
 
+
                  if (System.IO.File.Exists(cacheTemplateWorkItemsFile))
                  {
                      // load Cache
