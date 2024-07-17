@@ -46,17 +46,14 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 
         [Description("The WIQL Query to use. You can use @projectID, @projectTitle, @projectTags to replace data from the project!")]
         [CommandOption("--targetQuery")]
-        [DefaultValue("SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AreaPath],[System.AssignedTo],[System.State] FROM workitems WHERE [System.Parent] = @projectID")]
         public string? targetQuery { get; set; }
 
         [Description("The title to use for the query. You can use @projectID, @projectTitle, @projectTags, @RunName to replace data from the project!")]
         [CommandOption("--targetQueryTitle")]
-        [DefaultValue("Project-@RunName - @projectTitle")]
         public string? targetQueryTitle { get; set; }
 
         [Description("Must already Exist and be in the form 'Shared Queries/Folder1/Folder2'!")]
         [CommandOption("--targetQueryFolder")]
-        [DefaultValue("Shared Queries")]
         public string? targetQueryFolder { get; set; }
 
         //------------------------------------------------
