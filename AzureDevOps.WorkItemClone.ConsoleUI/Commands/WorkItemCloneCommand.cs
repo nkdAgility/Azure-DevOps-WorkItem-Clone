@@ -31,8 +31,6 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             AnsiConsole.MarkupLine($"[red]Run: [/] {config.RunName}");
             string runCache = $"{config.CachePath}\\{config.RunName}";
             DirectoryInfo outputPathInfo = CreateOutputPath(runCache);
-
-            AzureDevOpsApi templateApi = CreateAzureDevOpsConnection(config.templateAccessToken, config.templateOrganization, config.templateProject);
             AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(config.targetAccessToken, config.targetOrganization, config.targetProject);
 
             JArray inputWorkItems = DeserializeWorkItemList(config);
