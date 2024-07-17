@@ -30,6 +30,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
     <PackageReference Include="Spectre.Console.ImageSharp" Version="0.49.1" />
+    <PackageReference Include="YamlDotNet" Version="16.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +40,9 @@
   <ItemGroup>
     <None Update="configuration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="configuration.yaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Resources\ADO_TESTProjPipline_V03.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

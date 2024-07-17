@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics.Eventing.Reader;
 using AzureDevOps.WorkItemClone.Repositories;
+using YamlDotNet.Serialization;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -18,10 +19,15 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
     {
         public override async Task<int> ExecuteAsync(CommandContext context, WorkItemCloneCommandSettings settingsFromCmd)
         {
-            WorkItemCloneCommandSettings config = null;
-            if (File.Exists(settingsFromCmd.configFile))
+            if (!FileStoreCheckExtensionMatchesFormat(settingsFromCmd.configFile, settingsFromCmd.ConfigFormat))
             {
-                config = LoadWorkItemCloneCommandSettingsFromFile(settingsFromCmd.configFile);
+                AnsiConsole.MarkupLine($"[bold red]The file extension of {settingsFromCmd.configFile} does not match the format {settingsFromCmd.ConfigFormat.ToString()} selected! Please rerun with the correct format You can use --configFormat JSON or update your file to YAML[/]");
+                return -1;
+            }
+            WorkItemCloneCommandSettings config = null;
+            if (FileStoreExist(settingsFromCmd.configFile, settingsFromCmd.ConfigFormat))
+            {
+                config = FileStoreLoad<WorkItemCloneCommandSettings>(settingsFromCmd.configFile, settingsFromCmd.ConfigFormat);
             }
             if (config == null)
             {

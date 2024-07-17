@@ -12,5 +12,4 @@
   "targetQuery": "SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AreaPath],[System.AssignedTo],[System.State] FROM workitems WHERE [System.Parent] = @projectID",
   "targetQueryTitle": "Project-@RunName - @projectTitle",
   "targetQueryFolder": "Shared Queries"
-
 }

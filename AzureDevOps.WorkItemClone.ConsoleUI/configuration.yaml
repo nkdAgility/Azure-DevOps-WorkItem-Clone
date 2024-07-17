@@ -1,0 +1,40 @@
+CachePath: "./cache"
+controlFile: "ADO_TESTProjPipline_V03.json"
+targetAccessToken": null
+targetOrganization": "nkdagility-preview"
+targetProject": "ABB-Demo"
+targetParentId": 540
+templateAccessToken": null
+templateOrganization": "ABB-MO-ATE"
+templateProject": "ABB Traction Template"
+templateParentId": 212315
+targetQuery": |
+    SELECT
+        [Custom.Product],
+        [System.Title],
+        [System.Description],
+        [Custom.DeadlineDate],
+        [System.AreaPath],
+        [System.AssignedTo],
+        [System.State],
+        [Custom.Notes],
+        [System.WorkItemType],
+        [Custom.TRA_Milestone]
+    FROM workitemLinks
+    WHERE
+        (
+            [Source].[System.Id] = 000000
+            OR [Source].[System.Parent] = 000000
+            OR [Source].[System.Tags] CONTAINS 'xxxx xxxx'
+        )
+        AND (
+            [System.Links.LinkType] = 'System.LinkTypes.Hierarchy-Forward'
+        )
+        AND (
+            [Target].[System.Parent] = 000000
+            OR [Target].[System.Tags] CONTAINS 'xxxx xxxx'
+        )
+    ORDER BY [Custom.DeadlineDate]
+    MODE (Recursive)
+targetQueryTitle": "Project-@RunName - @projectTitle"
+targetQueryFolder": "Shared Queries"

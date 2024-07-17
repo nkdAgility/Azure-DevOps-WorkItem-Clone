@@ -11,6 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization;
+using Microsoft.SqlServer.Server;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -23,7 +26,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             config.ClearCache = settings.ClearCache;
             config.RunName = settings.RunName != null ? settings.RunName : DateTime.Now.ToString("yyyyyMMddHHmmss");
             config.configFile = EnsureFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile, "Where is the config file to load?");
-            config.controlFile = EnsureFileAskIfMissing(config.controlFile = settings.controlFile != null ? settings.controlFile : config.controlFile, "Where is the JSON File?");
+            config.controlFile = EnsureFileAskIfMissing(config.controlFile = settings.controlFile != null ? settings.controlFile : config.controlFile, "Where is the Control File?");
             config.CachePath = EnsureFolderAskIfMissing(config.CachePath = settings.CachePath != null ? settings.CachePath : config.CachePath, "What is the cache path?");
 
             config.templateOrganization = EnsureStringAskIfMissing(config.templateOrganization = settings.templateOrganization != null ? settings.templateOrganization : config.templateOrganization, "What is the template organisation?");
@@ -137,16 +140,73 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         }
 
 
-        internal ConfigurationSettings LoadConfigFile(string? configFile)
+        public TypeToLoad FileStoreLoad<TypeToLoad>(string configFile, ConfigFormats format)
         {
-            ConfigurationSettings configSettings = System.Text.Json.JsonSerializer.Deserialize<ConfigurationSettings>(System.IO.File.ReadAllText(configFile));
-            return configSettings;
+            TypeToLoad loadedFromFile;
+            configFile = FileStoreEnsureExtension(configFile, format);
+            if (!System.IO.File.Exists(configFile))
+            {
+                AnsiConsole.MarkupLine("[red]Error:[/] No file was found.");
+                throw new Exception(configFile + " not found.");
+            }
+            string content = System.IO.File.ReadAllText(configFile);
+            switch (format)
+            {
+                case ConfigFormats.JSON:
+                    loadedFromFile = JsonConvert.DeserializeObject<TypeToLoad>(content);
+                    break;
+                case ConfigFormats.YAML:
+                    var deserializer = new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
+                    loadedFromFile = deserializer.Deserialize<TypeToLoad>(content); /* compile error */
+                    break;
+                default:
+                    throw new Exception("Unknown format");
+            }
+            return loadedFromFile;
         }
 
-  internal WorkItemCloneCommandSettings LoadWorkItemCloneCommandSettingsFromFile(string? configFile)
+        public bool FileStoreExist(string? configFile, ConfigFormats format)
         {
-            WorkItemCloneCommandSettings configSettings = System.Text.Json.JsonSerializer.Deserialize<WorkItemCloneCommandSettings>(System.IO.File.ReadAllText(configFile));
-            return configSettings;
+            return System.IO.File.Exists(FileStoreEnsureExtension(configFile, format));
+        }
+        public bool FileStoreCheckExtensionMatchesFormat(string? configFile, ConfigFormats format)
+        {
+            if (Path.GetExtension(configFile).ToLower() != $".{format.ToString().ToLower()}")
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public string FileStoreEnsureExtension(string? configFile, ConfigFormats format)
+        {
+            if (Path.GetExtension(configFile).ToLower() != $".{format.ToString().ToLower()}")
+            {
+                var original = configFile;
+                configFile = Path.ChangeExtension(configFile, format.ToString().ToLower());
+                AnsiConsole.MarkupLine($"[green]Info:[/] Changed name of {original} to {configFile} ");
+            }
+            return configFile;
+        }
+
+        public string FileStoreSave<TypeToSave>(string configFile, TypeToSave content , ConfigFormats format)
+        {
+            string output;
+            switch (format)
+            {
+                case ConfigFormats.JSON:
+                    output = JsonConvert.SerializeObject(content, Formatting.Indented);
+                    break;
+                case ConfigFormats.YAML:
+                    var serializer = new SerializerBuilder().Build();
+                    output =  serializer.Serialize(content);
+                    break;
+                default:
+                    throw new Exception("Unknown format");
+            }
+            configFile = FileStoreEnsureExtension(configFile, format);
+            System.IO.File.WriteAllText(configFile, output);
+            return output;
         }
 
         internal string EnsureFileAskIfMissing(string? filename, string message = "What file should we load?")
@@ -155,16 +215,11 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             {
 
                 filename = AnsiConsole.Prompt(
-                new TextPrompt<string>("Where is the config File?")
+                new TextPrompt<string>(message)
                     .Validate(configFile
-                        => !string.IsNullOrWhiteSpace(configFile) && System.IO.File.Exists(configFile)
+                        => !string.IsNullOrWhiteSpace(configFile)
                             ? ValidationResult.Success()
                             : ValidationResult.Error("[yellow]Invalid config file[/]")));
-            }
-            if (!System.IO.File.Exists(filename))
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No file was found.");
-                throw new Exception(filename + " not found.");
             }
             return filename;
         }
@@ -196,11 +251,6 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                         => !string.IsNullOrWhiteSpace(configFile)
                             ? ValidationResult.Success()
                             : ValidationResult.Error("[yellow]Invalid config file[/]")));
-            }
-            if (!System.IO.File.Exists(configFile))
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was found.");
-                throw new Exception(configFile + " not found.");
             }
             return configFile;
         }
