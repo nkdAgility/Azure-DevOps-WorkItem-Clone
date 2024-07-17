@@ -1,6 +1,6 @@
 {
   "CachePath": "./cache",
-  "inputJsonFile": "ADO_TESTProjPipline_V03.json",
+  "controlFile": "ADO_TESTProjPipline_V03.json",
   "targetAccessToken": null,
   "targetOrganization": "nkdagility-preview",
   "targetProject": "ABB-Demo",

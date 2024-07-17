@@ -23,7 +23,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             config.ClearCache = settings.ClearCache;
             config.RunName = settings.RunName != null ? settings.RunName : DateTime.Now.ToString("yyyyyMMddHHmmss");
             config.configFile = EnsureFileAskIfMissing(config.configFile = settings.configFile != null ? settings.configFile : config.configFile, "Where is the config file to load?");
-            config.inputJsonFile = EnsureFileAskIfMissing(config.inputJsonFile = settings.inputJsonFile != null ? settings.inputJsonFile : config.inputJsonFile, "Where is the JSON File?");
+            config.controlFile = EnsureFileAskIfMissing(config.controlFile = settings.controlFile != null ? settings.controlFile : config.controlFile, "Where is the JSON File?");
             config.CachePath = EnsureFolderAskIfMissing(config.CachePath = settings.CachePath != null ? settings.CachePath : config.CachePath, "What is the cache path?");
 
             config.templateOrganization = EnsureStringAskIfMissing(config.templateOrganization = settings.templateOrganization != null ? settings.templateOrganization : config.templateOrganization, "What is the template organisation?");
@@ -79,26 +79,26 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return configWorkItems;
         }
 
-        internal JArray DeserializeWorkItemList(WorkItemCloneCommandSettings config)
+        internal JArray DeserializeControlFile(WorkItemCloneCommandSettings config)
         {
            string CachedRunJson =  System.IO.Path.Combine(config.CachePath, config.RunName, "input.json");
             if (System.IO.File.Exists(CachedRunJson))
             {
                 // Load From Run Cache
-                config.inputJsonFile = CachedRunJson;
+                config.controlFile = CachedRunJson;
                 return DeserializeWorkItemList(CachedRunJson);
             } else
             {
                 // Load new
-                config.inputJsonFile = EnsureFileAskIfMissing(config.inputJsonFile, "Where is the JSON File?");
-                if (!System.IO.File.Exists(config.inputJsonFile))
+                config.controlFile = EnsureFileAskIfMissing(config.controlFile, "Where is the JSON File?");
+                if (!System.IO.File.Exists(config.controlFile))
                 {
                     AnsiConsole.MarkupLine("[red]Error:[/] No JSON file was found.");
-                    throw new Exception(config.inputJsonFile + " not found.");
+                    throw new Exception(config.controlFile + " not found.");
                 }
 
                 JArray inputWorkItems;
-                inputWorkItems= DeserializeWorkItemList(config.inputJsonFile);
+                inputWorkItems= DeserializeWorkItemList(config.controlFile);
                 System.IO.File.WriteAllText(CachedRunJson, JsonConvert.SerializeObject(inputWorkItems, Formatting.Indented));
                 return inputWorkItems;
             } 
@@ -216,7 +216,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                .AddEmptyRow()
                .AddRow("configFile", config.configFile != null ? config.configFile : "NOT SET")               
                .AddRow("CachePath",  config.CachePath != null ? config.CachePath : "NOT SET")
-               .AddRow("inputJsonFile", config.inputJsonFile != null ? config.inputJsonFile : "NOT SET")
+               .AddRow("controlFile", config.controlFile != null ? config.controlFile : "NOT SET")
                .AddEmptyRow()
                .AddRow( "templateAccessToken", "***************")
                .AddRow("templateOrganization", config.templateOrganization != null ? config.templateOrganization : "NOT SET")
