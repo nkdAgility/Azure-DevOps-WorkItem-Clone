@@ -64,7 +64,6 @@ Clones work items from a template project to a target project incorproating a JS
  ```
 
 
-
  ### `init`
 
  Leads you through the process of creating a configuration file.
