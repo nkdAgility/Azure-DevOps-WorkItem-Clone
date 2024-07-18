@@ -228,7 +228,11 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                .AddRow("targetProject", config.targetProject != null ? config.targetProject : "NOT SET")
                .AddRow("targetParentId", config.targetParentId != null ? config.targetParentId.ToString() : "NOT SET")
                .AddRow("targetFalbackWit", config.targetFalbackWit != null ? config.targetFalbackWit : "NOT SET")
-               
+               .AddEmptyRow()
+               .AddRow("targetQueryTitle", config.targetQueryTitle != null ? config.targetQueryTitle : "NOT SET")
+               .AddRow("targetQueryFolder", config.targetQueryFolder != null ? config.targetQueryFolder : "NOT SET")
+               .AddRow("targetQuery", config.targetQuery != null ? config.targetQuery.Replace("]", "]]").Replace("[", "[[") : "NOT SET")
+
                 );
         }
 

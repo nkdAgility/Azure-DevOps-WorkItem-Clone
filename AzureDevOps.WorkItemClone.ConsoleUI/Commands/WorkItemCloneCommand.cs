@@ -96,7 +96,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                          task1.Increment(result.processed);
                          await Task.Delay(250);
                      }
-                     task1.Description = $"[bold]Stage 1[/]: Load Template Items ({result.loadingFrom})";
+                     task1.Description = $"[bold]Stage 1+2[/]: Load Template Items ({result.loadingFrom})";
                      task1.Increment(1);
                  }
                  task1.StopTask();
