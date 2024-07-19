@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics.Eventing.Reader;
 using AzureDevOps.WorkItemClone.Repositories;
+using YamlDotNet.Serialization;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -18,10 +19,15 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
     {
         public override async Task<int> ExecuteAsync(CommandContext context, WorkItemCloneCommandSettings settingsFromCmd)
         {
-            WorkItemCloneCommandSettings config = null;
-            if (File.Exists(settingsFromCmd.configFile))
+            if (!FileStoreCheckExtensionMatchesFormat(settingsFromCmd.configFile, settingsFromCmd.ConfigFormat))
             {
-                config = LoadWorkItemCloneCommandSettingsFromFile(settingsFromCmd.configFile);
+                AnsiConsole.MarkupLine($"[bold red]The file extension of {settingsFromCmd.configFile} does not match the format {settingsFromCmd.ConfigFormat.ToString()} selected! Please rerun with the correct format You can use --configFormat JSON or update your file to YAML[/]");
+                return -1;
+            }
+            WorkItemCloneCommandSettings config = null;
+            if (FileStoreExist(settingsFromCmd.configFile, settingsFromCmd.ConfigFormat))
+            {
+                config = FileStoreLoad<WorkItemCloneCommandSettings>(settingsFromCmd.configFile, settingsFromCmd.ConfigFormat);
             }
             if (config == null)
             {
@@ -34,7 +40,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             DirectoryInfo outputPathInfo = CreateOutputPath(runCache);
             AzureDevOpsApi targetApi = CreateAzureDevOpsConnection(config.targetAccessToken, config.targetOrganization, config.targetProject);
 
-            JArray inputWorkItems = DeserializeWorkItemList(config);
+            JArray workItemControlList = DeserializeControlFile(config);
 
             // --------------------------------------------------------------
             WriteOutSettings(config);
@@ -150,12 +156,12 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  else
                  {
                      // Task 4: First Pass generation of Work Items to build
-                     task4.MaxValue = inputWorkItems.Count();
+                     task4.MaxValue = workItemControlList.Count();
                      task4.StartTask();
                      await Task.Delay(250);
                      //AnsiConsole.WriteLine($"Stage 4: First Pass generation of Work Items to build will merge the provided json work items with the data from the template.");
                      buildItems = new List<WorkItemToBuild>();
-                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(inputWorkItems, templateWor.Data.workitems, projectItem, config.targetProject))
+                     await foreach (WorkItemToBuild witb in generateWorkItemsToBuildList(workItemControlList, templateWor.Data.workitems, projectItem, config.targetProject))
                      {
                          // AnsiConsole.WriteLine($"Stage 4: processing {witb.guid}");
                          buildItems.Add(witb);
@@ -166,7 +172,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                      //AnsiConsole.WriteLine($"Stage 4: Completed first pass.");
                      // --------------------------------------------------------------
                      // Task 5: Second Pass Add Relations
-                     task5.MaxValue = inputWorkItems.Count();
+                     task5.MaxValue = workItemControlList.Count();
                      //AnsiConsole.WriteLine($"Stage 5: Second Pass generate relations.");
                      task5.StartTask();
                      await Task.Delay(250);

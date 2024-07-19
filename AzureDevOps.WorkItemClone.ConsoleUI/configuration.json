@@ -1,6 +1,6 @@
 {
   "CachePath": "./cache",
-  "inputJsonFile": "ADO_TESTProjPipline_V03.json",
+  "controlFile": "ADO_TESTProjPipline_V03.json",
   "targetAccessToken": null,
   "targetOrganization": "nkdagility-preview",
   "targetProject": "ABB-Demo",
@@ -12,5 +12,4 @@
   "targetQuery": "SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AreaPath],[System.AssignedTo],[System.State] FROM workitems WHERE [System.Parent] = @projectID",
   "targetQueryTitle": "Project-@RunName - @projectTitle",
   "targetQueryFolder": "Shared Queries"
-
 }

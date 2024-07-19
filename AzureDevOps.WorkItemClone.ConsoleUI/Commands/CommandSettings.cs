@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using YamlDotNet.Serialization;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -14,7 +15,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         [Description("Pre configure paramiters using this config file. Run `Init` to create it.")]
         [CommandOption("--config|--configFile")]
         [DefaultValue("configuration.json")]
-        [JsonIgnore]
+        [JsonIgnore, YamlIgnore]
         public string? configFile { get; set; }
     }
 }

@@ -1,30 +1,43 @@
 ﻿using Spectre.Console.Cli;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using YamlDotNet.Serialization;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
+    public enum ConfigFormats
+    {
+       JSON,
+       YAML
+    }
+
     internal class WorkItemCloneCommandSettings : BaseCommandSettings
     {
+        //------------------------------------------------
         [Description("Execute with no user interaction required.")]
         [CommandOption("--NonInteractive")]
-        [JsonIgnore]
+        [JsonIgnore, YamlIgnore]
         public bool NonInteractive { get; set; }
         [Description("Clear any cache if there is any")]
         [CommandOption("--ClearCache")]
-        [JsonIgnore]
+        [JsonIgnore, YamlIgnore]
         public bool ClearCache { get; set; }
         [Description("Use this run name to execute. This will create a unique folder under the CachePath for storing run specific data and status. Defaults to yyyyyMMddHHmmss.")]
         [CommandOption("--RunName")]
-        [JsonIgnore]
+        [JsonIgnore, YamlIgnore]
         public string? RunName { get; set; }
+        [Description("Use this run name to execute. This will create a unique folder under the CachePath for storing run specific data and status. Defaults to yyyyyMMddHHmmss.")]
+        [CommandOption("--configFormat")]
+        [DefaultValue(ConfigFormats.JSON)]
+        [JsonIgnore, YamlIgnore]
+        public ConfigFormats ConfigFormat { get; set; }
         //------------------------------------------------
         [CommandOption("--outputPath|--cachePath")]
         [DefaultValue("./cache")]
         public string? CachePath { get; set; }
         //------------------------------------------------
-        [CommandOption("--jsonFile|--inputJsonFile")]
-        public string? inputJsonFile { get; set; }
+        [CommandOption("--jsonFile|--inputJsonFile|--controlFile")]
+        public string? controlFile { get; set; }
         //------------------------------------------------
         [Description("The access token for the target location")]
         [CommandOption("--targetAccessToken")]
