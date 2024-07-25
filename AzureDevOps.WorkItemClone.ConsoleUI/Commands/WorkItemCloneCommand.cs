@@ -230,8 +230,8 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                  Dictionary<string, string> queryParameters = new Dictionary<string, string>() 
                  { 
                      { "@projectID", projectItem.id.ToString() }, 
-                     { "@projectTitle", projectItem.fields.SystemTitle }, 
-                     { "@projectTags", projectItem.fields.SystemTags },
+                     { "@projectTitle", projectItem.fields["System.Title"].ToString() }, 
+                     { "@projectTags", projectItem.fields.ContainsKey("System.Tags") ? projectItem.fields["System.Tags"].ToString() : "" },
                      { "@RunName", config.RunName }
                  };
                  var query = await targetApi.CreateProjectQuery(config.targetQueryTitle, config.targetQueryFolder, config.targetQuery, queryParameters);
@@ -250,13 +250,14 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
             return 0;
         }
 
+
         private async IAsyncEnumerable<WorkItemToBuild> generateWorkItemsToBuildList(JArray jsonWorkItems, List<WorkItemFull> templateWorkItems, WorkItemFull projectItem, string targetTeamProject)
         {
-            foreach (var item in jsonWorkItems)
+            foreach (var controlItem in jsonWorkItems)
             {
                 WorkItemFull templateWorkItem = null;
                 int jsonItemTemplateId = 0;
-                if (int.TryParse(item["id"].Value<string>(), out jsonItemTemplateId))
+                if (int.TryParse(controlItem["id"].Value<string>(), out jsonItemTemplateId))
                 {
                     templateWorkItem = templateWorkItems.Find(x => x.id == jsonItemTemplateId);
                 }
@@ -264,15 +265,9 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 newItem.guid = Guid.NewGuid();
                 newItem.hasComplexRelation = false;
                 newItem.templateId = jsonItemTemplateId;
-                newItem.workItemType = templateWorkItem != null ? templateWorkItem.fields.SystemWorkItemType : "Deliverable";
+                newItem.workItemType = templateWorkItem != null ? templateWorkItem.fields["System.WorkItemType"].ToString() : "Deliverable";
                 newItem.fields = new Dictionary<string, string>();
-                newItem.fields.Add("System.Description", templateWorkItem != null ? templateWorkItem.fields.SystemDescription : "");
-                newItem.fields.Add("Microsoft.VSTS.Common.AcceptanceCriteria", templateWorkItem != null ? templateWorkItem.fields.MicrosoftVSTSCommonAcceptanceCriteria : "");
-                //{
-                //    { "System.Tags", string.Join(";" , item.tags, item.area, item.fields.product, templateWorkItem != null? templateWorkItem.fields.SystemTags : "") },
-                //    { "System.AreaPath", string.Join("\\", targetTeamProject, item.area)},
-                //};
-                var fields = item["fields"].ToObject<Dictionary<string, string>>();
+                var fields = controlItem["fields"].ToObject<Dictionary<string, string>>();
                 foreach (var field in fields)
                 {
                     switch (field.Key)
@@ -281,14 +276,15 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                             newItem.fields.Add(field.Key, string.Join("\\", targetTeamProject, field.Value));
                             break;
                         default:
-                            if (newItem.fields.ContainsKey(field.Key))
+                            if (templateWorkItem != null && templateWorkItem.fields.ContainsKey(field.Key) && (field.Value.Contains("${valuefromtemplate}") || field.Value.Contains("${fromtemplate}")))
                             {
-                                newItem.fields[field.Key] = field.Value;
+                                /// Add the value from the template
+                                newItem.fields.Add(field.Key, templateWorkItem.fields[field.Key].ToString());
                             }
                             else
                             {
+                                /// add value from control file
                                 newItem.fields.Add(field.Key, field.Value);
-
                             }
                             break;
                     }
