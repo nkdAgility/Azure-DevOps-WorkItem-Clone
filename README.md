@@ -127,7 +127,9 @@ The `fields` are the fields that will be used to create the work item. You can u
       "System.Title": "Technical specification",
       "Custom.Product": "CC",
       "Microsoft.VSTS.Scheduling.Effort": 12,
-      "Custom.TRA_Milestone": "E0.1"
+      "Custom.TRA_Milestone": "E0.1",
+      "System.Description": "${fromtemplate}",
+      "Microsoft.VSTS.Common.AcceptanceCriteria": "${fromtemplate}"
     }
   },
   {
@@ -139,6 +141,8 @@ The `fields` are the fields that will be used to create the work item. You can u
       "Custom.Product": "",
       "Microsoft.VSTS.Scheduling.Effort": 2,
       "Custom.TRA_Milestone": "E4.8"
+      "System.Description": "${fromtemplate}",
+      "Microsoft.VSTS.Common.AcceptanceCriteria": "${fromtemplate}"
     }
 ]
 ```
