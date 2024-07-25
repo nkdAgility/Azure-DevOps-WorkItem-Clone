@@ -17,7 +17,7 @@ namespace AzureDevOps.WorkItemClone.DataContracts
     {
         public int id { get; set; }
         public int rev { get; set; }
-        public Fields fields { get; set; }
+        public Dictionary<string, object> fields { get; set; }
         public Relation[] relations { get; set; }
         public _Links3 _links { get; set; }
         public string url { get; set; }
