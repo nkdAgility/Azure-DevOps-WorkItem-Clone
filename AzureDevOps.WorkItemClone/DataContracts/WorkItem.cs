@@ -23,25 +23,6 @@ namespace AzureDevOps.WorkItemClone.DataContracts
         public string url { get; set; }
     }
 
-    public class Fields
-    {
-        [JsonProperty("System.Id")]
-        public int SystemId { get; set; }
-        [JsonProperty("System.WorkItemType")]
-        public string SystemWorkItemType { get; set; }
-
-        [JsonProperty("System.Title")]
-        public string SystemTitle { get; set; }
-        [JsonProperty("System.Description")]
-        public string SystemDescription { get; set; }
-        [JsonProperty("Microsoft.VSTS.Common.AcceptanceCriteria")]
-        public string MicrosoftVSTSCommonAcceptanceCriteria { get; set; }
-        [JsonProperty("System.Tags")]
-        public string SystemTags { get; set; }
-        [JsonProperty("System.Parent")]
-        public int SystemParent { get; set; }
-    }
-
     public class SystemCreatedby
     {
         public string displayName { get; set; }

@@ -1,0 +1,15 @@
+[
+  {
+    "id": 213928,
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Technical specification",
+      "Custom.Product": "CC",
+      "Microsoft.VSTS.Scheduling.Effort": 12,
+      "Custom.TRA_Milestone": "E0.1",
+      "System.Description": "${fromtemplate}",
+      "Microsoft.VSTS.Common.AcceptanceCriteria": "${fromtemplate}"
+    }
+  }
+]

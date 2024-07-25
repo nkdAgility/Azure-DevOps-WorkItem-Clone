@@ -104,7 +104,7 @@ Clones work items from a template project to a target project incorproating a JS
   "templateOrganization": "orgname",
   "templateProject": "template Project",
   "templateParentId": 212315,
-  "targetQuery": "SELECT [System.Id], [System.WorkItemType], [System.Title], [System.AreaPath],[System.AssignedTo],[System.State] FROM workitems WHERE [System.Parent] = @projectID",
+  "targetQuery": "SELECT [Custom.Product], [System.Title], [System.Description], [Custom.DeadlineDate], [System.AreaPath], [System.AssignedTo], [System.State], [Custom.Notes], [System.WorkItemType], [Custom.TRA_Milestone] FROM WorkItemLinks WHERE (Source.[System.Id] = @projectID or Source.[System.Parent] = @projectID) and ([System.Links.LinkType] = 'System.LinkTypes.Hierarchy-Forward') and (Target.[System.Parent] = @projectID) ORDER BY [Custom.DeadlineDate] mode(Recursive)",
   "targetQueryTitle": "Project-@RunName - @projectTitle",
   "targetQueryFolder": "Shared Queries"
 }
@@ -116,6 +116,8 @@ Clones work items from a template project to a target project incorproating a JS
 The `id` is the ID of the template item. This will be used to specifiy Description, Acceptance Criteria, and dependancy relationsips. I the `id` is not specified a new work item will be created.
 
 The `fields` are the fields that will be used to create the work item. You can use any field ientifyer from Azure DevOps.
+
+Use the `${fromtemplate}` to specify that the value should be taken from the template. This is used here for the Description and Acceptance Criteria, but can be used to pull data from any field.
 
  ```json
 [
