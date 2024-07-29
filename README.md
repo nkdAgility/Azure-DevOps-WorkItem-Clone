@@ -110,14 +110,70 @@ Clones work items from a template project to a target project incorproating a JS
 }
  ```
 
-## Json Input File
+## Control File (--inputFile)
+
+The control file consists of a list of work items that you want to create. Each work item has an `id` and a list of `fields`. 
 
 
-The `id` is the ID of the template item. This will be used to specifiy Description, Acceptance Criteria, and dependancy relationsips. I the `id` is not specified a new work item will be created.
+- `id` - The `id` is the optional ID of a template item. If there is an ID, and there is a template item, then the tool will load that template and allow you to select values from it to add to the work item that you create. This template item will also be used to load relationships to other work items and if both ends of the relationship are part of the control file it will wire them up as expected. Not specifying an D wil result in a new work item based only on the control file.
+- `fields` - These `fields` are the fields that will be used to create the work item. You can use any field `Refname` from the target Azure DevOps work item.
 
-The `fields` are the fields that will be used to create the work item. You can use any field ientifyer from Azure DevOps.
+example:
 
-Use the `${fromtemplate}` to specify that the value should be taken from the template. This is used here for the Description and Acceptance Criteria, but can be used to pull data from any field.
+ ```json
+[
+  {
+    "id": 213928,
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Technical specification",
+      "Custom.Product": "CC",
+      "Microsoft.VSTS.Scheduling.Effort": 12,
+      "Custom.TRA_Milestone": "E0.1"
+    }
+  },
+  {
+    "id": "",
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "",
+      "System.Title": "E4.8 Assessment",
+      "Custom.Product": "",
+      "Microsoft.VSTS.Scheduling.Effort": 2,
+      "Custom.TRA_Milestone": "E4.8"
+    }
+]
+```
+
+### Fields Manipulation
+
+If you wish to pull fields from the template work item you can use the following syntax:
+
+- `$[System.Description|template]` - this will pull the `System.Description` field from the template work item. Since template is the default you can also use `$[System.Description]`.
+- `$[System.Description|control]` - this will pull the `System.Description` field from the control item data.
+
+This would make the following valid:
+
+ ```json
+[
+  {
+    "id": 213928,
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Technical specification [ $[Custom.Product|control] ]",
+      "Custom.Product": "CC",
+      "Microsoft.VSTS.Scheduling.Effort": 12,
+      "Custom.TRA_Milestone": "E0.1",
+      "System.Description": "$[System.Description] for $[Custom.Product|control]",
+      "Microsoft.VSTS.Common.AcceptanceCriteria": "$[Microsoft.VSTS.Common.AcceptanceCriteria]"
+    }
+  }
+]
+```
+
+You can also specify `${fromtemplate}` or `${valuefromtemplate}` to pull just the value from the template that is the same name as the control field in focus.
 
  ```json
 [
@@ -130,22 +186,10 @@ Use the `${fromtemplate}` to specify that the value should be taken from the tem
       "Custom.Product": "CC",
       "Microsoft.VSTS.Scheduling.Effort": 12,
       "Custom.TRA_Milestone": "E0.1",
-      "System.Description": "${fromtemplate}",
+      "System.Description": "The description: ${fromtemplate}",
       "Microsoft.VSTS.Common.AcceptanceCriteria": "${fromtemplate}"
     }
-  },
-  {
-    "id": "",
-    "fields": {
-      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
-      "System.Tags": "",
-      "System.Title": "E4.8 Assessment",
-      "Custom.Product": "",
-      "Microsoft.VSTS.Scheduling.Effort": 2,
-      "Custom.TRA_Milestone": "E4.8"
-      "System.Description": "${fromtemplate}",
-      "Microsoft.VSTS.Common.AcceptanceCriteria": "${fromtemplate}"
-    }
+  }
 ]
 ```
 

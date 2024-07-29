@@ -23,7 +23,7 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
         [DefaultValue("./cache")]
         public string? CachePath { get; set; }
         //------------------------------------------------
-        [CommandOption("--jsonFile|--inputJsonFile")]
+        [CommandOption("--jsonFile|--inputJsonFile|--controlFile")]
         public string? inputJsonFile { get; set; }
         //------------------------------------------------
         [Description("The access token for the target location")]
