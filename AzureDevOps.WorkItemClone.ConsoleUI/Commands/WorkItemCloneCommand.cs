@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics.Eventing.Reader;
 using AzureDevOps.WorkItemClone.Repositories;
+using System.Text.RegularExpressions;
 
 namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
 {
@@ -267,31 +268,80 @@ namespace AzureDevOps.WorkItemClone.ConsoleUI.Commands
                 newItem.templateId = jsonItemTemplateId;
                 newItem.workItemType = templateWorkItem != null ? templateWorkItem.fields["System.WorkItemType"].ToString() : "Deliverable";
                 newItem.fields = new Dictionary<string, string>();
-                var fields = controlItem["fields"].ToObject<Dictionary<string, string>>();
-                foreach (var field in fields)
+                var controlFields = controlItem["fields"].ToObject<Dictionary<string, string>>();
+                foreach (var field in controlFields)
                 {
-                    switch (field.Key)
+                    var fieldKey = field.Key;
+                    var fieldValue = field.Value;
+                    fieldValue = ProcessFieldValue(templateWorkItem, controlFields, field, fieldKey, fieldValue);
+                    switch (fieldKey)
                     {
                         case "System.AreaPath":
-                            newItem.fields.Add(field.Key, string.Join("\\", targetTeamProject, field.Value));
+                            newItem.fields.Add(fieldKey, string.Join("\\", targetTeamProject, field.Value));
                             break;
                         default:
-                            if (templateWorkItem != null && templateWorkItem.fields.ContainsKey(field.Key) && (field.Value.Contains("${valuefromtemplate}") || field.Value.Contains("${fromtemplate}")))
-                            {
-                                /// Add the value from the template
-                                newItem.fields.Add(field.Key, templateWorkItem.fields[field.Key].ToString());
-                            }
-                            else
-                            {
-                                /// add value from control file
-                                newItem.fields.Add(field.Key, field.Value);
-                            }
+                            newItem.fields.Add(fieldKey, fieldValue);
                             break;
                     }
                 }
                 newItem.relations = new List<WorkItemToBuildRelation>() { new WorkItemToBuildRelation() { rel = "System.LinkTypes.Hierarchy-Reverse", targetId = projectItem.id } };
                 yield return newItem;
             }
+        }
+
+        private static string ProcessFieldValue(WorkItemFull templateWorkItem, Dictionary<string, string>? controlFields, KeyValuePair<string, string> field, string fieldKey, string fieldValue)
+        {
+            var fieldMatches = Regex.Matches(field.Value, @"\$\[([^\|\]]+)(?:\|([^\]]+))?\]");
+            if (templateWorkItem != null)
+            {
+                // Check and replace all template field names
+                foreach (Match match in fieldMatches)
+                {
+                    var key = match.Groups[1].Value;
+                    var option = match.Groups[2].Value;
+                    switch (option)
+                    {
+                        case "control":
+                            if (controlFields.ContainsKey(key))
+                            {
+                                fieldValue = fieldValue.Replace(match.Value, controlFields[key].ToString());
+                            }
+                            break;
+                        case "template":
+                        default:
+                            if (templateWorkItem.fields.ContainsKey(key))
+                            {
+                                fieldValue = fieldValue.Replace(match.Value, templateWorkItem.fields[key].ToString());
+                            }
+                            break;
+                    }
+                }
+                // Check and replace old school replace flags
+                if (templateWorkItem.fields.ContainsKey(fieldKey) && (fieldValue.Contains("${valuefromtemplate}") || fieldValue.Contains("${fromtemplate}")))
+                {
+                    fieldValue = field.Value
+                        .Replace("${valuefromtemplate}", templateWorkItem.fields[fieldKey].ToString())
+                        .Replace("${fromtemplate}", templateWorkItem.fields[fieldKey].ToString());
+                }
+            }
+            else
+            {
+                // Check and replace all template field names
+                foreach (Match match in fieldMatches)
+                {
+                    var key = match.Groups[1].Value;
+                    if (templateWorkItem.fields.ContainsKey(key))
+                    {
+                        fieldValue = fieldValue.Replace($"$[{key}]", "");
+                    }
+                }
+                // Ensure we remove the template values
+                fieldValue = field.Value
+                        .Replace("${valuefromtemplate}", "")
+                        .Replace("${fromtemplate}", "");
+            }
+
+            return fieldValue;
         }
 
         private async IAsyncEnumerable<WorkItemToBuild> generateWorkItemsToBuildRelations(List<WorkItemToBuild> workItemsToBuild, List<WorkItemFull> templateWorkItems)

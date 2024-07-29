@@ -8,8 +8,22 @@
       "Custom.Product": "CC",
       "Microsoft.VSTS.Scheduling.Effort": 12,
       "Custom.TRA_Milestone": "E0.1",
-      "System.Description": "${fromtemplate}",
-      "Microsoft.VSTS.Common.AcceptanceCriteria": "${fromtemplate}"
+      "System.Description": "here is the descrption: ${fromtemplate}",
+      "Microsoft.VSTS.Common.AcceptanceCriteria": "${fromtemplate}",
+      "Custom.CombineDA": "<h1>Description></h1>$[System.Description]<br /><h2>Acceptance</h2>$[Microsoft.VSTS.Common.AcceptanceCriteria]<h2>Entra</h2>$[Custom.Product|control]"
+    }
+  },
+  {
+    "id": 213928,
+    "fields": {
+      "System.AreaPath": "Engineering Group\\ECH Group\\ECH TPL 1",
+      "System.Tags": "Customer Document",
+      "System.Title": "Technical specification",
+      "Custom.Product": "CC",
+      "Microsoft.VSTS.Scheduling.Effort": 12,
+      "Custom.TRA_Milestone": "E0.1",
+      "System.Description": "here is the descrption: $[System.Description] for $[Custom.Product|control]",
+      "Microsoft.VSTS.Common.AcceptanceCriteria": "$[Microsoft.VSTS.Common.AcceptanceCriteria]"
     }
   }
 ]
